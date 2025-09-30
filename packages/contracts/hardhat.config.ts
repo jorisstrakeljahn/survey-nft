@@ -5,6 +5,7 @@ dotenv.config();
 
 const config: HardhatUserConfig = {
     solidity: "0.8.28",
+    typechain: { target: "ethers-v6", outDir: "typechain-types" },
     networks: {
         hardhat: {},
         sepolia: {

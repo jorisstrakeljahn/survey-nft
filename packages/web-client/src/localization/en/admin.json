@@ -1,0 +1,60 @@
+{
+  "common": {
+    "clear": "Clear"
+  },
+  "admin": {
+    "title": "Admin / Teaching Panel",
+    "badges": {
+      "deleter": "Burn role active",
+      "noDeleter": "No burn role",
+      "roleAdmin": "Role administrator",
+      "noRoleAdmin": "No role admin"
+    },
+    "search": {
+      "title": "Search wallet",
+      "placeholder": "Enter 0x address …",
+      "load": "Load",
+      "invalid": "Please provide a valid 0x address."
+    },
+    "kpis": {
+      "address": "Address",
+      "nfts": "NFTs",
+      "points": "Total points"
+    },
+    "actions": {
+      "title": "Actions",
+      "infoGasless": "Note: Transactions are sponsored by the Paymaster (OpenGSN).",
+      "maxCountPh": "max per tx",
+      "burnAll": "Burn all NFTs"
+    },
+    "table": {
+      "title": "NFT list",
+      "points": "Points",
+      "links": "Links",
+      "action": "Action",
+      "metadata": "Metadata",
+      "explorer": "Explorer",
+      "burn": "Burn"
+    },
+    "roles": {
+      "title": "Manage roles",
+      "help": "Only wallets with the admin role can grant or revoke burn roles.",
+      "placeholder": "0x address",
+      "grant": "Grant burn role",
+      "revoke": "Revoke burn role",
+      "noPerm": "No permission to manage roles.",
+      "invalid": "Please provide a valid 0x address.",
+      "granted": "Burn role granted to {addr}.",
+      "revoked": "Burn role revoked from {addr}.",
+      "error": "Operation failed. Please check console/explorer."
+    },
+    "error": {
+      "title": "Failed to load",
+      "text": "Please try again later."
+    },
+    "empty": {
+      "title": "No NFTs found",
+      "text": "There are currently no VPP NFTs for this address."
+    }
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "common": {
+    "clear": "Zurücksetzen"
+  },
+  "admin": {
+    "title": "Lehrenden-Bereich",
+    "badges": {
+      "deleter": "Burn-Rolle aktiv",
+      "noDeleter": "Keine Burn-Rolle",
+      "roleAdmin": "Rollen-Administrator",
+      "noRoleAdmin": "Kein Rollen-Administrator"
+    },
+    "search": {
+      "title": "Wallet suchen",
+      "placeholder": "0xAdresse eingeben …",
+      "load": "Laden",
+      "invalid": "Bitte eine gültige 0x-Adresse eingeben."
+    },
+    "kpis": {
+      "address": "Adresse",
+      "nfts": "Anzahl NFTs",
+      "points": "Summe Punkte"
+    },
+    "actions": {
+      "title": "Aktionen",
+      "infoGasless": "Hinweis: Transaktionen werden über den Paymaster (OpenGSN) gesponsert.",
+      "maxCountPh": "max. pro Tx",
+      "burnAll": "Alle NFTs löschen"
+    },
+    "table": {
+      "title": "NFT-Liste",
+      "points": "Punkte",
+      "links": "Links",
+      "action": "Aktion",
+      "metadata": "Metadaten",
+      "explorer": "Explorer",
+      "burn": "Löschen"
+    },
+    "roles": {
+      "title": "Rollen verwalten",
+      "help": "Nur Wallets mit Admin-Rolle können Burn-Rollen vergeben oder entziehen.",
+      "placeholder": "0xAdresse",
+      "grant": "Burn-Rolle vergeben",
+      "revoke": "Burn-Rolle entziehen",
+      "noPerm": "Keine Berechtigung zum Verwalten von Rollen.",
+      "invalid": "Bitte eine gültige 0x-Adresse eingeben.",
+      "granted": "Burn-Rolle vergeben an {addr}.",
+      "revoked": "Burn-Rolle entzogen von {addr}.",
+      "error": "Vorgang fehlgeschlagen. Bitte Konsole/Explorer prüfen."
+    },
+    "error": {
+      "title": "Fehler beim Laden",
+      "text": "Bitte später erneut versuchen."
+    },
+    "empty": {
+      "title": "Keine NFTs gefunden",
+      "text": "Für diese Adresse existieren derzeit keine VPP-NFTs."
+    }
+  }
+}

@@ -15,6 +15,9 @@ const SURVEY_NFT_ABI = [
   'function tokenOfOwnerByIndex(address owner, uint256 index) view returns (uint256)',
   'function tokenURI(uint256 tokenId) view returns (string)',
   'function tokenByIndex(uint256 index) view returns (uint256)',
+  'function getRoleAdmin(bytes32 role) view returns (bytes32)',
+  'function grantRole(bytes32 role, address account)',
+  'function revokeRole(bytes32 role, address account)',
 
   // Custom
   'function claimNFT(uint256 surveyId, uint8 points) external',
@@ -314,6 +317,35 @@ export function useErc721(overrideAddress?: string) {
     return await tokenByIndexGlobal(index)
   }
 
+  // Hole das Bytes32 des Deleter-Roles (du hast DELETER_ROLE() bereits)
+  async function getDeleterRoleId () {
+    const { contract } = await getSignerAndContract(overrideAddress)
+    return await contract.DELETER_ROLE()
+  }
+
+// Prüfen, ob verbundene Wallet Admin dieses Roles ist
+  async function getDeleterRoleAdmin (): Promise<boolean> {
+    const { contract, user } = await getSignerAndContract(overrideAddress)
+    const role = await contract.DELETER_ROLE()
+    const adminRole = await contract.getRoleAdmin(role)
+    const has = await contract.hasRole(adminRole, user)
+    return !!has
+  }
+
+  async function grantDeleterRole (addr: `0x${string}`) {
+    const { contract } = await getSignerAndContract(overrideAddress)
+    const role = await contract.DELETER_ROLE()
+    const tx = await contract.grantRole(role, addr)
+    return await tx.wait()
+  }
+
+  async function revokeDeleterRole (addr: `0x${string}`) {
+    const { contract } = await getSignerAndContract(overrideAddress)
+    const role = await contract.DELETER_ROLE()
+    const tx = await contract.revokeRole(role, addr)
+    return await tx.wait()
+  }
+
   return {
     // moderne Methoden
     getInfo,
@@ -350,6 +382,11 @@ export function useErc721(overrideAddress?: string) {
     burnAllForHolder,
     hasRoleDeleter,
     isAlreadyClaimed,
+
+    // Rollen-Helpers:
+    getDeleterRoleAdmin,
+    grantDeleterRole,
+    revokeDeleterRole,
   }
 }
 

@@ -16,36 +16,21 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/pages/HomePage'),
   },
   {
-    path: '/binex',
-    name: ROUTE_NAMES.binex,
-    component: () => import('@/pages/BinexPage'),
+    path: '/admin',
+    name: ROUTE_NAMES.admin,
+    component: () => import('@/pages/AdminPage'),
   },
   {
-    path: '/binex/metamask',
-    name: ROUTE_NAMES.binexMetaMask,
-    component: () => import('@/pages/BinexPage/BinexPageMetaMask.vue'),
-  },
-  {
-    path: '/vpp',
-    name: ROUTE_NAMES.vpp,
-    component: () => import('@/pages/VPPDocPage'),
-  },
-  {
-    path: '/binex/nfts',
+    path: '/nfts',
     name: ROUTE_NAMES.vppNFTs,
     component: () => import('@/pages/NftsPage'),
     meta: { requiresMetaMask: true, hideNavbar: true },
   },
   {
-    path: '/binex/nfts/:id',
+    path: '/nfts/:id',
     name: ROUTE_NAMES.vppNFTDetails,
     component: () => import('@/pages/NftDetailsPage'),
     meta: { requiresMetaMask: true, hideNavbar: true },
-  },
-  {
-    path: '/privacy',
-    name: ROUTE_NAMES.privacy,
-    component: () => import('@/pages/PrivacyPage'),
   },
   {
     path: '/connect',

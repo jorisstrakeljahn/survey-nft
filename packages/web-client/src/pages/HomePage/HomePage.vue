@@ -1,5 +1,5 @@
 <template>
-  <div class="home-page" lang="de">
+  <div class="vpp-page" lang="de">
     <section class="header-section">
       <img
         :src="HeaderImage"
@@ -7,35 +7,68 @@
         class="header-section__image"
       />
       <h1 class="header-section__title">
-        {{ t('home-page.title') }}
+        {{ t('vpp-documentation-page.title') }}
       </h1>
       <p class="header-section__subtitle">
-        {{ t('home-page.subtitle') }}
+        {{ t('vpp-documentation-page.subtitle') }}
       </p>
+
+      <div class="header-section__buttons">
+        <router-link to="/binex/nfts" class="header-section__button">
+          {{ t('binex-page.button-text') }}
+        </router-link>
+        <router-link
+          to="/binex/metamask"
+          class="header-section__button header-section__button--blue"
+        >
+          {{ t('binex-page.button-text-metamask') }}
+        </router-link>
+      </div>
     </section>
 
-    <section class="projects-section">
-      <h2 class="projects-section__title">
-        {{ t('home-page.projects') }}
+    <!-- Dokumentation Section -->
+    <section id="guide-section-vpp" class="documentation-section">
+      <h2 class="documentation-section__title">
+        {{ t('vpp-documentation-page.guide-title') }}
       </h2>
-      <div class="projects-section__list">
-        <project-card
-          v-for="(project, index) in projects"
+
+      <!-- Für Teilnehmer:innen -->
+      <div class="documentation-section__group">
+        <h3 class="documentation-section__subtitle">
+          {{ t('vpp-documentation-page.guide-title-participant') }}
+        </h3>
+        <accordion-item
+          v-for="(item, index) in participantItems"
           :key="index"
-          :image-src="project.imageSrc"
-          :title="project.title"
-          :description="project.description"
-          :route-name="project.routeName"
-        />
+          :title="item.title"
+        >
+          <!-- eslint-disable-next-line vue/no-v-html -->
+          <div v-html="item.content"></div>
+        </accordion-item>
+      </div>
+
+      <!-- Für Umfrageersteller:innen -->
+      <div class="documentation-section__group">
+        <h3 class="documentation-section__subtitle">
+          {{ t('vpp-documentation-page.guide-title-organizer') }}
+        </h3>
+        <accordion-item
+          v-for="(item, index) in surveyCreatorItems"
+          :key="index"
+          :title="item.title"
+        >
+          <!-- eslint-disable-next-line vue/no-v-html -->
+          <div v-html="item.content"></div>
+        </accordion-item>
       </div>
     </section>
 
     <section class="info-section">
       <h2 class="info-section__title">
-        {{ t('home-page.info-title') }}
+        {{ t('vpp-documentation-page.info-title') }}
       </h2>
       <p class="info-section__text">
-        {{ t('home-page.info-text') }}
+        {{ t('vpp-documentation-page.info-text') }}
       </p>
     </section>
   </div>
@@ -43,46 +76,57 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
-import ProjectCard from '@/pages/HomePage/ProjectCard.vue'
 import AppFooter from '@/common/AppFooter.vue'
-import HeaderImage from '@/assets/homepage-start-image.jpg'
-import BinexImage from '@/assets/project-binex-image.jpg'
-import VppImage from '@/assets/project-vpp-image.jpg'
+import AccordionItem from '@/common/AccordionItem.vue'
+import HeaderImage from '@/assets/vpp-start-image.jpg'
 import { ROUTE_NAMES } from '@/enums'
 
-export default {
-  name: 'home-page',
+export default defineComponent({
+  name: 'vpp-doc-page',
   components: {
-    ProjectCard,
     AppFooter,
+    AccordionItem,
   },
   setup() {
     const { t } = useI18n()
-    return { t }
+    return {
+      t,
+      ROUTE_NAMES,
+    }
   },
   data() {
     return {
       HeaderImage,
-      projects: [
+      participantItems: [
         {
-          imageSrc: BinexImage,
-          title: 'Binex',
-          description:
-            'NFT-Spiel und Peer-to-Peer Plattform für den vielfältigen Einsatz an Hochschulen.',
-          routeName: ROUTE_NAMES.binex,
+          title: 'Metamask-Wallet erstellen',
+          content:
+            'Informationen zum Erstellen und Hinzufügen eines Metamask Wallets für verschiedene Browser findest du auf <a href="https://support.metamask.io/de/getting-started/getting-started-with-metamask/" target="_blank">dieser Seite</a>.',
         },
         {
-          imageSrc: VppImage,
-          title: 'Versuchspersonenpunkte',
-          description:
-            'Dokumentation einer Prüfungsleistung für Wirtschaftspsychologie.',
-          routeName: ROUTE_NAMES.vpp,
+          title: 'Mit Q-Blockchain verknüpfen',
+          content: 'Info bald verfügbar...',
+        },
+        {
+          title: 'Punkte erhalten',
+          content: 'Info bald verfügbar...',
+        },
+      ],
+      surveyCreatorItems: [
+        {
+          title: 'VPP Doku in SociSurvey einbinden',
+          content: 'Info bald verfügbar...',
+        },
+        {
+          title: 'VPP Doku mit anderen Tools nutzen',
+          content: 'Info bald verfügbar...',
         },
       ],
     }
   },
-}
+})
 </script>
 
 <style lang="scss" scoped>
@@ -92,8 +136,8 @@ export default {
   padding: 2rem 1rem;
 
   &__image {
-    max-width: 100%;
-    height: auto;
+    width: 480px;
+    height: 320px;
     border-radius: 8px;
     object-fit: cover;
   }
@@ -106,23 +150,54 @@ export default {
   &__subtitle {
     max-width: 1000px;
     font-size: 1.4rem;
+    line-height: 1.5;
+    text-align: justify;
+    hyphens: auto;
     margin: 1rem auto 0;
+  }
+
+  &__button {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.75rem 3rem;
+    background-color: #000000;
+    color: #fff;
+    font-size: 1.3rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: 12px;
+    transition: transform 0.3s;
+    opacity: 0.8;
+
+    &:hover {
+      transform: scale(1.08);
+    }
   }
 }
 
-/* Projekte Section Styles */
-.projects-section {
-  padding: 2rem 1rem 0;
+/* Dokumentation Section Styles */
+.documentation-section {
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
   &__title {
-    font-size: 1.8rem;
+    font-size: 2rem;
+    margin-bottom: 2rem;
     text-align: center;
   }
 
-  &__list {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+  &__group {
+    max-width: 1000px;
+    width: 100%;
+    margin-bottom: 2rem;
+  }
+
+  &__subtitle {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    margin-top: 2rem;
   }
 }
 
@@ -142,20 +217,10 @@ export default {
     max-width: 1000px;
     width: 100%;
     font-size: 1.2rem;
-    line-height: 1.5;
+    line-height: 1.6;
     text-align: justify;
     hyphens: auto;
   }
-}
-
-/* Optional: Scrollbar Styling */
-.projects-section__list::-webkit-scrollbar {
-  height: 8px;
-}
-
-.projects-section__list::-webkit-scrollbar-thumb {
-  background-color: #ccc;
-  border-radius: 4px;
 }
 
 /* Media Queries für kleinere Bildschirme */
@@ -164,8 +229,21 @@ export default {
     font-size: 1.5rem;
   }
 
+  .header-section__image {
+    width: 100%;
+    height: auto;
+  }
+
   .header-section__subtitle {
     font-size: 1rem;
+  }
+
+  .documentation-section__title {
+    font-size: 1.5rem;
+  }
+
+  .documentation-section__subtitle {
+    font-size: 1.2rem;
   }
 
   .info-section__text {

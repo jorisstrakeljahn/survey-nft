@@ -6,13 +6,13 @@
     <nav class="navigation" v-if="!isMenuOpen">
       <ul>
         <li>
-          <router-link :to="{ name: ROUTE_NAMES.binex }">
-            {{ t('header.binex') }}
+          <router-link :to="{ name: ROUTE_NAMES.vppNFTs }">
+            {{ t('header.vpp-nfts') }}
           </router-link>
         </li>
         <li>
-          <router-link :to="{ name: ROUTE_NAMES.vpp }">
-            {{ t('header.vpp-documentation') }}
+          <router-link :to="{ name: ROUTE_NAMES.admin }">
+            {{ t('header.admin') }}
           </router-link>
         </li>
       </ul>
@@ -38,36 +38,24 @@
         <li class="highlight-item">
           <div class="menu-item-with-button">
             <router-link
-              :to="{ name: ROUTE_NAMES.binex }"
+              :to="{ name: ROUTE_NAMES.vppNFTs }"
               class="menu-link"
               @click="toggleMenu"
             >
-              {{ t('header.binex') }}
+              {{ t('header.vpp-nfts') }}
             </router-link>
-            <button
-              class="instruction-button"
-              @click="navigateToRoute(ROUTE_NAMES.binexMetaMask)"
-            >
-              {{ t('header.guide') }}
-            </button>
           </div>
         </li>
 
         <li class="highlight-item">
           <div class="menu-item-with-button">
             <router-link
-              :to="{ name: ROUTE_NAMES.vpp }"
+              :to="{ name: ROUTE_NAMES.admin }"
               class="menu-link"
               @click="toggleMenu"
             >
-              {{ t('header.vpp-documentation') }}
+              {{ t('header.admin') }}
             </router-link>
-            <button
-              class="instruction-button"
-              @click="navigateToSection(ROUTE_NAMES.vpp, 'guide-section-vpp')"
-            >
-              {{ t('header.guide') }}
-            </button>
           </div>
         </li>
       </ul>

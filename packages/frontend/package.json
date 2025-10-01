@@ -23,13 +23,18 @@
     "lodash-es": "^4.17.21",
     "loglevel": "^1.9.2",
     "pinia": "^2.3.1",
+    "rollup-plugin-visualizer": "^6.0.3",
+    "vite-plugin-checker": "^0.11.0",
+    "vitest": "^3.2.4",
     "vue": "^3.5.22",
     "vue-i18n": "^9.14.5",
     "vue-router": "^4.5.1",
     "vue-toastification": "^2.0.0-rc.5"
   },
   "devDependencies": {
+    "@types/lodash-es": "^4.17.12",
     "@vitejs/plugin-vue": "^6.0.1",
+    "fast-glob": "^3.3.3",
     "sass-embedded": "^1.93.2",
     "vite": "^7.1.7",
     "vite-plugin-svg-icons": "^2.0.1",

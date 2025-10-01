@@ -22,3 +22,15 @@ function _mapEnvCfg(env: ImportMetaEnv | typeof document.ENV): {
   )
 }
 
+
+export const DEFAULT_CHAIN = {
+    chainId: 35443,
+    chainName: 'Q Testnet',
+    rpcUrls: ['https://rpc.qtestnet.org'],
+    blockExplorerUrls: ['https://explorer.qtestnet.org'],
+    nativeCurrency: {
+        name: 'Q',
+        symbol: 'Q ',
+        decimals: 18,
+    },
+}

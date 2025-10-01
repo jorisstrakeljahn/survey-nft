@@ -1,244 +1,273 @@
-import { computed, ref } from 'vue'
-import { EthProviderRpcError } from '@/types'
-import { handleEthError, sleep } from '@/helpers'
-import { BigNumber } from 'ethers'
-import { ABaseNFT__factory } from '@contracts/generated-types/ethers/factories/contracts/token/ABaseNFT__factory'
-import { useWeb3ProvidersStore } from '@/store'
+// packages/frontend/src/composables/contracts/use-erc721.ts
+import { ethers } from "ethers";
+import { config } from "@/config";
 
-export const useErc721 = (address?: string) => {
-  const webProvider = useWeb3ProvidersStore()
-  const provider = computed(() => webProvider.provider)
+/**
+ * Minimal-ABI für deinen SurveyNFT (OZ ERC721Enumerable + URIStorage + AccessControl + EIP-2771)
+ * Enthält nur die Funktionen, die wir im Frontend brauchen.
+ */
+const SURVEY_NFT_ABI = [
+  // ---- Standard & Enumerable & URI ----
+  "function name() view returns (string)",
+  "function symbol() view returns (string)",
+  "function totalSupply() view returns (uint256)",
+  "function balanceOf(address owner) view returns (uint256)",
+  "function ownerOf(uint256 tokenId) view returns (address)",
+  "function tokenOfOwnerByIndex(address owner, uint256 index) view returns (uint256)",
+  "function tokenURI(uint256 tokenId) view returns (string)",
 
-  const contractInstance = computed(
-    () =>
-      (!!provider.value &&
-        !!provider.value.currentSigner &&
-        !!address &&
-        ABaseNFT__factory.connect(address, provider.value.currentSigner)) ||
-      undefined,
-  )
+  // ---- Deine Custom-Felder/Funktionen ----
+  "function claimNFT(uint256 surveyId, uint8 points) external",
+  "function minted(address user, uint256 surveyId) view returns (bool)",
+  "function tokenPoints(uint256 tokenId) view returns (uint8)",
 
-  const contractInterface = ABaseNFT__factory.createInterface()
+  // ---- Burn & Admin ----
+  "function burn(uint256 tokenId) external",
+  "function burnAny(uint256 tokenId) external",
+  "function burnAllFor(address holder, uint256 maxCount) external",
+  "function DELETER_ROLE() view returns (bytes32)",
+  "function hasRole(bytes32 role, address account) view returns (bool)",
 
-  const allowance = ref<BigNumber>()
-  const decimals = ref(0)
-  const name = ref('')
-  const owner = ref('')
-  const symbol = ref('')
-  const totalSupply = ref<BigNumber>()
-  const balance = ref<BigNumber>()
+  // ---- (optional) EIP-2771 Info ----
+  "function isTrustedForwarder(address forwarder) view returns (bool)"
+] as const;
 
-  const loadDetails = async () => {
+/**
+ * Einfache Utility-Types
+ */
+export type HexAddress = `0x${string}`;
+export type Bigish = bigint | number | string;
+
+export interface LoadedToken {
+  tokenId: number;
+  owner: HexAddress;
+  uri?: string;
+  points?: number;
+}
+
+/**
+ * Interne: stelle Provider/Signer/Contract bereit
+ */
+async function getProvider(): Promise<ethers.BrowserProvider> {
+  if (typeof window === "undefined" || !(window as any).ethereum) {
+    throw new Error("MetaMask nicht gefunden.");
+  }
+  return new ethers.BrowserProvider((window as any).ethereum);
+}
+
+async function ensureChain(provider: ethers.BrowserProvider, chainIdHex = config.chainIdHex) {
+  const current = await provider.send("eth_chainId", []);
+  if (chainIdHex && current !== chainIdHex) {
     try {
-      const [_name, _owner, _symbol, _totalSupply, _balance] =
-        await Promise.all([
-          getName(),
-          getOwner(),
-          getSymbol(),
-          getTotalSupply(),
-          getBalanceOf(provider!.value.selectedAddress!),
-        ])
-
-      name.value = _name!
-      owner.value = _owner!
-      symbol.value = _symbol!
-      totalSupply.value = _totalSupply!
-      balance.value = _balance!
-    } catch (error) {
-      handleEthError(error as EthProviderRpcError)
+      await provider.send("wallet_switchEthereumChain", [{ chainId: chainIdHex }]);
+    } catch (e: any) {
+      if (e?.code === 4902) {
+        // optional: hier könnte man wallet_addEthereumChain anbieten
+        throw new Error("Falsches Netzwerk. Bitte Polygon Mainnet (137) in MetaMask hinzufügen.");
+      }
+      throw e;
     }
   }
+}
 
-  const approve = async (spender: string, amount: number) => {
-    if (!provider.value) return
+async function getSignerAndContract() {
+  const provider = await getProvider();
+  await provider.send("eth_requestAccounts", []);
+  await ensureChain(provider);
 
-    try {
-      const data = contractInterface.encodeFunctionData('approve', [
-        spender,
-        amount,
-      ])
+  const signer = await provider.getSigner();
+  if (!config.erc721Address) {
+    throw new Error("VITE_ERC721_ADDRESS fehlt in der .env / config.");
+  }
+  const contract = new ethers.Contract(config.erc721Address, SURVEY_NFT_ABI, signer);
+  const user = (await signer.getAddress()) as HexAddress;
 
-      const receipt = await provider.value.signAndSendTx({
-        to: address,
-        data,
-      })
+  return { provider, signer, contract, user };
+}
 
-      await sleep(1000)
-      return receipt
-    } catch (error) {
-      handleEthError(error as EthProviderRpcError)
-    }
+/**
+ * Öffentliche API: alle bequemen Operationen für dein Frontend
+ */
+export function useErc721() {
+  /**
+   * Info
+   */
+  async function getInfo() {
+    const { contract } = await getSignerAndContract();
+    const [name, symbol, total] = await Promise.all([
+      contract.name(),
+      contract.symbol(),
+      contract.totalSupply(),
+    ]);
+    return { name, symbol, totalSupply: Number(total) };
   }
 
-  const mint = async (to: string, nftId: number, tokenUri: string) => {
-    if (!provider.value) return
-
-    try {
-      const receipt = await contractInstance.value?.mintTo(to, nftId, tokenUri)
-      return receipt
-    } catch (error) {
-      handleEthError(error as EthProviderRpcError)
+  /**
+   * Hole alle TokenIds eines Owners (per Enumerable)
+   */
+  async function getTokenIdsOf(owner?: HexAddress) {
+    const { contract, user } = await getSignerAndContract();
+    const target = owner ?? user;
+    const bal: bigint = await contract.balanceOf(target);
+    const ids: number[] = [];
+    for (let i = 0n; i < bal; i++) {
+      const id: bigint = await contract.tokenOfOwnerByIndex(target, i);
+      ids.push(Number(id));
     }
+    return ids;
   }
 
-  const transfer = async (from: string, to: string, nftId: number | string) => {
-    if (!provider.value) return
+  /**
+   * Lade Token-Daten eines Owners (owner, uri, points)
+   */
+  async function loadTokensOf(owner?: HexAddress): Promise<LoadedToken[]> {
+    const { contract, user } = await getSignerAndContract();
+    const target = owner ?? user;
+    const ids = await getTokenIdsOf(target);
+    const out: LoadedToken[] = [];
 
-    try {
-      const receipt = await contractInstance.value?.transferFrom(
-        from,
-        to,
-        nftId,
-      )
-      return receipt
-    } catch (error) {
-      handleEthError(error as EthProviderRpcError)
+    for (const id of ids) {
+      const [uri, pts, own] = await Promise.all([
+        safeCall<string>(() => contract.tokenURI(id)),
+        safeCall<number>(() => contract.tokenPoints(id).then((x: bigint | number) => Number(x))),
+        contract.ownerOf(id),
+      ]);
+      out.push({
+        tokenId: id,
+        owner: own as HexAddress,
+        uri: uri ?? undefined,
+        points: typeof pts === "number" ? pts : undefined,
+      });
     }
+    return out;
   }
 
-  const getTokenOfOwnerByIndex = async (index: string | number) => {
-    if (!provider.value) return '0'
-    try {
-      const a = await contractInstance.value?.getTokenInfo(index)
-      return a
-    } catch (error) {
-      handleEthError(error as EthProviderRpcError)
-      return '0'
-    }
+  /**
+   * Prüfe, ob (user, surveyId) bereits geclaimt wurde
+   */
+  async function isAlreadyMinted(surveyId: Bigish, owner?: HexAddress) {
+    const { contract, user } = await getSignerAndContract();
+    const addr = owner ?? user;
+    const res: boolean = await contract.minted(addr, surveyId);
+    return res;
   }
 
-  const getTokensURIs = async (index: (string | number)[]) => {
-    if (!provider.value) return []
-    try {
-      return contractInstance.value?.getTokensURIs(index) || []
-    } catch (error) {
-      handleEthError(error as EthProviderRpcError)
-      return []
-    }
+  /**
+   * Claim – ruft claimNFT(surveyId, points)
+   * Achtung: wirf Fehler, wenn bereits geclaimt.
+   */
+  async function claim(surveyId: Bigish, points: 1 | 2 | 3) {
+    const { contract, user } = await getSignerAndContract();
+    const already: boolean = await contract.minted(user, surveyId);
+    if (already) throw new Error("Für diese Umfrage wurde bereits geclaimt.");
+
+    const tx = await contract.claimNFT(surveyId, points);
+    return await tx.wait();
   }
 
-  const getOwnerOfNft = async (index: string | number) => {
-    if (!provider.value) return ''
-    try {
-      return contractInstance.value?.ownerOf(index) || ''
-    } catch (error) {
-      handleEthError(error as EthProviderRpcError)
-      return ''
+  /**
+   * Burn eigenes NFT
+   */
+  async function burnOwn(tokenId: Bigish) {
+    const { contract, user } = await getSignerAndContract();
+    const owner: HexAddress = await contract.ownerOf(tokenId);
+    if (owner.toLowerCase() !== user.toLowerCase()) {
+      throw new Error("Du bist nicht der Eigentümer dieses Tokens.");
     }
+    const tx = await contract.burn(tokenId);
+    return await tx.wait();
   }
 
-  const getTokenByIndex = async (index: string | number) => {
-    if (!provider.value) return '0'
-    try {
-      return contractInstance.value?.tokenByIndex(index)
-    } catch (error) {
-      handleEthError(error as EthProviderRpcError)
-      return '0'
-    }
-  }
-  const getApproved = async (index: string | number) => {
-    if (!provider.value) return false
-    try {
-      return contractInstance.value?.getApproved(index)
-    } catch (error) {
-      handleEthError(error as EthProviderRpcError)
-      return false
-    }
+  /**
+   * Admin: Burn jedes NFT (erfordert DELETER_ROLE)
+   */
+  async function burnAny(tokenId: Bigish) {
+    const { contract } = await getSignerAndContract();
+    const tx = await contract.burnAny(tokenId);
+    return await tx.wait();
   }
 
-  const renounceOwnership = async () => {
-    if (!provider.value) return
-
-    try {
-      const data = contractInterface.encodeFunctionData('renounceOwnership')
-
-      const receipt = await provider.value.signAndSendTx({
-        to: address,
-        data,
-      })
-
-      await sleep(1000)
-      return receipt
-    } catch (error) {
-      handleEthError(error as EthProviderRpcError)
-    }
+  /**
+   * Admin: Alle NFTs eines Holders löschen (Chunk via maxCount)
+   */
+  async function burnAllFor(holder: HexAddress, maxCount = 50) {
+    const { contract } = await getSignerAndContract();
+    const tx = await contract.burnAllFor(holder, maxCount);
+    return await tx.wait();
   }
 
-  const getBalanceOf = async (address: string) => {
-    if (!contractInstance.value) return
-
-    try {
-      return contractInstance.value?.balanceOf(address)
-    } catch (error) {
-      handleEthError(error as EthProviderRpcError)
-    }
+  /**
+   * Rollen: hat verbundener Nutzer DELETER_ROLE?
+   */
+  async function hasDeleterRole(addr?: HexAddress) {
+    const { contract, user } = await getSignerAndContract();
+    const role: string = await contract.DELETER_ROLE();
+    const who = addr ?? user;
+    const res: boolean = await contract.hasRole(role, who);
+    return res;
   }
 
-  const getName = async () => {
-    if (!contractInstance.value) return
-
-    try {
-      return contractInstance.value?.name()
-    } catch (error) {
-      handleEthError(error as EthProviderRpcError)
-    }
+  /**
+   * Trusted Forwarder (nur Info)
+   */
+  async function isForwarderTrusted(forwarder?: HexAddress) {
+    const { contract } = await getSignerAndContract();
+    const fwd = forwarder ?? (config.forwarderAddress as HexAddress);
+    if (!fwd) throw new Error("Kein Forwarder in config gesetzt.");
+    const res: boolean = await contract.isTrustedForwarder(fwd);
+    return res;
   }
 
-  const getOwner = async () => {
-    if (!contractInstance.value) return
-
-    try {
-      return contractInstance.value?.owner()
-    } catch (error) {
-      handleEthError(error as EthProviderRpcError)
-    }
+  /**
+   * Öffentliche Helfer
+   */
+  async function getMyAddress(): Promise<HexAddress> {
+    const { signer } = await getSignerAndContract();
+    return (await signer.getAddress()) as HexAddress;
   }
 
-  const getSymbol = async () => {
-    if (!contractInstance.value) return
-
-    try {
-      return contractInstance.value?.symbol()
-    } catch (error) {
-      handleEthError(error as EthProviderRpcError)
-    }
+  async function getTokenURI(tokenId: Bigish) {
+    const { contract } = await getSignerAndContract();
+    return await contract.tokenURI(tokenId);
   }
 
-  const getTotalSupply = async () => {
-    if (!contractInstance.value) return
-    try {
-      return contractInstance.value?.totalSupply()
-    } catch (error) {
-      handleEthError(error as EthProviderRpcError)
-    }
+  async function getTokenPoints(tokenId: Bigish) {
+    const { contract } = await getSignerAndContract();
+    const p: bigint = await contract.tokenPoints(tokenId);
+    return Number(p);
   }
 
   return {
-    allowance,
-    decimals,
-    name,
-    owner,
-    symbol,
-    totalSupply,
-    balance,
-    getTokenOfOwnerByIndex,
+    // Infos & Helpers
+    getInfo,
+    getMyAddress,
+    isForwarderTrusted,
 
-    loadDetails,
+    // Lesen
+    getTokenIdsOf,
+    loadTokensOf,
+    getTokenURI,
+    getTokenPoints,
+    isAlreadyMinted,
 
-    useErc721,
-    approve,
+    // Schreiben
+    claim,
+    burnOwn,
+    burnAny,
+    burnAllFor,
 
-    mint,
-    renounceOwnership,
-    getTokenByIndex,
-    getTokensURIs,
-    transfer,
-    getApproved,
-    getOwnerOfNft,
-    getBalanceOf,
-    getName,
-    getOwner,
-    getSymbol,
-    getTotalSupply,
+    // Rollen
+    hasDeleterRole,
+  };
+}
+
+/**
+ * Safe-Wrapper: gibt undefined zurück statt Fehler zu werfen
+ */
+async function safeCall<T>(fn: () => Promise<T>): Promise<T | undefined> {
+  try {
+    return await fn();
+  } catch {
+    return undefined;
   }
 }

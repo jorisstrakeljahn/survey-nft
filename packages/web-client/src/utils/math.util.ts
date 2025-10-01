@@ -34,13 +34,13 @@ BigNumber.config({
 })
 
 export class BN {
-  static TO_WEI_FACTOR = new BN(10).pow(WEB3_DECIMALS.WEI)
-  static MIN_WEI_STR = new BN(0.1).pow(WEB3_DECIMALS.WEI).toString()
-  static FROM_WEI_FACTOR = new BN(0.1).pow(WEB3_DECIMALS.WEI)
-  static ROUNDING = BN_ROUNDING
-  static MAX_UINT256 = new BN(2).pow(256).sub(1)
-  #bn: BigNumber
-  #cfg?: BnCfg
+  static readonly TO_WEI_FACTOR = new BN(10).pow(WEB3_DECIMALS.WEI)
+  static readonly MIN_WEI_STR = new BN(0.1).pow(WEB3_DECIMALS.WEI).toString()
+  static readonly FROM_WEI_FACTOR = new BN(0.1).pow(WEB3_DECIMALS.WEI)
+  static readonly ROUNDING = BN_ROUNDING
+  static readonly MAX_UINT256 = new BN(2).pow(256).sub(1)
+  readonly #bn: BigNumber
+  readonly #cfg?: BnCfg
 
   constructor(bigLike: BnLike, cfg?: BnCfg) {
     this.#bn = this._bn(bigLike, cfg)
@@ -87,8 +87,9 @@ export class BN {
    * @param {BnLike} other
    * @returns {number}
    */
-  compare(other: BnLike): number {
-    return this.#bn.comparedTo(this._bn(other))
+  compare(other: BnLike): 1 | -1 | 0 | null {
+    const rhs = this._bn(other) ?? this._bn(0)
+    return this.#bn.comparedTo(rhs)
   }
 
   round(precision: number, mode?: BN_ROUNDING): string {
@@ -102,10 +103,10 @@ export class BN {
         rounding = BigNumber.config({}).ROUNDING_MODE as BN_ROUNDING,
         noGroupSeparator,
         ...fmt
-      } = format || {}
+      } = format ?? {}
       const groupSeparatorFormat: { [key: string]: string | number } = {
         ...(fmt.groupSeparator
-          ? { groupSeparator: fmt.groupSeparator as string }
+          ? { groupSeparator: fmt.groupSeparator }
           : {}),
       }
       if (noGroupSeparator) {
@@ -174,7 +175,9 @@ export class BN {
     try {
       return new ctor(value)
     } catch (error) {
-      throw new TypeError(`Cannot convert the given "${value}" to BN!`)
+      throw new TypeError(
+        `Cannot convert the given "${value}" to BN!`
+      )
     }
   }
 }

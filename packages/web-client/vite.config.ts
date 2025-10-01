@@ -63,10 +63,10 @@ export default defineConfig(({ command, mode }) => {
       extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
       dedupe: ['vue'],
       alias: {
-        '@': `${root}/`,
         '@config': `${root}/config.ts`,
         '@static': `${root}/../static`,
         '@contracts': `${root}/../../contracts/`,
+        '@': path.resolve(__dirname, './src')
       },
     },
   }

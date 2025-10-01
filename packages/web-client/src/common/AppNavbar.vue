@@ -6,11 +6,6 @@
     <nav class="navigation" v-if="!isMenuOpen">
       <ul>
         <li>
-          <router-link :to="{ name: ROUTE_NAMES.blockchainBasics }">
-            {{ t('header.blockchain-basics') }}
-          </router-link>
-        </li>
-        <li>
           <router-link :to="{ name: ROUTE_NAMES.binex }">
             {{ t('header.binex') }}
           </router-link>
@@ -18,11 +13,6 @@
         <li>
           <router-link :to="{ name: ROUTE_NAMES.vpp }">
             {{ t('header.vpp-documentation') }}
-          </router-link>
-        </li>
-        <li>
-          <router-link :to="{ name: ROUTE_NAMES.events }">
-            {{ t('header.events') }}
           </router-link>
         </li>
       </ul>
@@ -42,14 +32,6 @@
         <li>
           <router-link :to="{ name: ROUTE_NAMES.home }" @click="toggleMenu">
             {{ t('header.start') }}
-          </router-link>
-        </li>
-        <li>
-          <router-link
-            :to="{ name: ROUTE_NAMES.blockchainBasics }"
-            @click="toggleMenu"
-          >
-            {{ t('header.blockchain-basics') }}
           </router-link>
         </li>
 
@@ -87,11 +69,6 @@
               {{ t('header.guide') }}
             </button>
           </div>
-        </li>
-        <li>
-          <router-link :to="{ name: ROUTE_NAMES.events }" @click="toggleMenu">
-            {{ t('header.events') }}
-          </router-link>
         </li>
       </ul>
     </nav>

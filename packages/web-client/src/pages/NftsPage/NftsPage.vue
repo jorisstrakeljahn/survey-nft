@@ -91,12 +91,11 @@ import {
   AppButton,
 } from '@/common'
 
-import { useErc721Store } from '@/store'
+import { useErc721Store, useWeb3ProvidersStore } from '@/store'
 import { ErrorHandler } from '@/helpers'
 import { ref, computed } from 'vue'
 import { NftItem } from '@/types'
 import { utils } from 'ethers'
-import { useWeb3ProvidersStore } from '@/store'
 import { InputField } from '@/fields'
 
 const { erc721 } = useErc721Store()
@@ -129,22 +128,27 @@ const loadNftData = async () => {
   isLoaded.value = false
   isLoadFailed.value = false
   try {
-    contractOwner.value = (await erc721.getOwner()) || ''
-    const totalSupply = await erc721.getTotalSupply()
+    // die "contractOwner" Variable hieß bei dir so, ist aber deine eigene Adresse
+    contractOwner.value = (await erc721.getMyAddress()) || ''
+
+    const totalSupply = await erc721.getTotalSupply()         // => number
     const nftListId = await Promise.all(
-      new Array(totalSupply?.toNumber()).fill(null).map(async (_, index) => {
-        const nft = await erc721.getTokenByIndex(index)
-        return nft?.toString() || ''
+      Array.from({ length: totalSupply }, async (_, index) => {
+        const id = await erc721.getTokenByIndex(index)        // globaler Index
+        return id.toString()
       }),
     )
+
     const tokenOwners = await Promise.all(
-      nftListId.map(async id => {
-        return erc721.getOwnerOfNft(id)
-      }),
+      nftListId.map(id => erc721.getOwnerOf(id)),
     )
-    const tokensURIs = await erc721.getTokensURIs(nftListId)
-    nftList.value = tokensURIs.map((item, index) => ({
-      link: item,
+
+    const tokensURIs = await Promise.all(
+      nftListId.map(id => erc721.getTokenURI(id)),
+    )
+
+    nftList.value = tokensURIs.map((uri, index) => ({
+      link: uri,
       title: nftListId[index],
       owner: tokenOwners[index],
     }))

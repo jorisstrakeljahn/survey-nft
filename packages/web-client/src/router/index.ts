@@ -16,11 +16,6 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/pages/HomePage'),
   },
   {
-    path: '/blockchain-basics',
-    name: ROUTE_NAMES.blockchainBasics,
-    component: () => import('@/pages/BlockchainBasicsPage'),
-  },
-  {
     path: '/binex',
     name: ROUTE_NAMES.binex,
     component: () => import('@/pages/BinexPage'),
@@ -29,16 +24,6 @@ const routes: Array<RouteRecordRaw> = [
     path: '/binex/metamask',
     name: ROUTE_NAMES.binexMetaMask,
     component: () => import('@/pages/BinexPage/BinexPageMetaMask.vue'),
-  },
-  {
-    path: '/events',
-    name: ROUTE_NAMES.events,
-    component: () => import('@/pages/EventsPage'),
-  },
-  {
-    path: '/events/cashlink',
-    name: ROUTE_NAMES.cashlinkEvent,
-    component: () => import('@/pages/EventsPage/CashlinkEventPage.vue'),
   },
   {
     path: '/vpp',

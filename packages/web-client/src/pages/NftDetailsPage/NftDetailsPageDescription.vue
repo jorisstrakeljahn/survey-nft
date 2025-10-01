@@ -69,13 +69,6 @@
         </div>
       </div>
 
-      <app-button
-        class="nft-details-page-description__transfer-btn"
-        v-if="provider.selectedAddress === props.nft?.owner"
-        :text="$t('nft-details-page-description.transfer-btn')"
-        @click="toggleMintModal"
-      />
-
       <nft-details-page-transfer-modal
         v-if="isTransferModalOpened"
         :nft-id="props.nft?.id"

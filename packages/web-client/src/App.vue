@@ -11,26 +11,50 @@ import { Loader, AppNavbar } from '@/common'
 import { ErrorHandler } from '@/helpers/error-handler'
 import { computed, ref } from 'vue'
 import { useNotifications } from '@/composables'
-import { useWeb3ProvidersStore, useErc721Store } from '@/store'
+import { useWeb3ProvidersStore } from '@/store'
 import { config } from '@config'
 import { useRoute } from 'vue-router'
+import { useErc721 } from '@/composables/contracts/use-erc721'
 
 const isAppInitialized = ref(false)
 const web3ProvidersStore = useWeb3ProvidersStore()
+const erc721 = useErc721()
 
-const { erc721 } = useErc721Store()
+// optionale Anzeige-States (werden von loadDetails() gefüllt)
+const info = ref<{ name: string; symbol: string; totalSupply: number } | null
+>(
+  null
+)
+const myAddress = ref<string>('')
+const myTokens = ref<{ tokenId: number; uri?: string; points?: number }[]>([])
+const status = ref<string>('')
+
 const route = useRoute()
-
-// Computed Property zur Überprüfung des Meta-Felds
 const hideNavbar = computed(() => route.meta.hideNavbar === true)
 
+// ---- NEU: eigene Lade-Methode (ruft die vorhandenen erc721-Methoden) ----
+async function loadDetails () {
+  try {
+    status.value = 'Lade…'
+    info.value = await erc721.getInfo()
+    myAddress.value = await erc721.getMyAddress()
+    myTokens.value = await erc721.loadTokensOf()
+    status.value = ''
+  } catch (e: any) {
+    status.value = e?.message ?? String(e)
+    console.error(e)
+  }
+}
+
+// ---- App-Init: Notifications, Titel, Provider-Init, Daten laden ----
 const init = async () => {
   isAppInitialized.value = false
   try {
     useNotifications()
     document.title = config.APP_NAME
     await web3ProvidersStore.init()
-    await erc721.loadDetails()
+    // WICHTIG: nicht erc721.loadDetails() (gibt es nicht), sondern unsere Methode
+    await loadDetails()
   } catch (error) {
     ErrorHandler.processWithoutFeedback(error)
   }
@@ -45,20 +69,14 @@ init()
 
 .app__container {
   display: grid;
-  grid-template-rows: 1fr max-content;
   grid-template-rows: toRem(85) 1fr max-content;
   flex: 1;
   background: var(--background-primary-light);
-
-  @include respond-to(small) {
-    grid-template-rows: 1fr max-content;
-    grid-template-rows: max-content 1fr max-content;
-  }
 }
 
 .app__main {
   padding: var(--app-padding-top) var(--app-padding-right)
-    var(--app-padding-bottom) var(--app-padding-left);
+  var(--app-padding-bottom) var(--app-padding-left);
 }
 
 .fade-enter-active {

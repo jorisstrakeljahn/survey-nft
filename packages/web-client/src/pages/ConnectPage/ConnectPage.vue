@@ -44,34 +44,87 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-import { AppButton } from '@/common'
-import { useWeb3ProvidersStore } from '@/store'
-import { DEFAULT_CHAIN, config } from '@/config'
-import { isMetamaskExtension } from '@/helpers'
-import { useRouter, useRoute } from 'vue-router'
-import { watch } from 'vue'
+<script setup lang="ts">
+import { ref, onMounted, computed } from 'vue'
+import { ethers } from 'ethers'
+import { config } from '@/config'
+import {
+  getCurrentChainIdHex,
+  getExpectedChainIdDec,
+  toHex,
+  isOnSupportedChain,
+  chainLabelFromId,
+} from '@/utils/chain.util'
 
-const METAMASK_DOWNLOAD_LINK = 'https://metamask.io/download'
-const router = useRouter()
-const route = useRoute()
-const { provider, isValidChain } = useWeb3ProvidersStore()
-
-const connect = async () => {
-  await provider.connect()
+type Eip1193 = {
+  request: (args: { method: string; params?: unknown[] }) => Promise<unknown>
 }
 
-watch(
-  [() => provider.isConnected, () => isValidChain],
-  ([isConnected, validChain]) => {
-    if (isConnected && validChain) {
-      const redirectParam = route.query.redirect
-      const redirectPath =
-        (Array.isArray(redirectParam) ? redirectParam[0] : redirectParam) || '/'
-      router.push(redirectPath)
+const eth = (window as unknown as { ethereum?: Eip1193 }).ethereum
+const currentHex = ref<string>('unbekannt')
+const expectedDec = getExpectedChainIdDec()
+const expectedHex = toHex(expectedDec)
+
+const expectedLabel = computed(() => chainLabelFromId(expectedDec))
+
+async function getProvider() {
+  if (!eth) throw new Error('MetaMask nicht gefunden')
+  return new ethers.providers.Web3Provider(eth as unknown as any, 'any')
+}
+
+async function readChain() {
+  try {
+    const provider = await getProvider()
+    currentHex.value = await getCurrentChainIdHex(provider)
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+async function switchChain() {
+  if (!eth) return
+  try {
+    await eth.request({
+      method: 'wallet_switchEthereumChain',
+      params: [
+        { chainId: expectedHex }
+      ],
+    })
+    await readChain()
+  } catch (e: any) {
+    if (e?.code === 4902) {
+      await addExpectedChain()
+    } else {
+      console.error(e)
     }
-  },
-)
+  }
+}
+
+async function addExpectedChain() {
+  if (!eth) return
+  // hier Polygon Mainnet; passe bei Bedarf für Mumbai an
+  await eth.request({
+    method: 'wallet_addEthereumChain',
+    params: [{
+      chainId: expectedHex,
+      chainName: expectedLabel.value,
+      nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 },
+      rpcUrls: ['https://polygon-rpc.com'],
+      blockExplorerUrls: ['https://polygonscan.com/'],
+    }],
+  })
+  await readChain()
+}
+
+async function connectAndFix() {
+  const provider = await getProvider()
+  await provider.send('eth_requestAccounts', [])
+  const ok = await isOnSupportedChain(provider)
+  if (!ok) await switchChain()
+  await readChain()
+}
+
+onMounted(readChain)
 </script>
 
 <style lang="scss" scoped>

@@ -34,7 +34,8 @@
       "action": "Action",
       "metadata": "Metadata",
       "explorer": "Explorer",
-      "burn": "Burn"
+      "burn": "Burn",
+      "token": "Token"
     },
     "roles": {
       "title": "Manage roles",

@@ -34,7 +34,8 @@
       "action": "Aktion",
       "metadata": "Metadaten",
       "explorer": "Explorer",
-      "burn": "Löschen"
+      "burn": "Löschen",
+      "token": "Token"
     },
     "roles": {
       "title": "Rollen verwalten",

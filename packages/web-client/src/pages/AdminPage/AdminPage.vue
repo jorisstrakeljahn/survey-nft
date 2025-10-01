@@ -5,44 +5,71 @@
         <h1>{{ t('admin.title') }}</h1>
 
         <div class="badges">
-          <span
-            class="badge"
-            :class="isDeleter ? 'badge--ok' : 'badge--warn'"
-          >
+          <span class="badge" :class="isDeleter ? 'badge--ok' : 'badge--warn'">
             {{ isDeleter ? t('admin.badges.deleter') : t('admin.badges.noDeleter') }}
           </span>
 
-          <span
-            class="badge"
-            :class="canManage ? 'badge--ok' : 'badge--muted'"
-          >
+          <span class="badge" :class="canManage ? 'badge--ok' : 'badge--muted'">
             {{ canManage ? t('admin.badges.roleAdmin') : t('admin.badges.noRoleAdmin') }}
           </span>
         </div>
       </header>
 
-      <!-- Wallet Suche -->
-      <section class="box">
-        <h2>{{ t('admin.search.title') }}</h2>
+      <!-- Suche Wallet + Rollenverwaltung NEBENEINANDER -->
+      <div class="row-two">
+        <!-- Wallet Suche (ohne Buttons; Enter/ESC + Autosearch) -->
+        <section class="box">
+          <h2>{{ t('admin.search.title') }}</h2>
 
-        <div class="search">
-          <input
-            v-model="walletInput"
-            :placeholder="t('admin.search.placeholder')"
-            @keyup.enter="loadWallet"
-          />
-          <button class="btn" @click="loadWallet" :disabled="isLoading">
-            {{ t('admin.search.load') }}
-          </button>
-          <button class="btn btn--ghost" @click="clear">
-            {{ t('common.clear') }}
-          </button>
-        </div>
+          <div class="search">
+            <input
+              v-model="walletInput"
+              :placeholder="t('admin.search.placeholder')"
+              @keyup.enter="loadWallet"
+              @keydown.esc="clear"
+            />
+          </div>
 
-        <div v-if="searchError" class="help help--error">
-          {{ searchError }}
-        </div>
-      </section>
+          <div v-if="searchError" class="help help--error">
+            {{ searchError }}
+          </div>
+        </section>
+
+        <!-- Rollenverwaltung (Enter = prüfen, Buttons: grant/revoke) -->
+        <section class="box">
+          <h2>{{ t('admin.roles.title') }}</h2>
+          <div class="help">{{ t('admin.roles.help') }}</div>
+
+          <div class="roles-line">
+            <input
+              v-model="roleAddr"
+              :placeholder="t('admin.roles.placeholder')"
+              @keyup.enter="checkRole"
+              @keydown.esc="roleAddr=''; roleMsg=''"
+            />
+            <div class="roles-actions">
+              <button
+                class="btn"
+                :disabled="!canManage || !isAddress(roleAddr)"
+                @click="grantRole"
+                title="Grant"
+              >
+                {{ t('admin.roles.grant') }}
+              </button>
+              <button
+                class="btn btn--ghost"
+                :disabled="!canManage || !isAddress(roleAddr)"
+                @click="revokeRole"
+                title="Revoke"
+              >
+                {{ t('admin.roles.revoke') }}
+              </button>
+            </div>
+          </div>
+
+          <div class="help" v-if="roleMsg">{{ roleMsg }}</div>
+        </section>
+      </div>
 
       <!-- KPIs -->
       <section v-if="hasResult" class="kpis">
@@ -73,52 +100,29 @@
         <p>{{ t('admin.empty.text') }}</p>
       </section>
 
-      <!-- Aktionen für gefundene Wallet -->
+      <!-- KOMBINIERTE BOX: Aktion „Alles löschen“ + NFT-Tabelle -->
       <section v-if="!isLoading && hasResult && tokens.length > 0" class="box">
-        <h2>{{ t('admin.actions.title') }}</h2>
-
-        <div class="actions">
-          <div class="action-line">
-            <div class="action-line__left">
-              <div class="hint">{{ t('admin.actions.infoGasless') }}</div>
-            </div>
-            <div class="action-line__right">
-              <input
-                v-model.number="maxChunk"
-                type="number"
-                min="1"
-                class="input-n"
-                :placeholder="t('admin.actions.maxCountPh')"
-              />
-              <button
-                class="btn btn--danger"
-                :disabled="!isDeleter"
-                @click="burnAllForTarget"
-              >
-                {{ t('admin.actions.burnAll') }}
-              </button>
-            </div>
-          </div>
+        <div class="box-head">
+          <h2 class="box-title">{{ t('admin.table.title') }}</h2>
+          <button
+            class="btn btn--danger"
+            :disabled="!isDeleter"
+            @click="burnAllForTarget"
+          >
+            {{ t('admin.actions.burnAll') }}
+          </button>
         </div>
-      </section>
-
-      <!-- Tabelle der Tokens -->
-      <section v-if="!isLoading && hasResult && tokens.length > 0" class="box">
-        <h2>{{ t('admin.table.title') }}</h2>
 
         <div class="table">
           <div class="thead">
+            <div>{{ t('admin.table.token') }}</div>
             <div>{{ t('admin.table.points') }}</div>
             <div>{{ t('admin.table.links') }}</div>
             <div>{{ t('admin.table.action') }}</div>
           </div>
 
-          <div
-            class="trow"
-            v-for="tkn in tokens"
-            :key="tkn.tokenId"
-          >
-            <div class="cell">{{ tkn.tokenId }}</div>
+          <div class="trow" v-for="tkn in tokens" :key="tkn.tokenId">
+            <div class="cell">#{{ tkn.tokenId }}</div>
             <div class="cell">{{ tkn.points ?? 0 }}</div>
             <div class="cell cell--links">
               <a
@@ -151,39 +155,6 @@
           </div>
         </div>
       </section>
-
-      <!-- Rollenverwaltung -->
-      <section class="box">
-        <h2>{{ t('admin.roles.title') }}</h2>
-        <div class="help">
-          {{ t('admin.roles.help') }}
-        </div>
-
-        <div class="roles-line">
-          <input
-            v-model="roleAddr"
-            :placeholder="t('admin.roles.placeholder')"
-          />
-          <button
-            class="btn"
-            :disabled="!canManage"
-            @click="grantRole"
-          >
-            {{ t('admin.roles.grant') }}
-          </button>
-          <button
-            class="btn btn--ghost"
-            :disabled="!canManage"
-            @click="revokeRole"
-          >
-            {{ t('admin.roles.revoke') }}
-          </button>
-        </div>
-
-        <div class="help" v-if="roleMsg">
-          {{ roleMsg }}
-        </div>
-      </section>
     </main>
 
     <app-footer />
@@ -191,10 +162,9 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import AppNavbar from '@/common/AppNavbar.vue'
 import AppFooter from '@/common/AppFooter.vue'
 import Loader from '@/common/Loader.vue'
 import { useErc721 } from '@/composables/contracts/use-erc721'
@@ -216,7 +186,6 @@ const {
   getTokenURI,
   getTokenPoints,
   hasDeleterRole,
-  // neue Methoden aus dem Patch (siehe Punkt 2 unten)
   grantDeleterRole,
   revokeDeleterRole,
   getDeleterRoleAdmin,
@@ -247,9 +216,11 @@ const totalPoints = computed(() =>
 )
 const hasResult = computed(() => !!target.value)
 
-const isDeleter = ref(false)     // darf burn ausführen
-const canManage = ref(false)     // darf Rollen vergeben (Admin des Deleter-Roles)
-const maxChunk = ref<number>(50)
+const isDeleter = ref(false)
+const canManage = ref(false)
+
+/** Chunksize intern, UI zeigt nur „Alles löschen“ */
+const CHUNK_SIZE = 50
 
 const roleAddr = ref('')
 const roleMsg = ref('')
@@ -258,7 +229,6 @@ function short (addr?: string) {
   if (!addr) return ''
   return `${addr.slice(0, 6)}…${addr.slice(-4)}`
 }
-
 function isAddress (s: string) {
   return /^0x[a-fA-F0-9]{40}$/.test(s.trim())
 }
@@ -266,7 +236,7 @@ function isAddress (s: string) {
 async function initMyRole () {
   me.value = (await getMyAddress()) || ''
   isDeleter.value = await hasDeleterRole()
-  canManage.value = await getDeleterRoleAdmin() // true, wenn me Admin dieses Roles ist
+  canManage.value = await getDeleterRoleAdmin()
 }
 
 async function loadWallet () {
@@ -283,17 +253,10 @@ async function loadWallet () {
     isLoading.value = true
     target.value = a as `0x${string}`
 
-    // Tokens des Ziels holen
     const list = await loadTokensOf(target.value)
-
-    // sicherstellen, dass points/uri gefüllt sind (Fallback)
     for (const tkn of list) {
-      if (tkn.points == null) {
-        tkn.points = await getTokenPoints(tkn.tokenId)
-      }
-      if (!tkn.uri) {
-        tkn.uri = await getTokenURI(tkn.tokenId)
-      }
+      if (tkn.points == null) tkn.points = await getTokenPoints(tkn.tokenId)
+      if (!tkn.uri) tkn.uri = await getTokenURI(tkn.tokenId)
     }
     tokens.value = list
   } catch (e: unknown) {
@@ -313,6 +276,24 @@ function clear () {
   searchError.value = ''
 }
 
+/* -------- Autosearch (vollständige 0x-Adresse) -------- */
+let searchTimer: number | undefined
+watch(walletInput, (val) => {
+  if (searchTimer) window.clearTimeout(searchTimer)
+  const trimmed = val.trim()
+  // Bei leer: Ergebnis zurücksetzen
+  if (!trimmed) {
+    clear()
+    return
+  }
+  // Autosearch, wenn 42-Zeichen-0x-Adresse erkannt
+  if (trimmed.length === 42 && isAddress(trimmed)) {
+    searchTimer = window.setTimeout(() => { void loadWallet() }, 200)
+  }
+})
+
+/* -------- Aktionen -------- */
+
 async function burnOne (id: number) {
   if (!isDeleter.value) return
   try {
@@ -326,17 +307,38 @@ async function burnOne (id: number) {
   }
 }
 
+/** „Alles löschen“: intern in CHUNK_SIZE-Schritten, bis keine Tokens mehr */
 async function burnAllForTarget () {
   if (!isDeleter.value || !target.value) return
   try {
     isLoading.value = true
-    await burnAllFor(target.value, Math.max(1, maxChunk.value || 50))
+    let safety = 40 // hard stop gegen Endlosschleifen
+    while (safety-- > 0) {
+      await loadWallet()
+      const count = tokens.value.length
+      if (!count) break
+      const n = Math.min(CHUNK_SIZE, count)
+      await burnAllFor(target.value, n)
+    }
     await loadWallet()
   } catch (e: unknown) {
     // eslint-disable-next-line no-console
     console.error(e)
     isLoading.value = false
   }
+}
+
+/* -------- Rollen -------- */
+
+async function checkRole () {
+  roleMsg.value = ''
+  const a = roleAddr.value.trim()
+  if (!isAddress(a)) {
+    roleMsg.value = t('admin.roles.invalid')
+    return
+  }
+  const has = await hasDeleterRole(a as `0x${string}`)
+  roleMsg.value = has ? t('admin.badges.deleter') : t('admin.badges.noDeleter')
 }
 
 async function grantRole () {
@@ -423,24 +425,52 @@ onMounted(() => { void initMyRole() })
 .badge--warn { background: #fff7ed; color: #9a3412; border-color: #fed7aa }
 .badge--muted{ background: #f6f6f6; color: #444 }
 
+/* Zwei Boxen nebeneinander (responsive) */
+.row-two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+@media (max-width: 900px) {
+  .row-two { grid-template-columns: 1fr; }
+}
+
 .box {
   border: 1px solid #eee;
   border-radius: 12px;
   background: #fff;
   padding: 14px;
-  margin-bottom: 16px;
 }
+
+/* Kopfzeile innerhalb der kombinierten Box */
+.box-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.box-title { margin: 0 }
+
+/* Suche */
 .search { display: flex; gap: 8px; flex-wrap: wrap }
-.search input,
-.roles-line input {
-  flex: 1;
-  min-width: 260px;
-  padding: 10px 12px;
-  border: 1px solid #e5e5e5;
-  border-radius: 10px;
+.search input { flex: 1; min-width: 240px; padding: 10px 12px; border: 1px solid #e5e5e5; border-radius: 10px }
+
+/* Rollenverwaltung */
+.roles-line {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+  margin-top: 8px;
 }
+.roles-line input { padding: 10px 12px; border: 1px solid #e5e5e5; border-radius: 10px }
+.roles-actions { display: flex; gap: 8px }
+
+/* Buttons */
 .btn {
-  padding: 10px 14px;
+  padding: 6px 10px;
   border: 1px solid #e5e5e5;
   border-radius: 10px;
   background: #fff;
@@ -450,11 +480,11 @@ onMounted(() => { void initMyRole() })
 .btn--ghost  { background: #fafafa }
 .btn--danger { background: #fee2e2; border-color: #fecaca; color: #7f1d1d }
 
-.help {
-  font-size: .95rem; color: #555; margin-top: 8px;
-}
+/* Hinweise / States */
+.help { font-size: .95rem; color: #555; margin-top: 8px }
 .help--error { color: #b00020 }
 
+/* KPIs */
 .kpis { display: grid; gap: 10px; grid-template-columns: repeat(3,1fr); margin-bottom: 12px }
 .kpi {
   background: #fff;
@@ -466,12 +496,7 @@ onMounted(() => { void initMyRole() })
 .kpi__label { color: #666; font-size: .9rem }
 .kpi__value { font-size: 1.2rem; font-weight: 800 }
 
-.actions { display: grid; gap: 8px }
-.action-line {
-  display: flex; gap: 12px; justify-content: space-between; align-items: center; flex-wrap: wrap
-}
-.input-n { width: 120px; text-align: right }
-
+/* Tabelle */
 .table { width: 100% }
 .thead, .trow {
   display: grid;
@@ -489,10 +514,8 @@ onMounted(() => { void initMyRole() })
 .link { color: #2563eb; text-decoration: none; font-weight: 700 }
 .link:hover { text-decoration: underline }
 
+/* Loader / Error */
 .state { text-align: center; padding: 28px 16px }
 .state--error h3 { color: #b00020 }
-
 .admin__loader { margin: 24px 0 }
-
-.roles-line { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px }
 </style>

@@ -1,11 +1,10 @@
 {
   "footer": {
-    "newsTitle": "Neuigkeiten und Termine",
-    "footerTitle": "Arbeitskreis Blockchain",
-    "footerText": "Eine Initiative von Studierenden für Studierende an der Hochschule Bielefeld.",
+    "footerTitle": "Versuchspersonenpunkte – Blockchain-Projekt",
+    "footerText": "Seid dem Oktober 2025 werden Versuchspersonenpunkte fälschungssicher als NFTs vergeben.",
     "contactTitle": "Kontakt",
-    "contactPerson": "Prof. Dr. Rainer Lenz",
-    "contactPhone": "+49.521.106-70212",
+    "contactPerson": "Prof. Dr. Alexander Haubrock",
+    "contactPhone": "+49.521.106-70355",
     "contactEmail": "{account}{'@'}{domain}",
     "datenschutz": "Datenschutz"
   }

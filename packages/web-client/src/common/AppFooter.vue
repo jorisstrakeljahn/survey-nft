@@ -23,7 +23,7 @@
         <p class="footer-text">
           {{
             t('footer.contactEmail', {
-              account: 'ak-krypto',
+              account: 'vpstunden',
               domain: 'hsbi.de',
             })
           }}
@@ -50,8 +50,8 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n({ useScope: 'global' })
 
 const mail = t('footer.contactEmail', {
-  account: 'rainer.lenz',
-  domain: 'fh-bielefeld.de',
+  account: 'vpstunden',
+  domain: 'hsbi.de',
 })
 </script>
 

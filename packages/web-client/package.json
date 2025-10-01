@@ -9,7 +9,7 @@
     "install-project": "npm install --legacy-peer-deps",
     "vite-dev-server": "vite",
     "vite-build": "vite build",
-    "start": "cross-env VITE_APP_ENVIRONMENT=development npm run vite-dev-server",
+    "start": "cross-env VITE_APP_ENVIRONMENT=development npm run dev",
     "build": "cross-env VITE_APP_ENVIRONMENT=production npm run vite-build",
     "analyze": "cross-env VITE_APP_ENVIRONMENT=analyze yarn vite-build",
     "test": "yarn test:unit",

@@ -1,0 +1,207 @@
+{
+  "validations": {
+    "field-error_required": "Please fill out this field",
+    "field-error_url": "Field must be a valid URL",
+    "field-error_email": "Field must be a valid email"
+  },
+  "errors": {
+    "default": "Oops... Something went wrong",
+    "provider-user-rejected-request": "User rejected request.",
+    "provider-unauthorized": "The requested method and/or account has not been authorized by the user.",
+    "provider-unsupported-method": "The Provider does not support the requested method.",
+    "provider-disconnected": "The Provider is disconnected from all chains.",
+    "provider-chain-disconnected": "The Provider is not connected to the requested chain.",
+    "provider-parse-error": "Invalid JSON standard",
+    "provider-invalid-request": "JSON is not a valid request object standard",
+    "provider-method-not-found": "Method does not exist standard",
+    "provider-invalid-params": "Invalid method parameters standard",
+    "provider-internal-error": "Internal JSON-RPC error standard",
+    "provider-invalid-input": "Missing or invalid parameters non-standard",
+    "provider-resource-not-found": "Requested resource not found non-standard",
+    "provider-resource-unavailable": "Requested resource not available non-standard",
+    "provider-transaction-rejected": "Transaction creation failed non-standard",
+    "provider-method-not-supported": "Method is not implemented non-standard",
+    "provider-reject-request": "You reject transaction",
+    "provider-limit-exceeded": "Request exceeds defined limit non-standard",
+    "provider-json-rpc-version-not-supported": "Version of JSON-RPC protocol is not supported non-standard",
+    "provider-wrapper-method-not-found": "provider not exist or hasn't this method",
+    "provider-failed-estimate-gas": "The request can't estimate gas. Please try again later!"
+  },
+  "notification": {
+    "default-title-success": "Success",
+    "default-title-error": "Error",
+    "default-title-warning": "Warning",
+    "default-title-info": "Info",
+    "default-title-default": "Just a message",
+    "default-message-success": "Action successful",
+    "default-message-error": "Something went wrong",
+    "default-message-warning": "Something you are doing is not recommended",
+    "default-message-info": "Something is happening. Just want you to know that",
+    "default-message-default": "Just a message"
+  },
+  "connect-page": {
+    "loading-error-msg": "Oops... Something went wrong",
+    "title": "Laboratory work",
+    "subtitle": "This is a lab work, the main objective of which is to show by example how to deploy solidity smart contracts and work with a locally running frontend",
+    "connect-modal-title": "Connect to MetaMask",
+    "connect-modal-subtitle": "Connect to MetaMask to start your work",
+    "connect-btn": "Connect to MetaMask",
+    "install-metamask-btn": "Install MetaMask",
+    "switch-network-btn": "Switch Network",
+    "mint-lbl": "Mint"
+  },
+  "nfts-page": {
+    "loading-error-msg": "Oops, something went wrong",
+    "no-data-msg": "Empty data, please add new",
+    "title": "NFT-Spiel-Oberfläche"
+  },
+  "nfts-page-actions": {
+    "search-placeholder": "Search by address",
+    "search-btn": "Search",
+    "mint-btn": "Mint"
+  },
+  "nfts-page-mint-modal": {
+    "mint-title": "Mint NFT",
+    "success-mint": "You success mint NFT",
+    "nft-name-placeholder": "Enter the name of NFT",
+    "nft-name-title": "NFT name",
+    "nft-link-placeholder": "Enter the link to NFT image",
+    "nft-link-title": "NFT link",
+    "loading-msg-btn": "Loading...",
+    "loading-msg": "Please wait for the successful completion of the transaction",
+    "mint-btn": "Mint"
+  },
+  "nft-details-page": {
+    "back-btn": "Back to main page",
+    "loading-error-msg": "Oops, something went wrong",
+    "no-data-msg": "Empty data"
+  },
+  "nft-details-page-transfer-modal": {
+    "transfer-title": "Transfer NFT",
+    "transfer-error": "Can't transfer NFT",
+    "address-placeholder": "Enter user address for transfer",
+    "address-title": "User address",
+    "success-transfer": "You success transfer NFT",
+    "loading-msg-btn": "Loading...",
+    "loading-msg": "Please wait for the successful completion of the transaction",
+    "transfer-btn": "Transfer"
+  },
+  "nft-details-page-description": {
+    "token-id": "Token id",
+    "contract-address": "Contract address",
+    "owner": "Owner",
+    "transfer-btn": "Transfer"
+  },
+  "header": {
+    "start": "Start",
+    "blockchain-basics": "Blockchain Basics",
+    "binex": "Binex",
+    "vpp-documentation": "VPP Doc",
+    "events": "Events",
+    "guide": "Guide"
+  },
+  "home-page": {
+    "title": "Arbeitskreis Blockchain",
+    "subtitle": "Gemeinsam lernen und arbeiten mit den Themen Blockchain, Decentralized Finance, Kryptografie und Governance.",
+    "projects": "Projekte",
+    "info-title": "Blockchain und Krypto in der Lehre",
+    "info-text": "Trotz wachsender Bedeutung der Blockchain-Technologie ist das Wissen über die Technologie und deren vielfältigen Anwendungsmöglichkeiten bisher in den Curricular der Hochschulstudiengänge weit unterrepräsentiert. Dies mag daran liegen, dass die Blockchain-Technologie für Dozenten kein einfach zu vermittelnder Lehrinhalt ist. Verlangt sie doch als Querschnittstechnologie von den Lehrenden ein fundiertes interdisziplinäres Wissen in Datenbankanwendungen, Kryptographie, Prozessorganisation und über deren vielfältigen Anwendungsmöglichkeiten in der Ökonomie. Daher bleibt für Studierende die Blockchain-, Token- und Kryptowelt meist sehr abstrakt, ohne persönlichen Zugang und die Möglichkeit des Sammelns von eigenen Erfahrungen. Studierenden und Lehrenden fehlt ein konkretes Anwendungsbeispiel für die Nutzung von Token auf der Blockchain. Dies will der Arbeitskreis DeFi verändern."
+  },
+  "events-page": {
+    "title": "Veranstaltungen",
+    "subtitle": "Neben den regelmäßigen Treffen des Arbeitskreis veranstalten wir jedes Semester ein Event mit Vorträgen zu aktuellen Blockchain-Themen, geben Workshops und informieren in verschiedenen Kontexten zu unserem Themen.",
+    "events": "Zukünftige Termine",
+    "info-title": "Arbeitskreistreffen",
+    "info-text": "Wir freuen uns, neue Mitglieder im Arbeitskreis begrüßen zu dürfen. Um zum Verteiler für die Abstimmung der Termine hinzugefügt zu werden E-Mail an {account}{'@'}{domain} .\nWir treffen uns im HSBI Hauptgebäude in Konfernzraum B339."
+   },
+  "event-cashlink-page": {
+    "title": "Wertpapiere im digitalen Zeitalter: von Security Token zu Kryptowertpapieren",
+    "description": "Erfahren Sie, was Kryptowertpapiere von traditionellen Wertpapieren unterscheidet und wie sie das Finanzsystem beeinflussen. Wir beleuchten das rechtliche Umfeld, die technologische Innovation und die Bedeutung für die Finanzlandschaft.",
+    "titel-2": "Hauptreferentin",
+    "text-2": "Dr. Jenni Milinovic ist Juristin mit Spezialisierung im Bankenaufsichtsrecht und arbeitet als Chief Regulatory Officer in einem Finanzdienstleistungsinstitut, das innovative Lösungen im Bereich Kryptowertpapiere entwickelt.",
+    "titel-3": "Programm",
+    "text-3-1": "Datum: 27. November 2024",
+    "text-3-2": "Uhrzeit: 14:30 Uhr bis ca. 16:30 Uhr",
+    "text-3-3": "Ort: Hochschule Bielefeld, Audimax",
+    "titel-4": "Ablauf",
+    "text-4-1": "Wir laden euch herzlich ein zu unserer Veranstaltung des Arbeitskreises „Blockchain“, die ohne Anmeldung offen für alle Interessierten ist. Los geht es mit einer kurzen Einführung ins Thema durch die Veranstalter, gefolgt von einem spannenden Vortrag von Dr. Jenni Milinovic (Dauer: ca. 20–30 Minuten). Im Anschluss habt ihr die Möglichkeit, in einer Diskussions- und Fragerunde (Dauer: ca. 20–30 Minuten) eure Fragen zu stellen und in den Austausch zu treten.",
+    "text-4-2": "Nach einer etwa 30-minütigen Pause, in der für Essen und Trinken gesorgt ist, stellen wir euch die aktuellen Projekte und Entwicklungen des Arbeitskreises „Blockchain“ vor (Dauer: ca. 30 Minuten).",
+    "text-4-3": "Zum Abschluss habt ihr die Möglichkeit, euch in lockerer Atmosphäre mit den Referenten und anderen Teilnehmern auszutauschen und zu vernetzen. Kommt gerne vorbei - wir freuen uns auf euch!"
+  },
+  "blockchain-basics-page": {
+    "title": "Blockchain Basics",
+    "subtitle": "Die Blockchain-Technologie ist ein dezentralisiertes und transparentes System, das Daten in chronologisch angeordneten Blöcken speichert. Jede Transaktion wird verschlüsselt und auf vielen Computern weltweit gleichzeitig gesichert, wodurch Manipulationen nahezu ausgeschlossen sind. Durch die dezentrale Struktur bietet Blockchain nicht nur hohe Sicherheit, sondern auch Transparenz und Nachvollziehbarkeit, was sie ideal für Anwendungen in Bereichen wie Finanzen, Logistik und Datensicherheit macht.",
+    "guide-title": "Grundbegriffe"
+  },
+  "binex-page": {
+    "title": "Binex Projekt",
+    "button-text": "Zur Binex App",
+    "button-text-metamask": "Metamask Anleitung",
+    "titel-2": "Problemstellung: Blockchain und Krypto in der Lehre",
+    "text-2": "Trotz wachsender Bedeutung der Blockchain-Technologie ist das Wissen über die Technologie und deren vielfältigen Anwendungsmöglichkeiten bisher in den Curricular der Hochschulstudiengänge weitgehend unterrepräsentiert. Dies mag daran liegen, dass die Blockchain-Technologie für Dozenten kein einfach zu vermittelnder Lehrinhalt ist. Verlangt sie doch als Querschnittstechnologie von den Lehrenden ein fundiertes interdisziplinäres Wissen in Datenbankanwendungen, Kryptographie, Prozessorganisation und über deren vielfältigen Anwendungsmöglichkeiten in der Ökonomie. daher bleibt für Studierenden die Blockchain-, Token- und Kryptowelt meist sehr abstrakt, ohne persönlichen Zugang und die Möglichkeit des Sammelns von eigenen Erfahrungen. Studierenden und Lehrenden fehlt ein konkretes Anwendungsbeispiel für die Nutzung von Token auf der Blockchain. Dies soll sich mit der Entwicklung eines blockchain-basierten Spiels für Studierende der HSBI ändern.",
+    "titel-3": "Idee: NFTs und Blockchain als Spiel für HSBI-Studierende",
+    "text-3": "Die Idee ist es, ein nicht-kommerzielles Spiel für HSBI-Studierende zu kreieren, welches allein über den „Spaßfaktor“ die Studierenden:",
+    "text-3-1": "für außercurriculare Leistungen und Engagement an der Hochschule mit dem Sammeln von digitalen Bildern (Non-Fungible-Token „NFTs“) belohnt,",
+    "text-3-2": "über Spaß und Freude am Sammeln und Tauschen von NFTs zur sozialen Interaktion (sowohl digital als auch face-to-face) in der Peergruppe über Tauschbörsen etc. motiviert,",
+    "text-3-3": "spielerisch an das Thema „Blockchain, Tokenisierung und NFTs“ heranführt und erste praktische Erfahrungen mit neuen Technologien vermittelt,",
+    "text-3-4": "fachbereichsübergreifend Lehrenden als interdisziplinäre Fallstudie und Anschauungsobjekt in der Lehre dient,",
+    "text-3-5": "den spielerischen Einstieg und den Aufbau in ein blockchain-basiertes Peer-to-Peer Interaktionsnetzwerk der Hochschule Bielefeld ermöglicht,",
+    "text-3-6": "und in der Außendarstellung die Reputation als innovative Hochschule stärkt.",
+    "titel-4": "NFT-Spiel kurz skizziert",
+    "text-4-1": "HSBI-Studierende erhalten als Belohnung für außercurriculares Engagement oder besondere Leistungen an der Hochschule ein einzigartiges digitales Bild (NFTs). Die Bilder sind witzig designt, werden von den Studierenden selbst erstellt und enthalten einen Bezug zur Hochschule. Je nach Gestaltung der Spielregeln erhalten die digitalen Bilder eine Wertigkeit, so dass ein Anreiz zum Sammeln und zum Tauschen entsteht. Vorstellbar wäre auch der Vergabe von einfachen Preisen (HSBI Tassen, Taschen, T-Shirts oder Kaffeegutschein etc.) bei Erreichen einer bestimmten Anzahl von NFTs.",
+    "text-4-2": "Was man als außercurriculares Engagement oder besondere Leistung von Studierenden mit digitalen Bildern verschiedener Wertigkeit belohnen möchte, bleibt den studentischen Spielgestaltern überlassen. Hier ist alles Mögliche denkbar, solange es einen Bezug zur Hochschule und zum Campusleben hat.",
+    "text-4-3": "Mit der Gestaltung der digitalen Bilder lassen sich auch Messages transportieren. Möchte man beispielsweise die Studierenden darin bestärken, für ihren Kaffee, statt Einwegbecher besser Tassen zu nutzen, so könnten die Bildinhalte entsprechend designt werden.",
+    "titel-5": "Entwicklung und Governance des NFT-Spiels",
+    "text-5-1": "Das ganze Projekt „NFT-Spiel der HSBI“ soll Teil des Lernens/Lehrens von Studierenden und Dozenten werden. So wie die Blockchain als Querschittstechnologie per se interdisziplinär ist, so erfordert auch die Entwicklung und die Governance des NFT-Spiels sehr verschiedene Qualifikationsprofile des Entwicklerteams. Im Idealfall lässt sich ein interdisziplinärer Arbeitskreis aus blockchain-begeisterten Studierenden und Lehrenden aller Fachbereich gründen, der das NFTs-Spiel entwickelt, testet und in der Hochschule vermarktet.",
+    "text-5-2": "Ein kurzer Blick auf die vier Blöcke der Aufgaben und Inhalte verdeutlicht die interdisziplinären Anforderungen, Qualifikationen und den hohen Grad an Kooperation, die ein solches Projekt an die Spielentwickler stellt. Es geht hier unter anderem um digitales Design witziger Bilder, die eine Identität der Besitzer mit der Hochschule generieren und zugleich einen Anreiz zum hochschulinternen Engagement darstellen. NFTs sind zudem der Nachweis des Eigentums an digitaler Kunst. Das Generieren von NFTs auf der Blockchain mittels Smart Contracts sowie das Erstellen einer web-basierten digitalen Tauschbörse verlangt fundierte IT-Kenntnisse. Spielregeln aufstellen bedeutet, Anreizstrukturen für die Nutzung des Spiels zu schaffen. Hier lassen sich Elemente der „Gamification“ real testen.",
+    "text-5-3": "Das Spiel soll von den Studierenden stets selbst weiterentwickelt werden und die Spieler sollen demokratisch über die Weiterentwicklung entscheiden. Damit dies niederschwellig und ohne großen Aufwand funktioniert, müssen Entscheidungsprozesse weitgehend über Smart Contracts im Rahmen eine DAO automatisiert werden. Die Entwicklung einer DAO mit der Vielzahl von partizipativen Rechten der Spieler und automatisierten Entscheidungsstrukturen wird das „Meisterstück“ dieses sehr innovativen Projektes werden.",
+    "titel-6": "Technologiepartner: Entwickler-Team der Q-Blockchain",
+    "text-6": "Bei der Entwicklung des NFTs Spiels unterstützt uns das Entwicklerteam der Q-Bockchain (https://q.org). Q ist eine neue Blockchain am Markt, deren Alleinstellungsmerkmal in der dezentralen Governance-Struktur liegt. Im Rahmen von Blockchain-Forschungsprojekten (Erasmus Plus Projekte) des Fachbereichs Wirtschaft ist eine persönliche Verbindung zu dem Entwicklerteam von Q entstanden. Q-Projektmanager Daniel Zimmermann hat an der FH Wirtschaftsinformatik studiert und ist als Alumni der Hochschule sehr verbunden. Im Juni wird Daniel mit einem Kollegen einen Workshop zum Generieren von NFTs auf der Q-Blockchain anbieten – siehe Flyer im Anhang.",
+    "titel-7": "Vision Peer-to-Peer Interaktionsplattform der Hochschule",
+    "text-7": "Aus dem simplen NFT-Spiel für HSBI Studierende könnte zukünftig eine blockchainbasierte Peer-to-Peer Interaktionsplattform werden. Anstatt lediglich NFT Bilder via Blockchain zu tauschen, könnten auch Informationen über Mitfahrgelegenheit, Praktikumsplätze, Wohnmöglichkeiten, Vorlesungsunterlagen, alte Klausuren etc. im HSBI-Studierenden-Netzwerk getauscht werden. Mit der Nutzung des Studierendenausweises als digitale ID wäre es gar möglich, bisher zentral organisierte Verwaltungsprozesse der Hochschule via Blockchain zu dezentralisieren. Gerade im Hinblick auf die Dokumentation, Zertifizierung und den Austausch von Prüfungsleistungen könnte die Blockchain als dezentral organisierte Datenbankanwendung Vorteile bieten. Aber Schritt für Schritt, erst das NFT-Spiel, dann die HSBI P2P-Plattform.",
+    "caption-1": "Abb. 1: Über Spiel und Spaß Krypto Lernen, Lehren und Erfahren",
+    "caption-2": "Abb. 2: Grobe Skizze NFT-Spiel",
+    "caption-3": "Abb. 3: Entwicklung und Governance des NFT-Spiels"
+  },
+  "vpp-documentation-page": {
+    "title": "VPP Dokumentation",
+    "subtitle": "Eine blockchain-basierte Anwendung zur fälschungssicheren Dokumentation von Versuchspersonenpunkten im Fachbereich der Wirtschaftspsychologie an der Hochschule Bielefeld.",
+    "button-text": "Zu deinen VPPs",
+    "info-title": "Über das Projekt",
+    "info-text": "Ab Oktober 2025 werden Versuchspersonenpunkte vergeben, wenn Studierende an Studien und Umfragen anderer Studierender teilnehmen, und stellen eine wichtige Prüfungsleistung dar. Dieses System fördert die aktive Teilnahme an Forschungsprojekten und erleichtert es den Studierenden, Teilnehmer:innen für ihre eigenen Umfragen zu gewinnen, indem es ein transparentes und sicheres Anreizsystem schafft.Dafür entwickelt der Arbeitskreis DeFi ein blockchain-basiertes System zur Dokumentation der Versuchspersonenpunkte. Dieses Tool ermöglicht es Studierenden, ihre Teilnahme an wissenschaftlichen Studien und Umfragen effizient und transparent zu dokumentieren.Die Verwaltung dieser Punkte wird dezentral, sicher und nachvollziehbar auf der Blockchain abgewickelt. Studierende können ihre gesammelten Punkte digital erfassen und jederzeit abrufen, während Dozent:in und Studienorganisator:in eine zuverlässige Übersicht über den Punktestand erhalten.",
+    "guide-title": "Anleitung und Q&A",
+    "guide-title-participant": "Für Teilnehmer:innen",
+    "guide-title-organizer": "Für Umfrageersteller:innen"
+  },
+  "footer": {
+    "newsTitle": "Neuigkeiten und Termine",
+    "footerTitle": "Arbeitskreis Blockchain",
+    "footerText": "Eine Initiative von Studierenden für Studierende an der Hochschule Bielefeld.",
+    "contactTitle": "Kontakt",
+    "contactPerson": "Prof. Dr. Rainer Lenz",
+    "contactPhone": "+49.521.106-70212",
+    "contactEmail": "{account}{'@'}{domain}",
+    "impressum": "Impressum",
+    "datenschutz": "Datenschutz"
+  },
+  "underConstruction": {
+    "title": "Seite im Aufbau",
+    "message": "Diese Seite befindet sich derzeit im Aufbau. Bitte schauen Sie später noch einmal vorbei."
+  },
+  "accordion-item": {
+    "open": "-",
+    "close": "+"
+  },
+  "binex-page-metamask": {
+    "title": "MetaMask Wallet Anleitung mit Q-Blockchain",
+    "button-text": "Zur Binex App"
+  },
+  "nfts-page-claim-modal": {
+    "claim-title": "NFT für deine Veranstaltung",
+    "code-title": "Veranstaltungscode",
+    "code-placeholder": "Gib deinen Code ein",
+    "claim-button": "NFT erhalten"
+  },
+  "nfts-page-loading-error-msg": "Fehler beim Laden der NFTs. Bitte versuche es später erneut.",
+  "nfts-page-no-data-msg": "Keine NFTs verfügbar."
+}

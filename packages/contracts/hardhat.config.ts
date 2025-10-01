@@ -16,6 +16,15 @@ const config: HardhatUserConfig = {
             url: process.env.ALCHEMY_MAINNET || "",
             accounts: process.env.DEPLOYER_KEY ? [process.env.DEPLOYER_KEY] : [],
         },
+        polygon: {
+            url: process.env.POLYGON_MAINNET!,  // z. B. https://polygon-rpc.com
+            accounts: [process.env.DEPLOYER_KEY!],
+            chainId: 137,
+        },
+    },
+    etherscan: {
+        //apiKey: process.env.ETHERSCAN_API_KEY,
+        apiKey: process.env.POLYGONSCAN_API_KEY || "",
     },
 };
 

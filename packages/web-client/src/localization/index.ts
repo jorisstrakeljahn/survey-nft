@@ -6,12 +6,14 @@ import enHome from '@/localization/en/home.json'
 import enFooter from '@/localization/en/footer.json'
 import enHeader from '@/localization/en/header.json'
 import enNfts from '@/localization/en/nfts.json'
+import enNft from '@/localization/en/nft.json'
 
 // DE
 import deHome from '@/localization/de/home.json'
 import deFooter from '@/localization/de/footer.json'
 import deHeader from '@/localization/de/header.json'
 import deNfts from '@/localization/de/nfts.json'
+import deNft from '@/localization/de/nft.json'
 
 export const i18n = createI18n({
   legacy: false,
@@ -19,12 +21,11 @@ export const i18n = createI18n({
   fallbackLocale: 'en',
   globalInjection: true,
   messages: {
-    de: { ...deHome, ...deFooter, ...deHeader, ...deNfts },
-    en: { ...enHome, ...enFooter, ...enHeader, ...enNfts },
+    de: { ...deHome, ...deFooter, ...deHeader, ...deNfts, ...deNft },
+    en: { ...enHome, ...enFooter, ...enHeader, ...enNfts, ...enNft },
   },
 })
 
-// Optional: beim App-Start Locale aus localStorage herstellen
 const LS_KEY = 'app_lang'
 export function initLocaleFromStorage() {
   const saved = localStorage.getItem(LS_KEY)

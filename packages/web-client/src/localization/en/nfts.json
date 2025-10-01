@@ -4,7 +4,7 @@
     "summary": {
       "points": "Total points",
       "nfts": "NFTs",
-      "lastActivity": "Last activity"
+      "latestToken": "Newest token"
     },
     "actions": {
       "refresh": "Refresh"

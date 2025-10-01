@@ -1,0 +1,7 @@
+{
+  "nft": {
+    "backWithArrow": "← Zur Übersicht",
+    "tokenIdValue": "#{id}",
+    "traitLabel": "{name}:"
+  }
+}

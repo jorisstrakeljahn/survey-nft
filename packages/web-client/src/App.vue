@@ -21,9 +21,8 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 const erc721 = useErc721()
 
 // optionale Anzeige-States (werden von loadDetails() gefüllt)
-const info = ref<{ name: string; symbol: string; totalSupply: number } | null
->(
-  null
+const info = ref<{ name: string; symbol: string; totalSupply: number } | null>(
+  null,
 )
 const myAddress = ref<string>('')
 const myTokens = ref<{ tokenId: number; uri?: string; points?: number }[]>([])
@@ -33,7 +32,7 @@ const route = useRoute()
 const hideNavbar = computed(() => route.meta.hideNavbar === true)
 
 // ---- NEU: eigene Lade-Methode (ruft die vorhandenen erc721-Methoden) ----
-async function loadDetails () {
+async function loadDetails() {
   try {
     status.value = 'Lade…'
     info.value = await erc721.getInfo()
@@ -76,7 +75,7 @@ init()
 
 .app__main {
   padding: var(--app-padding-top) var(--app-padding-right)
-  var(--app-padding-bottom) var(--app-padding-left);
+    var(--app-padding-bottom) var(--app-padding-left);
 }
 
 .fade-enter-active {

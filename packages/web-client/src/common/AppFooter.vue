@@ -43,10 +43,16 @@
   </section>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 
-const { t } = useI18n()
+/** GLOBALER Composer */
+const { t } = useI18n({ useScope: 'global' })
+
+const mail = t('footer.contactEmail', {
+  account: 'rainer.lenz',
+  domain: 'fh-bielefeld.de',
+})
 </script>
 
 <style lang="scss" scoped>

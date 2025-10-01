@@ -1,0 +1,74 @@
+{
+  "home": {
+    "hero": {
+      "title": "Participant points — tamper-proof on the blockchain",
+      "subtitle": "From October 2025, students receive VPP points as NFTs for participating in studies and surveys. Transparent, verifiable, paperless.",
+      "gsnHint": "Gasless via OpenGSN — no MATIC required."
+    },
+    "cta": {
+      "student": "View my points",
+      "admin": "Staff / Admin"
+    },
+    "howItWorks": {
+      "title": "How it works",
+      "items": {
+        "participate": {
+          "title": "Participate → receive",
+          "text": "After completing a study you receive your VPP-NFT directly in your wallet."
+        },
+        "prove": {
+          "title": "Prove → manage",
+          "text": "Your points are visible as NFTs. Course requirements are easy to verify."
+        },
+        "secure": {
+          "title": "Secure → auditable",
+          "text": "Duplicate claims are prevented on-chain. Everything stays transparent and tamper-proof."
+        }
+      }
+    },
+    "target": {
+      "title": "Who is it for?",
+      "student": {
+        "title": "Students",
+        "bullets": [
+          "Point balance at a glance",
+          "No paperwork or manual submissions",
+          "Direct proof for course requirements"
+        ]
+      },
+      "admin": {
+        "title": "Teaching staff & organization",
+        "bullets": [
+          "Reliable overview of points",
+          "Selective or complete removal (role-based)",
+          "Explorer links & export options"
+        ]
+      }
+    },
+    "faq": {
+      "title": "FAQ",
+      "items": {
+        "gas": {
+          "title": "Do I need to pay fees?",
+          "content": "No. Transactions are sponsored by our Paymaster (OpenGSN)."
+        },
+        "duplicate": {
+          "title": "Can I claim multiple times for the same study?",
+          "content": "No. The smart contract blocks duplicate claims and stores already granted combinations."
+        },
+        "network": {
+          "title": "Which network is used?",
+          "content": "Polygon Mainnet. When connected, the app will guide you to switch automatically."
+        },
+        "privacy": {
+          "title": "Which data is stored?",
+          "content": "On-chain NFT ownership only. We do not manage personal data."
+        }
+      }
+    }
+  },
+  "accordion-item": {
+    "open": "-",
+    "close": "+"
+  }
+}

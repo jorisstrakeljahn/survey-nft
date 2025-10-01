@@ -1,8 +1,11 @@
 <template>
   <div :class="['app-navbar', { 'app-navbar--menu-open': isMenuOpen }]">
+    <!-- Logo -->
     <app-logo class="app-navbar__logo" v-if="!isMenuOpen" />
+
     <div class="spacer" />
 
+    <!-- Desktop-Navigation -->
     <nav class="navigation" v-if="!isMenuOpen">
       <ul>
         <li>
@@ -18,6 +21,29 @@
       </ul>
     </nav>
 
+    <!-- Desktop: Language Dropdown -->
+    <div class="lang" v-if="!isMenuOpen" ref="langRef">
+      <button class="lang__btn" @click="toggleLang">
+        <span class="lang__label">{{ currentLangLabel }}</span>
+        <svg class="lang__chev" viewBox="0 0 24 24">
+          <path d="M7 10l5 5 5-5z" />
+        </svg>
+      </button>
+
+      <div v-if="isLangOpen" class="lang__menu">
+        <button
+          v-for="l in languages"
+          :key="l.code"
+          class="lang__item"
+          :class="{ 'is-active': locale === l.code }"
+          @click="setLang(l.code)"
+        >
+          {{ l.label }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Burger -->
     <img
       :src="isMenuOpen ? CloseMenuIcon : OpenMenuIcon"
       alt="Menu Icon"
@@ -26,6 +52,7 @@
     />
   </div>
 
+  <!-- Mobile Off-Canvas -->
   <div class="mobile-menu" v-if="isMenuOpen">
     <nav class="mobile-navigation">
       <ul>
@@ -64,30 +91,62 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 import { AppLogo } from '@/common'
 import { ROUTE_NAMES } from '@/enums'
 import { useI18n } from 'vue-i18n'
 import OpenMenuIcon from '@/assets/header-open-menu-icon.svg'
 import CloseMenuIcon from '@/assets/header-close-icon.svg'
-import { router } from '@/router'
 
 const isMenuOpen = ref(false)
-const { t } = useI18n()
-
 function toggleMenu() {
   isMenuOpen.value = !isMenuOpen.value
 }
 
-function navigateToSection(routeName: string, sectionId: string) {
-  toggleMenu()
-  router.push({ name: routeName, hash: `#${sectionId}` })
+/** GLOBALER Composer (nicht lokal!) */
+const { t, locale } = useI18n({ useScope: 'global' })
+
+const languages = [
+  { code: 'de', label: 'DE' },
+  { code: 'en', label: 'EN' },
+] as const
+
+const isLangOpen = ref(false)
+const langRef = ref<HTMLElement | null>(null)
+function toggleLang() {
+  isLangOpen.value = !isLangOpen.value
 }
 
-function navigateToRoute(routeName: string) {
-  toggleMenu()
-  router.push({ name: routeName })
+const LS_KEY = 'app_lang'
+function setLang(code: 'de' | 'en') {
+  locale.value = code
+  localStorage.setItem(LS_KEY, code)
+  isLangOpen.value = false
 }
+function setLangFromMobile(code: 'de' | 'en') {
+  setLang(code)
+  toggleMenu()
+}
+
+const currentLangLabel = computed(() => {
+  const current = languages.find(l => l.code === locale.value)
+  return current ? current.label : 'DE'
+})
+
+function onClickOutside(e: MouseEvent) {
+  if (!isLangOpen.value) return
+  const el = langRef.value
+  if (el && !el.contains(e.target as Node)) isLangOpen.value = false
+}
+
+onMounted(() => {
+  document.addEventListener('click', onClickOutside)
+  const saved = localStorage.getItem(LS_KEY)
+  if (saved === 'de' || saved === 'en') locale.value = saved
+})
+onBeforeUnmount(() => {
+  document.removeEventListener('click', onClickOutside)
+})
 </script>
 
 <style lang="scss" scoped>
@@ -123,21 +182,20 @@ function navigateToRoute(routeName: string) {
 .navigation ul {
   list-style: none;
   display: flex;
-  gap: 1.5rem;
+  gap: 1.25rem;
+  margin: 0;
+  padding: 0;
 }
-
 .navigation a {
   position: relative;
   text-decoration: none;
   color: #000;
-  font-weight: bold;
-  font-size: 1.5rem;
+  font-weight: 700;
+  font-size: 1.1rem;
   display: block;
-  padding: toRem(12) toRem(10);
-  border-radius: 0;
-  transition: font-size 0.3s ease;
+  padding: toRem(10) toRem(8);
+  border-radius: 8px;
 }
-
 .navigation a::before {
   content: '';
   position: absolute;
@@ -145,82 +203,13 @@ function navigateToRoute(routeName: string) {
   left: 50%;
   width: 0;
   height: 2px;
-  background-color: black;
-  transition: all 0.5s ease;
+  background-color: #000;
+  transition: all 0.35s ease;
 }
-
 .navigation a:hover::before,
 .navigation .router-link-active::before {
   left: 0;
   width: 100%;
-}
-
-.navigation .router-link-active {
-  position: relative;
-}
-
-.navigation .router-link-active::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background-color: black;
-  opacity: 0.8;
-  border-radius: 2px;
-}
-
-.mobile-navigation .highlight-item a {
-  background-color: var(--app-bg);
-  color: #000000;
-  border-radius: toRem(15);
-  padding: toRem(12) toRem(10);
-  font-size: toRem(20);
-}
-
-.menu-item-with-button {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: toRem(6) toRem(10);
-  border-radius: toRem(15);
-}
-
-.menu-item-with-button .menu-link {
-  color: #000000;
-  background-color: #ffffff;
-  border-radius: toRem(15);
-  padding: toRem(12) toRem(16);
-  text-decoration: none;
-  font-size: toRem(24);
-  font-weight: bold;
-  flex: 1;
-}
-
-.instruction-button {
-  border: 1px solid #000000;
-  border-radius: toRem(10);
-  background: transparent;
-  color: #000000;
-  padding: toRem(2) toRem(16);
-  font-size: toRem(16);
-  cursor: pointer;
-  margin-left: toRem(8);
-}
-
-.mobile-navigation .highlight-item {
-  background-color: #ffffff;
-  border-radius: toRem(15);
-  margin-left: toRem(24);
-  margin-right: toRem(24);
-  padding: 0;
-}
-
-.mobile-navigation .highlight-item a.menu-link {
-  background: none;
-  padding: 0;
-  border-radius: 0;
 }
 
 .menu-icon {
@@ -230,15 +219,67 @@ function navigateToRoute(routeName: string) {
   display: none;
 }
 
+/* Language Dropdown (Desktop) */
+.lang {
+  position: relative;
+  margin-left: 0.5rem;
+}
+.lang__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.lang__label {
+  line-height: 1;
+}
+.lang__chev {
+  width: 18px;
+  height: 18px;
+  fill: #333;
+}
+.lang__menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  background: #fff;
+  border: 1px solid #e9e9e9;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  min-width: 120px;
+  padding: 0.25rem;
+  z-index: 1002;
+}
+.lang__item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 8px;
+}
+.lang__item:hover {
+  background: #f6f6f6;
+}
+.lang__item.is-active {
+  font-weight: 700;
+}
+
+/* Mobile */
 @media (max-width: 900px) {
   .app-navbar__logo {
     width: toRem(40);
   }
-
   .navigation {
     display: none;
   }
-
   .menu-icon {
     display: block;
   }
@@ -246,30 +287,25 @@ function navigateToRoute(routeName: string) {
 
 .mobile-menu {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background-color: #090909;
   z-index: 1000;
   overflow-y: auto;
 }
 
 .mobile-navigation {
-  margin-top: toRem(120);
+  margin-top: toRem(110);
 }
-
 .mobile-navigation ul {
   list-style: none;
   padding: 0;
+  margin: 0;
 }
-
 .mobile-navigation li {
   margin: toRem(20) 0;
   text-align: left;
   padding: 0 toRem(24);
 }
-
 .mobile-navigation a {
   text-decoration: none;
   color: #ffffff;

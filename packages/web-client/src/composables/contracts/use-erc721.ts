@@ -46,7 +46,7 @@ export interface LoadedToken {
 
 /** EIP-1193 Provider Typ (vermeidet "any") */
 type Eip1193Provider = {
-  request: (args: { method: string, params?: unknown[] }) => Promise<unknown>
+  request: (args: { method: string; params?: unknown[] }) => Promise<unknown>
   on?: (...args: unknown[]) => void
 }
 
@@ -130,8 +130,7 @@ export function useErc721(overrideAddress?: string) {
 
     const ids: number[] = []
     for (let i = 0; i < count; i++) {
-      const id: ethers.BigNumber =
-        await contract.tokenOfOwnerByIndex(target, i)
+      const id: ethers.BigNumber = await contract.tokenOfOwnerByIndex(target, i)
       ids.push(id.toNumber())
     }
     return ids
@@ -187,7 +186,7 @@ export function useErc721(overrideAddress?: string) {
     return await tx.wait()
   }
 
-  async function tokenByIndexGlobal (index: number) {
+  async function tokenByIndexGlobal(index: number) {
     const { contract } = await getSignerAndContract(overrideAddress)
     const id: ethers.BigNumber = await contract.tokenByIndex(index)
     return id.toNumber()
@@ -253,9 +252,7 @@ export function useErc721(overrideAddress?: string) {
   // - getOwner()         -> contract owner (falls Ownable), sonst undefined
   async function getOwner(): Promise<HexAddress | undefined>
   async function getOwner(tokenId: Bigish): Promise<HexAddress>
-  async function getOwner(
-    arg?: Bigish,
-  ): Promise<HexAddress | undefined> {
+  async function getOwner(arg?: Bigish): Promise<HexAddress | undefined> {
     if (typeof arg !== 'undefined') {
       return await getOwnerOf(arg)
     }
@@ -313,7 +310,7 @@ export function useErc721(overrideAddress?: string) {
     return await isAlreadyMinted(surveyId, owner)
   }
 
-  async function getTokenByIndex (index: number): Promise<number> {
+  async function getTokenByIndex(index: number): Promise<number> {
     return await tokenByIndexGlobal(index)
   }
 

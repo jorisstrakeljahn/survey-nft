@@ -1,0 +1,74 @@
+{
+  "home": {
+    "hero": {
+      "title": "Versuchspunkte – fälschungssicher auf der Blockchain",
+      "subtitle": "Ab Oktober 2025 erhalten Studierende VPP-Punkte als NFTs für die Teilnahme an Studien und Umfragen. Transparent, nachvollziehbar, ohne Zettelwirtschaft.",
+      "gsnHint": "Gaslos via OpenGSN – keine MATIC erforderlich."
+    },
+    "cta": {
+      "student": "Meine Punkte ansehen",
+      "admin": "Lehrenden-Bereich"
+    },
+    "howItWorks": {
+      "title": "So funktioniert’s",
+      "items": {
+        "participate": {
+          "title": "Teilnehmen → erhalten",
+          "text": "Nach Abschluss einer Studie erhältst du dein VPP-NFT direkt in deine Wallet."
+        },
+        "prove": {
+          "title": "Nachweisen → verwalten",
+          "text": "Deine Punkte sind als NFTs sichtbar. Prüfungsleistungen lassen sich einfach nachweisen."
+        },
+        "secure": {
+          "title": "Sicher → nachvollziehbar",
+          "text": "Doppelte Claims sind on-chain ausgeschlossen. Alles bleibt transparent und fälschungssicher."
+        }
+      }
+    },
+    "target": {
+      "title": "Für wen ist das?",
+      "student": {
+        "title": "Studierende",
+        "bullets": [
+          "Punktestand jederzeit in der Wallet",
+          "Kein Papier, kein Nachtrag",
+          "Direkter Nachweis für Prüfungsleistungen"
+        ]
+      },
+      "admin": {
+        "title": "Lehrende & Organisation",
+        "bullets": [
+          "Zuverlässiger Überblick über VPP",
+          "Selektives oder vollständiges Löschen (rollenbasiert)",
+          "Explorer-Links & Exportoptionen"
+        ]
+      }
+    },
+    "faq": {
+      "title": "FAQ",
+      "items": {
+        "gas": {
+          "title": "Muss ich etwas bezahlen?",
+          "content": "Nein. Transaktionsgebühren werden über unseren Paymaster gesponsert (OpenGSN)."
+        },
+        "duplicate": {
+          "title": "Kann ich mehrfach für dieselbe Studie claimen?",
+          "content": "Nein. Der Smart-Contract verhindert Doppel-Claims und speichert bereits vergebene Kombinationen."
+        },
+        "network": {
+          "title": "Welches Netzwerk wird genutzt?",
+          "content": "Polygon Mainnet. Wenn du verbunden bist, hilft die App dir automatisch beim Wechsel."
+        },
+        "privacy": {
+          "title": "Welche Daten werden gespeichert?",
+          "content": "On-chain wird der NFT-Besitz dokumentiert. Persönliche Daten verwalten wir nicht."
+        }
+      }
+    }
+  },
+  "accordion-item": {
+    "open": "-",
+    "close": "+"
+  }
+}

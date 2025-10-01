@@ -105,9 +105,7 @@ export class BN {
         ...fmt
       } = format ?? {}
       const groupSeparatorFormat: { [key: string]: string | number } = {
-        ...(fmt.groupSeparator
-          ? { groupSeparator: fmt.groupSeparator }
-          : {}),
+        ...(fmt.groupSeparator ? { groupSeparator: fmt.groupSeparator } : {}),
       }
       if (noGroupSeparator) {
         groupSeparatorFormat.groupSeparator = ''
@@ -175,9 +173,7 @@ export class BN {
     try {
       return new ctor(value)
     } catch (error) {
-      throw new TypeError(
-        `Cannot convert the given "${value}" to BN!`
-      )
+      throw new TypeError(`Cannot convert the given "${value}" to BN!`)
     }
   }
 }

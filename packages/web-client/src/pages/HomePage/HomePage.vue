@@ -1,181 +1,233 @@
 <template>
-  <div class="vpp-page" lang="de">
+  <div class="vpp-page">
+    <!-- HERO -->
     <section class="header-section">
-      <img
-        :src="HeaderImage"
-        alt="Header Image"
-        class="header-section__image"
-      />
+      <img :src="HeaderImage" alt="VPP Header" class="header-section__image" />
+
       <h1 class="header-section__title">
-        {{ t('vpp-documentation-page.title') }}
+        {{ t('home.hero.title') }}
       </h1>
+
       <p class="header-section__subtitle">
-        {{ t('vpp-documentation-page.subtitle') }}
+        {{ t('home.hero.subtitle') }}
       </p>
 
       <div class="header-section__buttons">
-        <router-link to="/binex/nfts" class="header-section__button">
-          {{ t('binex-page.button-text') }}
+        <router-link to="/nfts" class="header-section__button">
+          {{ t('home.cta.student') }}
         </router-link>
+
         <router-link
-          to="/binex/metamask"
+          to="/admin"
           class="header-section__button header-section__button--blue"
         >
-          {{ t('binex-page.button-text-metamask') }}
+          {{ t('home.cta.admin') }}
         </router-link>
       </div>
-    </section>
 
-    <!-- Dokumentation Section -->
-    <section id="guide-section-vpp" class="documentation-section">
-      <h2 class="documentation-section__title">
-        {{ t('vpp-documentation-page.guide-title') }}
-      </h2>
-
-      <!-- Für Teilnehmer:innen -->
-      <div class="documentation-section__group">
-        <h3 class="documentation-section__subtitle">
-          {{ t('vpp-documentation-page.guide-title-participant') }}
-        </h3>
-        <accordion-item
-          v-for="(item, index) in participantItems"
-          :key="index"
-          :title="item.title"
-        >
-          <!-- eslint-disable-next-line vue/no-v-html -->
-          <div v-html="item.content"></div>
-        </accordion-item>
-      </div>
-
-      <!-- Für Umfrageersteller:innen -->
-      <div class="documentation-section__group">
-        <h3 class="documentation-section__subtitle">
-          {{ t('vpp-documentation-page.guide-title-organizer') }}
-        </h3>
-        <accordion-item
-          v-for="(item, index) in surveyCreatorItems"
-          :key="index"
-          :title="item.title"
-        >
-          <!-- eslint-disable-next-line vue/no-v-html -->
-          <div v-html="item.content"></div>
-        </accordion-item>
-      </div>
-    </section>
-
-    <section class="info-section">
-      <h2 class="info-section__title">
-        {{ t('vpp-documentation-page.info-title') }}
-      </h2>
-      <p class="info-section__text">
-        {{ t('vpp-documentation-page.info-text') }}
+      <p class="header-section__hint">
+        {{ t('home.hero.gsnHint') }}
       </p>
     </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="documentation-section">
+      <h2 class="documentation-section__title">
+        {{ t('home.howItWorks.title') }}
+      </h2>
+
+      <div class="how-cards">
+        <div class="how-card" v-for="c in howItems" :key="c.key">
+          <h3 class="how-card__title">
+            {{ c.title }}
+          </h3>
+          <p class="how-card__text">
+            {{ c.text }}
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- TARGET GROUPS -->
+    <section class="info-section">
+      <h2 class="info-section__title">
+        {{ t('home.target.title') }}
+      </h2>
+
+      <div class="target-grid">
+        <div class="target-col">
+          <h3 class="target-col__title">
+            {{ t('home.target.student.title') }}
+          </h3>
+          <ul class="target-col__list">
+            <li v-for="(p, i) in studentPoints" :key="i">
+              {{ p }}
+            </li>
+          </ul>
+        </div>
+
+        <div class="target-col">
+          <h3 class="target-col__title">
+            {{ t('home.target.admin.title') }}
+          </h3>
+          <ul class="target-col__list">
+            <li v-for="(p, i) in adminPoints" :key="i">
+              {{ p }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="documentation-section">
+      <h2 class="documentation-section__title">
+        {{ t('home.faq.title') }}
+      </h2>
+
+      <div class="documentation-section__group">
+        <accordion-item
+          v-for="(item, index) in faqItems"
+          :key="index"
+          :title="item.title"
+        >
+          <!-- eslint-disable-next-line vue/no-v-html -->
+          <div v-html="item.content"></div>
+        </accordion-item>
+      </div>
+    </section>
   </div>
+
   <app-footer />
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script lang="ts" setup>
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import AppFooter from '@/common/AppFooter.vue'
 import AccordionItem from '@/common/AccordionItem.vue'
 import HeaderImage from '@/assets/vpp-start-image.jpg'
-import { ROUTE_NAMES } from '@/enums'
 
-export default defineComponent({
-  name: 'vpp-doc-page',
-  components: {
-    AppFooter,
-    AccordionItem,
+const { t } = useI18n()
+
+/** 3 Kacheln "Wie es funktioniert" */
+const howItems = computed(() => [
+  {
+    key: 'participate',
+    title: t('home.howItWorks.items.participate.title'),
+    text: t('home.howItWorks.items.participate.text'),
   },
-  setup() {
-    const { t } = useI18n()
-    return {
-      t,
-      ROUTE_NAMES,
-    }
+  {
+    key: 'prove',
+    title: t('home.howItWorks.items.prove.title'),
+    text: t('home.howItWorks.items.prove.text'),
   },
-  data() {
-    return {
-      HeaderImage,
-      participantItems: [
-        {
-          title: 'Metamask-Wallet erstellen',
-          content:
-            'Informationen zum Erstellen und Hinzufügen eines Metamask Wallets für verschiedene Browser findest du auf <a href="https://support.metamask.io/de/getting-started/getting-started-with-metamask/" target="_blank">dieser Seite</a>.',
-        },
-        {
-          title: 'Mit Q-Blockchain verknüpfen',
-          content: 'Info bald verfügbar...',
-        },
-        {
-          title: 'Punkte erhalten',
-          content: 'Info bald verfügbar...',
-        },
-      ],
-      surveyCreatorItems: [
-        {
-          title: 'VPP Doku in SociSurvey einbinden',
-          content: 'Info bald verfügbar...',
-        },
-        {
-          title: 'VPP Doku mit anderen Tools nutzen',
-          content: 'Info bald verfügbar...',
-        },
-      ],
-    }
+  {
+    key: 'secure',
+    title: t('home.howItWorks.items.secure.title'),
+    text: t('home.howItWorks.items.secure.text'),
   },
-})
+])
+
+/** Zielgruppen-Stichpunkte */
+const studentPoints = computed(() => [
+  t('home.target.student.bullets.0'),
+  t('home.target.student.bullets.1'),
+  t('home.target.student.bullets.2'),
+])
+
+const adminPoints = computed(() => [
+  t('home.target.admin.bullets.0'),
+  t('home.target.admin.bullets.1'),
+  t('home.target.admin.bullets.2'),
+])
+
+/** FAQ */
+const faqItems = computed(() => [
+  {
+    title: t('home.faq.items.gas.title'),
+    content: t('home.faq.items.gas.content'),
+  },
+  {
+    title: t('home.faq.items.duplicate.title'),
+    content: t('home.faq.items.duplicate.content'),
+  },
+  {
+    title: t('home.faq.items.network.title'),
+    content: t('home.faq.items.network.content'),
+  },
+  {
+    title: t('home.faq.items.privacy.title'),
+    content: t('home.faq.items.privacy.content'),
+  },
+])
 </script>
 
 <style lang="scss" scoped>
-/* Header Section Styles */
 .header-section {
   text-align: center;
   padding: 2rem 1rem;
 
   &__image {
     width: 480px;
-    height: 320px;
-    border-radius: 8px;
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
     object-fit: cover;
   }
 
   &__title {
     font-size: 2rem;
-    margin-top: 1.5rem;
+    margin-top: 1.25rem;
   }
 
   &__subtitle {
-    max-width: 1000px;
-    font-size: 1.4rem;
-    line-height: 1.5;
-    text-align: justify;
-    hyphens: auto;
+    max-width: 980px;
+    font-size: 1.125rem;
+    line-height: 1.6;
+    text-align: center;
     margin: 1rem auto 0;
+    color: #2c2c2c;
+  }
+
+  &__buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 1.25rem;
+    flex-wrap: wrap;
   }
 
   &__button {
     display: inline-block;
-    margin-top: 1rem;
-    padding: 0.75rem 3rem;
-    background-color: #000000;
+    padding: 0.75rem 2rem;
+    background-color: #111;
     color: #fff;
-    font-size: 1.3rem;
-    font-weight: 500;
+    font-size: 1rem;
+    font-weight: 600;
     text-decoration: none;
     border-radius: 12px;
-    transition: transform 0.3s;
-    opacity: 0.8;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    opacity: 0.92;
 
     &:hover {
-      transform: scale(1.08);
+      transform: translateY(-1px);
+      opacity: 1;
     }
+
+    &--blue {
+      background-color: #2563eb;
+    }
+  }
+
+  &__hint {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #666;
   }
 }
 
-/* Dokumentation Section Styles */
+/* HOW IT WORKS */
 .documentation-section {
   padding: 2rem 1rem;
   display: flex;
@@ -183,8 +235,8 @@ export default defineComponent({
   align-items: center;
 
   &__title {
-    font-size: 2rem;
-    margin-bottom: 2rem;
+    font-size: 1.75rem;
+    margin-bottom: 1.125rem;
     text-align: center;
   }
 
@@ -193,14 +245,38 @@ export default defineComponent({
     width: 100%;
     margin-bottom: 2rem;
   }
+}
 
-  &__subtitle {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    margin-top: 2rem;
+.how-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 320px));
+  gap: 16px;
+  width: 100%;
+  max-width: 1000px;
+
+  @media (max-width: 980px) {
+    grid-template-columns: 1fr;
   }
 }
 
+.how-card {
+  border: 1px solid #e9e9e9;
+  border-radius: 12px;
+  padding: 1rem;
+  background: #fff;
+
+  &__title {
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  &__text {
+    color: #444;
+    line-height: 1.5;
+  }
+}
+
+/* TARGET GROUPS */
 .info-section {
   padding: 2rem 1rem;
   display: flex;
@@ -208,46 +284,41 @@ export default defineComponent({
   align-items: center;
 
   &__title {
-    font-size: 1.8rem;
-    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
     text-align: center;
-  }
-
-  &__text {
-    max-width: 1000px;
-    width: 100%;
-    font-size: 1.2rem;
-    line-height: 1.6;
-    text-align: justify;
-    hyphens: auto;
   }
 }
 
-/* Media Queries für kleinere Bildschirme */
-@media (max-width: 768px) {
-  .header-section__title {
-    font-size: 1.5rem;
+.target-grid {
+  max-width: 1000px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  @media (max-width: 980px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.target-col {
+  border: 1px solid #e9e9e9;
+  border-radius: 12px;
+  padding: 1rem;
+  background: #fff;
+
+  &__title {
+    font-weight: 700;
+    margin-bottom: 0.5rem;
   }
 
-  .header-section__image {
-    width: 100%;
-    height: auto;
-  }
-
-  .header-section__subtitle {
-    font-size: 1rem;
-  }
-
-  .documentation-section__title {
-    font-size: 1.5rem;
-  }
-
-  .documentation-section__subtitle {
-    font-size: 1.2rem;
-  }
-
-  .info-section__text {
-    font-size: 1rem;
+  &__list {
+    margin: 0;
+    padding-left: 1.2rem;
+    li {
+      margin: 0.25rem 0;
+    }
   }
 }
 </style>

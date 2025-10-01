@@ -11,10 +11,6 @@
     <p class="under-construction-text">
       {{ t('underConstruction.message') }}
     </p>
-    <img :src="EventImage" alt="Event 1" class="under-construction-image" />
-    <img :src="NftEins" alt="NFT 1" class="under-construction-image" />
-    <img :src="NftZwei" alt="NFT 2" class="under-construction-image" />
-    <img :src="NftDrei" alt="NFT 3" class="under-construction-image" />
   </div>
   <app-footer />
 </template>
@@ -22,10 +18,6 @@
 <script lang="ts">
 import { useI18n } from 'vue-i18n'
 import WorkInProgressImage from '@/assets/work-in-progress-image.svg'
-import EventImage from '@/assets/1-binex-nft-event-blockchain-trifft-finance.jpg'
-import NftEins from '../../../../../survey-nft/packages/frontend/src/assets/VPP - NFT 1.jpg'
-import NftZwei from '../../../../../survey-nft/packages/frontend/src/assets/VPP - NFT 2.jpg'
-import NftDrei from '../../../../../survey-nft/packages/frontend/src/assets/VPP - NFT 3.jpg'
 import AppFooter from '@/common/AppFooter.vue'
 
 export default {
@@ -40,10 +32,6 @@ export default {
   data() {
     return {
       WorkInProgressImage,
-      EventImage,
-      NftEins,
-      NftZwei,
-      NftDrei,
     }
   },
 }

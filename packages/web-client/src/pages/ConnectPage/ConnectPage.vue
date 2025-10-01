@@ -86,9 +86,7 @@ async function switchChain() {
   try {
     await eth.request({
       method: 'wallet_switchEthereumChain',
-      params: [
-        { chainId: expectedHex }
-      ],
+      params: [{ chainId: expectedHex }],
     })
     await readChain()
   } catch (e: any) {
@@ -105,13 +103,15 @@ async function addExpectedChain() {
   // hier Polygon Mainnet; passe bei Bedarf für Mumbai an
   await eth.request({
     method: 'wallet_addEthereumChain',
-    params: [{
-      chainId: expectedHex,
-      chainName: expectedLabel.value,
-      nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 },
-      rpcUrls: ['https://polygon-rpc.com'],
-      blockExplorerUrls: ['https://polygonscan.com/'],
-    }],
+    params: [
+      {
+        chainId: expectedHex,
+        chainName: expectedLabel.value,
+        nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 },
+        rpcUrls: ['https://polygon-rpc.com'],
+        blockExplorerUrls: ['https://polygonscan.com/'],
+      },
+    ],
   })
   await readChain()
 }

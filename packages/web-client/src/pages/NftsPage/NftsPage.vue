@@ -131,10 +131,10 @@ const loadNftData = async () => {
     // die "contractOwner" Variable hieß bei dir so, ist aber deine eigene Adresse
     contractOwner.value = (await erc721.getMyAddress()) || ''
 
-    const totalSupply = await erc721.getTotalSupply()         // => number
+    const totalSupply = await erc721.getTotalSupply() // => number
     const nftListId = await Promise.all(
       Array.from({ length: totalSupply }, async (_, index) => {
-        const id = await erc721.getTokenByIndex(index)        // globaler Index
+        const id = await erc721.getTokenByIndex(index) // globaler Index
         return id.toString()
       }),
     )

@@ -107,7 +107,7 @@
           <button
             class="btn btn--danger"
             :disabled="!isDeleter"
-            @click="burnAllForTarget"
+            @click="confirmBurnAll"
           >
             {{ t('admin.actions.burnAll') }}
           </button>
@@ -125,15 +125,9 @@
             <div class="cell">#{{ tkn.tokenId }}</div>
             <div class="cell">{{ tkn.points ?? 0 }}</div>
             <div class="cell cell--links">
-              <a
-                v-if="tkn.uri"
-                class="link"
-                :href="tkn.uri"
-                target="_blank"
-                rel="noopener"
-              >
-                {{ t('admin.table.metadata') }}
-              </a>
+              <!-- NEU: Details öffnet Popup -->
+              <button class="link" @click="openMeta(tkn)">{{ t('admin.table.metadata') }}</button>
+              <!-- Explorer-Link bleibt -->
               <a
                 class="link"
                 :href="`${explorerBase}/token/${erc721Address}?a=${tkn.tokenId}`"
@@ -147,7 +141,7 @@
               <button
                 class="btn btn--danger"
                 :disabled="!isDeleter"
-                @click="burnOne(tkn.tokenId)"
+                @click="confirmBurnOne(tkn.tokenId)"
               >
                 {{ t('admin.table.burn') }}
               </button>
@@ -155,6 +149,20 @@
           </div>
         </div>
       </section>
+
+      <!-- NEU: Metadata-Modal -->
+      <nft-metadata-modal
+        v-if="showMeta && metaToken"
+        :open="showMeta"
+        @close="showMeta = false"
+        :token-id="metaToken.tokenId"
+        :token-uri="metaToken.uri"
+        :owner="metaToken.owner"
+        :points="metaToken.points"
+        :contract-address="erc721Address"
+        :explorer-base="explorerBase"
+      />
+
     </main>
 
     <app-footer />
@@ -167,6 +175,7 @@ import { useI18n } from 'vue-i18n'
 
 import AppFooter from '@/common/AppFooter.vue'
 import Loader from '@/common/Loader.vue'
+import NftMetadataModal from '@/common/NftMetadataModal.vue'
 import { useErc721 } from '@/composables/contracts/use-erc721'
 import { config } from '@/config'
 
@@ -218,6 +227,20 @@ const hasResult = computed(() => !!target.value)
 
 const isDeleter = ref(false)
 const canManage = ref(false)
+
+const showMeta = ref(false)
+const metaToken = ref<Token | null>(null)
+
+async function openMeta (tkn: Token) {
+  if (!tkn.uri) {
+    tkn.uri = await getTokenURI(tkn.tokenId)
+  }
+  if (tkn.points == null) {
+    tkn.points = await getTokenPoints(tkn.tokenId)
+  }
+  metaToken.value = tkn
+  showMeta.value = true
+}
 
 /** Chunksize intern, UI zeigt nur „Alles löschen“ */
 const CHUNK_SIZE = 50
@@ -281,18 +304,13 @@ let searchTimer: number | undefined
 watch(walletInput, (val) => {
   if (searchTimer) window.clearTimeout(searchTimer)
   const trimmed = val.trim()
-  // Bei leer: Ergebnis zurücksetzen
-  if (!trimmed) {
-    clear()
-    return
-  }
-  // Autosearch, wenn 42-Zeichen-0x-Adresse erkannt
+  if (!trimmed) { clear(); return }
   if (trimmed.length === 42 && isAddress(trimmed)) {
     searchTimer = window.setTimeout(() => { void loadWallet() }, 200)
   }
 })
 
-/* -------- Aktionen -------- */
+/* -------- Aktionen (mit Bestätigung) -------- */
 
 async function burnOne (id: number) {
   if (!isDeleter.value) return
@@ -307,12 +325,19 @@ async function burnOne (id: number) {
   }
 }
 
+async function confirmBurnOne (id: number) {
+  if (!isDeleter.value) return
+  const ok = window.confirm(`Soll Token #${id} wirklich gelöscht werden?`)
+  if (!ok) return
+  await burnOne(id)
+}
+
 /** „Alles löschen“: intern in CHUNK_SIZE-Schritten, bis keine Tokens mehr */
 async function burnAllForTarget () {
   if (!isDeleter.value || !target.value) return
   try {
     isLoading.value = true
-    let safety = 40 // hard stop gegen Endlosschleifen
+    let safety = 40 // hard stop
     while (safety-- > 0) {
       await loadWallet()
       const count = tokens.value.length
@@ -326,6 +351,14 @@ async function burnAllForTarget () {
     console.error(e)
     isLoading.value = false
   }
+}
+
+async function confirmBurnAll () {
+  if (!isDeleter.value || !target.value) return
+  const count = tokens.value.length
+  const ok = window.confirm(`Wirklich ALLE (${count}) NFTs für ${short(target.value)} löschen?`)
+  if (!ok) return
+  await burnAllForTarget()
 }
 
 /* -------- Rollen -------- */
@@ -397,7 +430,7 @@ onMounted(() => { void initMyRole() })
 .admin-page__main {
   flex: 1;
   width: 100%;
-  max-width: 1100px;
+  max-width: 1240px;
   margin: 0 auto;
   padding: 24px 16px 32px 16px;
 }

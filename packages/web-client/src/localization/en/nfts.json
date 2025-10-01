@@ -1,0 +1,27 @@
+{
+  "nfts": {
+    "title": "My Points",
+    "summary": {
+      "points": "Total points",
+      "nfts": "NFTs",
+      "lastActivity": "Last activity"
+    },
+    "actions": {
+      "refresh": "Refresh"
+    },
+    "empty": {
+      "title": "No points yet",
+      "text": "You don’t have any VPP NFTs yet. Participate in a study/survey to receive points."
+    },
+    "error": {
+      "title": "Failed to load",
+      "text": "Please try again later or refresh the page."
+    },
+    "card": {
+      "points": "{n} points",
+      "tokenId": "Token ID",
+      "metadata": "Metadata",
+      "explorer": "Explorer"
+    }
+  }
+}

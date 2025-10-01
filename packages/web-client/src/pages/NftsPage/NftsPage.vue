@@ -1,310 +1,273 @@
 <template>
   <div class="nfts-page">
-    <nfts-page-actions
-      :owner="contractOwner"
-      @save="loadNftData"
-      @filter="filterNftList"
-    />
+    <app-navbar />
 
-    <!-- Neuer Abschnitt für "NFT claimen" -->
-    <div class="nfts-page-claim">
-      <div class="nfts-page-claim__content">
-        <span class="nfts-page-claim__title">
-          {{ $t('nfts-page.title') }}
-        </span>
-        <app-button
-          class="nfts-page-claim__button"
-          :text="'NFT für Veranstaltung claimen'"
-          @click="openClaimModal"
-        />
-      </div>
-    </div>
+    <main class="nfts-page__main">
+      <header class="nfts-page__header">
+        <h1>{{ t('nfts.title') }}</h1>
+        <button class="btn" @click="loadMyNfts" :disabled="isLoading">
+          {{ t('nfts.actions.refresh') }}
+        </button>
+      </header>
 
-    <!-- Popup für NFT claim -->
-    <teleport-modal
-      :is-shown="isClaimModalOpen"
-      @click-outside="closeClaimModal"
-    >
-      <div class="nfts-page-claim-modal__form">
-        <h4 class="nfts-page-claim-modal__title">
-          {{ $t('nfts-page-claim-modal.claim-title') }}
-        </h4>
-
-        <div class="nfts-page-claim-modal__inputs">
-          <div class="nfts-page-claim-modal__input-wrapper">
-            <span class="nfts-page-claim-modal__input-title">
-              {{ $t('nfts-page-claim-modal.code-title') }}
-            </span>
-            <input-field
-              v-model="claimCode"
-              class="nfts-page-claim-modal__input"
-              :placeholder="$t('nfts-page-claim-modal.code-placeholder')"
-              :error-message="claimCodeError"
-            />
+      <!-- Summary -->
+      <section class="summary" v-if="!isLoading && !isError">
+        <div class="summary__card">
+          <div class="summary__item">
+            <div class="summary__label">{{ t('nfts.summary.points') }}</div>
+            <div class="summary__value">{{ totalPoints }}</div>
+          </div>
+          <div class="summary__item">
+            <div class="summary__label">{{ t('nfts.summary.nfts') }}</div>
+            <div class="summary__value">{{ tokens.length }}</div>
+          </div>
+          <div class="summary__item" v-if="lastTokenId">
+            <div class="summary__label">{{ t('nfts.summary.lastActivity') }}</div>
+            <div class="summary__value">{{ lastTokenId }}</div>
           </div>
         </div>
+      </section>
 
-        <div class="nfts-page-claim-modal__actions">
-          <app-button
-            :text="'NFT erhalten'"
-            :disabled="isClaiming"
-            @click="claimNft"
-          />
-        </div>
+      <!-- Loader -->
+      <loader v-if="isLoading" class="nfts-page__loader" />
 
-        <loader v-if="isClaiming" class="nfts-page-claim-modal__loader" />
-      </div>
-    </teleport-modal>
+      <!-- Error -->
+      <section v-if="!isLoading && isError" class="state state--error">
+        <h3>{{ t('nfts.error.title') }}</h3>
+        <p>{{ t('nfts.error.text') }}</p>
+      </section>
 
-    <template v-if="isLoaded">
-      <template v-if="isLoadFailed">
-        <error-message
-          class="app__page-error-message"
-          :message="$t('nfts-page.loading-error-msg')"
-        />
-      </template>
-      <template v-else-if="filteredNftList?.length">
-        <nfts-page-list :nfts="filteredNftList" />
-      </template>
-      <template v-else>
-        <no-data-message
-          class="app__page-no-data-message"
-          :message="$t('nfts-page.no-data-msg')"
-          :icon-name="$icons.noData"
-        />
-      </template>
-    </template>
-    <template v-else>
-      <loader class="app__page-loader" />
-    </template>
+      <!-- Empty -->
+      <section v-if="!isLoading && !isError && tokens.length === 0" class="state state--empty">
+        <h3>{{ t('nfts.empty.title') }}</h3>
+        <p>{{ t('nfts.empty.text') }}</p>
+      </section>
+
+      <!-- Grid -->
+      <section v-if="!isLoading && !isError && tokens.length > 0" class="grid">
+        <article v-for="tkn in tokens" :key="tkn.tokenId" class="card">
+          <div class="card__image-wrap">
+            <img
+              v-if="images[tkn.tokenId]"
+              :src="images[tkn.tokenId]"
+              :alt="`Token #${tkn.tokenId}`"
+              class="card__image"
+              loading="lazy"
+            />
+            <div v-else class="card__placeholder"></div>
+
+            <span class="badge" :class="`badge--p${tkn.points || 0}`">
+              {{ t('nfts.card.points', { n: tkn.points || 0 }) }}
+            </span>
+          </div>
+
+          <div class="card__meta">
+            <div class="card__row">
+              <span class="card__label">{{ t('nfts.card.tokenId') }}</span>
+              <span class="card__value">{{ tkn.tokenId }}</span>
+            </div>
+
+            <div class="card__links">
+              <a
+                v-if="tkn.uri"
+                :href="tkn.uri"
+                target="_blank"
+                rel="noopener"
+                class="link"
+              >
+                {{ t('nfts.card.metadata') }}
+              </a>
+
+              <a
+                :href="`${explorerBase}/token/${erc721Address}?a=${tkn.tokenId}`"
+                target="_blank"
+                rel="noopener"
+                class="link"
+              >
+                {{ t('nfts.card.explorer') }}
+              </a>
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <app-footer />
   </div>
 </template>
 
 <script lang="ts" setup>
-import NftsPageList from '@/pages/NftsPage/NftsPageList.vue'
-import NftsPageActions from '@/pages/NftsPage/NftsPageActions.vue'
-import {
-  NoDataMessage,
-  Loader,
-  ErrorMessage,
-  TeleportModal,
-  AppButton,
-} from '@/common'
+import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
+import AppNavbar from '@/common/AppNavbar.vue'
+import AppFooter from '@/common/AppFooter.vue'
+import Loader from '@/common/Loader.vue'
+import { useErc721 } from '@/composables/contracts/use-erc721'
+import { config } from '@/config'
 
-import { useErc721Store, useWeb3ProvidersStore } from '@/store'
-import { ErrorHandler } from '@/helpers'
-import { ref, computed } from 'vue'
-import { NftItem } from '@/types'
-import { utils } from 'ethers'
-import { InputField } from '@/fields'
+type Token = { tokenId: number, owner: `0x${string}`, uri?: string, points?: number }
 
-const { erc721 } = useErc721Store()
-const { provider } = useWeb3ProvidersStore()
+const { t } = useI18n({ useScope: 'global' })
+const { loadTokensOf, getMyAddress } = useErc721()
 
-const nftList = ref<NftItem[]>([])
-const search = ref('')
-const contractOwner = ref('')
-const isLoaded = ref(false)
-const isLoadFailed = ref(false)
-const isClaimModalOpen = ref(false)
-const claimCode = ref('')
-const isClaiming = ref(false)
-const publicKey = ref('')
-const claimCodeError = ref('')
+const isLoading = ref(false)
+const isError = ref(false)
+const myAddress = ref<`0x${string}` | ''>('')
+const tokens = ref<Token[]>([])
+const images = ref<Record<number, string>>({})
 
-const getPublicKey = async () => {
-  publicKey.value = provider.selectedAddress || ''
-}
+const erc721Address = config.ERC721_ADDRESS as string
 
-const filteredNftList = computed(() => {
-  return search.value
-    ? utils.isAddress(search.value)
-      ? nftList.value.filter(item => item.owner === search.value)
-      : []
-    : nftList.value.filter(item => item.owner === provider.selectedAddress)
-})
+const chainId = Number(config.SUPPORTED_CHAIN_ID || 137)
+const explorerBase = computed(() =>
+  chainId === 137
+    ? 'https://polygonscan.com'
+    : chainId === 80001
+      ? 'https://mumbai.polygonscan.com'
+      : 'https://polygonscan.com'
+)
 
-const loadNftData = async () => {
-  isLoaded.value = false
-  isLoadFailed.value = false
+const totalPoints = computed(() =>
+  tokens.value.reduce((sum, t) => sum + (t.points || 0), 0)
+)
+
+const lastTokenId = computed(() =>
+  tokens.value.length ? Math.max(...tokens.value.map(t => t.tokenId)) : null
+)
+
+async function fetchTokenImage (tokenId: number, uri?: string) {
+  if (!uri) return
   try {
-    // die "contractOwner" Variable hieß bei dir so, ist aber deine eigene Adresse
-    contractOwner.value = (await erc721.getMyAddress()) || ''
-
-    const totalSupply = await erc721.getTotalSupply() // => number
-    const nftListId = await Promise.all(
-      Array.from({ length: totalSupply }, async (_, index) => {
-        const id = await erc721.getTokenByIndex(index) // globaler Index
-        return id.toString()
-      }),
-    )
-
-    const tokenOwners = await Promise.all(
-      nftListId.map(id => erc721.getOwnerOf(id)),
-    )
-
-    const tokensURIs = await Promise.all(
-      nftListId.map(id => erc721.getTokenURI(id)),
-    )
-
-    nftList.value = tokensURIs.map((uri, index) => ({
-      link: uri,
-      title: nftListId[index],
-      owner: tokenOwners[index],
-    }))
-  } catch (error) {
-    ErrorHandler.process(error)
-    isLoadFailed.value = true
-  }
-  isLoaded.value = true
+    const res = await fetch(uri, { cache: 'no-store' })
+    if (!res.ok) return
+    const meta = await res.json()
+    const img = meta?.image as string | undefined
+    if (img) images.value[tokenId] = img
+  } catch { /* ignore */ }
 }
 
-const filterNftList = async (address: string) => {
-  search.value = address
-  await loadNftData()
-}
-
-const openClaimModal = () => {
-  isClaimModalOpen.value = true
-}
-
-const closeClaimModal = () => {
-  if (!isClaiming.value) isClaimModalOpen.value = false
-}
-
-const claimNft = async () => {
-  if (!claimCode.value) {
-    claimCodeError.value = 'Bitte gib einen gültigen Code ein.'
-    return
-  }
-
-  claimCodeError.value = ''
-  isClaiming.value = true
-
+async function loadMyNfts () {
+  isLoading.value = true
+  isError.value = false
   try {
-    await getPublicKey()
-
-    if (!publicKey.value) {
-      alert('Fehler: Der Public Key konnte nicht abgerufen werden.')
-      isClaiming.value = false
-      return
-    }
-
-    const queryParams = new URLSearchParams({
-      publicKey: publicKey.value,
-      surveyId: claimCode.value,
-      participantPoints: '1',
-    })
-
-    const response = await fetch(
-      `https://binex-backend-321237844397.europe-west3.run.app/api/mint-nft?${queryParams.toString()}`,
-      {
-        method: 'POST',
-      },
-    )
-
-    if (response.ok) {
-      alert('NFT erfolgreich gesichert!')
-      closeClaimModal() // Popup schließen
-      await loadNftData() // NFT-Liste neu laden
-    } else {
-      const errorMessage = await response.text()
-      console.error('Server-Antwort:', errorMessage)
-      alert(`Fehler beim Minten des NFTs: ${errorMessage}`)
-    }
-  } catch (error) {
-    console.error('Fehler beim Claim:', error)
-    alert('Ein unerwarteter Fehler ist aufgetreten.')
+    myAddress.value = (await getMyAddress()) || ''
+    const list = await loadTokensOf()
+    tokens.value = list
+    // metadaten-bilder lazy nachladen
+    await Promise.all(list.map(t => fetchTokenImage(t.tokenId, t.uri)))
+  } catch (e) {
+    console.error(e)
+    isError.value = true
   }
-  isClaiming.value = false
+  isLoading.value = false
 }
 
-loadNftData()
+onMounted(loadMyNfts)
 </script>
 
 <style lang="scss" scoped>
+/* Seite: volle Höhe + Spaltenlayout: Header / Main / Footer */
 .nfts-page {
+  min-height: 100vh;           /* oder 100svh für Mobile-Safe */
   display: flex;
   flex-direction: column;
-  gap: toRem(30);
   width: 100%;
-  max-width: 1300px;
-  margin: 0 auto;
 }
 
-.nfts-page-claim {
-  display: flex;
-  justify-content: center;
-  margin: toRem(20) 0;
+/* Main nimmt restlichen Platz ein und ist zentriert */
+.nfts-page__main {
+  flex: 1;                     /* <-- wichtig: drückt Footer nach unten */
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;              /* zentriert */
+  padding: 24px 16px 32px 16px;
 }
 
-.nfts-page-claim__content {
+/* Headline + Refresh */
+.nfts-page__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
-  max-width: 1400px;
-  gap: toRem(20);
-  padding: 0 var(--app-padding-right) 0 var(--app-padding-left);
+  gap: 12px;
+  margin-bottom: 16px;
 
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: stretch;
+  h1 { font-size: 1.75rem; margin: 0 }
+  .btn {
+    padding: 10px 14px;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+    background: #fff;
+    font-weight: 700;
+    cursor: pointer;
   }
 }
 
-.nfts-page-claim__title {
-  font-size: toRem(32);
-  font-weight: bold;
-  color: var(--text-primary-main);
-  flex: 1;
+/* Summary Cards */
+.summary { margin-bottom: 16px }
+.summary__card {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 14px;
+}
+.summary__item { text-align: center }
+.summary__label { color: #666; font-size: .9rem }
+.summary__value { font-size: 1.4rem; font-weight: 800 }
 
-  @media (max-width: 768px) {
-    margin-bottom: toRem(10);
-    text-align: center;
-  }
+/* Loader / States */
+.nfts-page__loader { margin: 24px 0 }
+.state { text-align: center; padding: 28px 16px }
+.state--error h3 { color: #b00020 }
+.state--empty h3 { color: #333 }
+
+/* Grid der Karten */
+.grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.nfts-page-claim__button {
-  @media (max-width: 768px) {
-    width: 100%;
-  }
+/* Karte */
+.card {
+  border: 1px solid #eee;
+  border-radius: 12px;
+  background: #fff;
+  overflow: hidden;
+}
+.card__image-wrap { position: relative; aspect-ratio: 16 / 10; background: #fafafa }
+.card__image { width: 100%; height: 100%; object-fit: cover; display: block }
+.card__placeholder {
+  width: 100%; height: 100%;
+  background: repeating-linear-gradient(45deg,#f6f6f6,#f6f6f6 10px,#f0f0f0 10px,#f0f0f0 20px);
 }
 
-.nfts-page-claim-modal__form {
-  padding: toRem(32) toRem(130);
-  border-radius: toRem(15);
-  box-shadow: var(--shadow-primary);
-  background: var(--app-bg-tertiary);
-  max-width: 350px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+/* Punkte-Badge */
+.badge {
+  position: absolute; bottom: 8px; left: 8px;
+  padding: 6px 10px; border-radius: 999px;
+  font-size: .8rem; font-weight: 800; color: #fff; background: #333;
 }
+.badge--p1 { background: #64748b }
+.badge--p2 { background: #10b981 }
+.badge--p3 { background: #2563eb }
 
-.nfts-page-claim-modal__title {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: toRem(24);
-  font-size: toRem(40);
-  font-weight: 500;
-}
+/* Meta */
+.card__meta { padding: 12px 14px }
+.card__row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px }
+.card__label { color: #666; font-size: .9rem }
+.card__value { font-weight: 800 }
 
-.nfts-page-claim-modal__input-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: toRem(10);
-  margin-bottom: toRem(24);
-}
+/* Links */
+.card__links { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 6px }
+.link { color: #2563eb; text-decoration: none; font-weight: 700 }
+.link:hover { text-decoration: underline }
 
-.nfts-page-claim-modal__actions {
-  display: flex;
-  justify-content: center;
-}
-
-.nfts-page-claim-modal__loader {
-  margin-top: toRem(20);
+/* Responsive */
+@media (max-width: 530px) {
+  .summary__card { grid-template-columns: 1fr }
+  .grid { grid-template-columns: 1fr }
 }
 </style>

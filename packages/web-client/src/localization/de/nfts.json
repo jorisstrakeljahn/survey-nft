@@ -1,0 +1,27 @@
+{
+  "nfts": {
+    "title": "Meine Punkte",
+    "summary": {
+      "points": "Gesamtpunkte",
+      "nfts": "Anzahl NFTs",
+      "lastActivity": "Letzte Aktivität"
+    },
+    "actions": {
+      "refresh": "Aktualisieren"
+    },
+    "empty": {
+      "title": "Noch keine Punkte",
+      "text": "Du hast bisher keine VPP-NFTs. Nimm an einer Studie oder Umfrage teil, um Punkte zu erhalten."
+    },
+    "error": {
+      "title": "Konnte Daten nicht laden",
+      "text": "Bitte später erneut versuchen oder neu laden."
+    },
+    "card": {
+      "points": "{n} Punkte",
+      "tokenId": "Token-ID",
+      "metadata": "Metadaten",
+      "explorer": "Explorer"
+    }
+  }
+}

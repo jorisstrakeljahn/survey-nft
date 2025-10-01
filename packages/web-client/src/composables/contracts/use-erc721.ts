@@ -15,6 +15,8 @@ const SURVEY_NFT_ABI = [
   'function tokenOfOwnerByIndex(address owner, uint256 index) view returns (uint256)',
   'function tokenURI(uint256 tokenId) view returns (string)',
   'function tokenByIndex(uint256 index) view returns (uint256)',
+
+  // AccessControl
   'function getRoleAdmin(bytes32 role) view returns (bytes32)',
   'function grantRole(bytes32 role, address account)',
   'function revokeRole(bytes32 role, address account)',
@@ -31,9 +33,10 @@ const SURVEY_NFT_ABI = [
   'function DELETER_ROLE() view returns (bytes32)',
   'function hasRole(bytes32 role, address account) view returns (bool)',
 
-  // optional
+  // optional / EIP-2771
   'function isTrustedForwarder(address forwarder) view returns (bool)',
-  // optional (nur falls Ownable, wird via safeCall benutzt)
+
+  // optional (falls Ownable; wird via safeCall benutzt)
   'function owner() view returns (address)',
 ] as const
 
@@ -53,9 +56,34 @@ type Eip1193Provider = {
   on?: (...args: unknown[]) => void
 }
 
-/**
- * Provider/Signer/Contract (ethers v5)
- */
+/* -------------------------------------------------------- */
+/* Helpers                                                  */
+/* -------------------------------------------------------- */
+
+/** Zahlensicher: wandelt bigint | BigNumber | number | string → number */
+function toNum(x: unknown): number {
+  if (typeof x === 'bigint') return Number(x)
+  // v5 BigNumber-Case
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if (x && typeof (x as any).toNumber === 'function') return (x as any).toNumber()
+  if (typeof x === 'number') return x
+  if (typeof x === 'string') return Number(x)
+  return Number(x as any)
+}
+
+/** Safe-Wrapper: gibt undefined statt Fehler zurück */
+async function safeCall<T>(fn: () => Promise<T>): Promise<T | undefined> {
+  try {
+    return await fn()
+  } catch {
+    return undefined
+  }
+}
+
+/* -------------------------------------------------------- */
+/* Provider/Signer/Contract (ethers v5 kompatibel)          */
+/* -------------------------------------------------------- */
+
 async function getWeb3Provider(): Promise<ethers.providers.Web3Provider> {
   const w = window as unknown as { ethereum?: Eip1193Provider }
   const eth = w.ethereum
@@ -64,9 +92,7 @@ async function getWeb3Provider(): Promise<ethers.providers.Web3Provider> {
   return new ethers.providers.Web3Provider(eth as unknown as any, 'any')
 }
 
-/**
- * Netz prüfen/wechseln (ethers v5)
- */
+/** Netz prüfen/wechseln (v5) */
 async function ensureChain(
   provider: ethers.providers.Web3Provider,
   supportedChainId?: number | string,
@@ -82,17 +108,12 @@ async function ensureChain(
     try {
       await provider.send('wallet_switchEthereumChain', [{ chainId: wantHex }])
     } catch {
-      throw new Error(
-        'Falsches Netzwerk. Bitte auf die unterstützte Chain wechseln.',
-      )
+      throw new Error('Falsches Netzwerk. Bitte auf die unterstützte Chain wechseln.')
     }
   }
 }
 
-/**
- * Signer + Contract laden
- * addressParam: überschreibt config.ERC721_ADDRESS (optional)
- */
+/** Signer + Contract laden (optional andere Contract-Adresse) */
 async function getSignerAndContract(addressParam?: string) {
   const provider = await getWeb3Provider()
   await provider.send('eth_requestAccounts', [])
@@ -106,39 +127,41 @@ async function getSignerAndContract(addressParam?: string) {
 
   const contract = new ethers.Contract(nftAddress, SURVEY_NFT_ABI, signer)
   const user = (await signer.getAddress()) as HexAddress
-
   return { provider, signer, contract, user }
 }
 
-/**
- * Öffentliches API
- * useErc721(address?) -> alle Methoden auf dein SurveyNFT
- */
+/* -------------------------------------------------------- */
+/* Öffentliches API                                         */
+/* -------------------------------------------------------- */
+
 export function useErc721(overrideAddress?: string) {
+  /** Basisinfos */
   async function getInfo() {
     const { contract } = await getSignerAndContract(overrideAddress)
-    const [name, symbol, total] = await Promise.all([
+    const [name, symbol, totalRaw] = await Promise.all([
       contract.name(),
       contract.symbol(),
       contract.totalSupply(),
     ])
-    return { name, symbol, totalSupply: Number(total) }
+    return { name, symbol, totalSupply: toNum(totalRaw) }
   }
 
+  /** Token-IDs eines Owners */
   async function getTokenIdsOf(owner?: HexAddress) {
     const { contract, user } = await getSignerAndContract(overrideAddress)
     const target = owner ?? user
-    const bal: ethers.BigNumber = await contract.balanceOf(target)
-    const count = bal.toNumber()
+    const balRaw = await contract.balanceOf(target)
+    const count = toNum(balRaw)
 
     const ids: number[] = []
     for (let i = 0; i < count; i++) {
-      const id: ethers.BigNumber = await contract.tokenOfOwnerByIndex(target, i)
-      ids.push(id.toNumber())
+      const idRaw = await contract.tokenOfOwnerByIndex(target, i)
+      ids.push(toNum(idRaw))
     }
     return ids
   }
 
+  /** Tokens mit URI/Punkten laden */
   async function loadTokensOf(owner?: HexAddress): Promise<LoadedToken[]> {
     const { contract, user } = await getSignerAndContract(overrideAddress)
     const target = owner ?? user
@@ -146,31 +169,30 @@ export function useErc721(overrideAddress?: string) {
     const out: LoadedToken[] = []
 
     for (const id of ids) {
-      const [uri, pts, own] = await Promise.all([
+      const [uri, ptsRaw, own] = await Promise.all([
         safeCall<string>(() => contract.tokenURI(id)),
-        safeCall<number>(async () => {
-          const x: ethers.BigNumber = await contract.tokenPoints(id)
-          return x.toNumber()
-        }),
+        safeCall<unknown>(() => contract.tokenPoints(id)), // uint8 (v6 -> bigint, v5 -> BigNumber)
         contract.ownerOf(id),
       ])
+
       out.push({
         tokenId: id,
         owner: own as HexAddress,
         uri: uri ?? undefined,
-        points: typeof pts === 'number' ? pts : undefined,
+        points: ptsRaw != null ? toNum(ptsRaw) : undefined,
       })
     }
     return out
   }
 
+  /** Doppel-Claim verhindern */
   async function isAlreadyMinted(surveyId: Bigish, owner?: HexAddress) {
     const { contract, user } = await getSignerAndContract(overrideAddress)
     const addr = owner ?? user
-    const res: boolean = await contract.minted(addr, surveyId)
-    return res
+    return await contract.minted(addr, surveyId)
   }
 
+  /** Claim (Frontend-Fallback; dein Live-Claim kommt am Ende der Umfrage) */
   async function claim(surveyId: Bigish, points: 1 | 2 | 3) {
     const { contract, user } = await getSignerAndContract(overrideAddress)
     const already: boolean = await contract.minted(user, surveyId)
@@ -179,6 +201,7 @@ export function useErc721(overrideAddress?: string) {
     return await tx.wait()
   }
 
+  /** Eigenes NFT burnen (nur Owner) */
   async function burnOwn(tokenId: Bigish) {
     const { contract, user } = await getSignerAndContract(overrideAddress)
     const owner: HexAddress = await contract.ownerOf(tokenId)
@@ -189,60 +212,64 @@ export function useErc721(overrideAddress?: string) {
     return await tx.wait()
   }
 
+  /** Global: tokenByIndex (z. B. Explorer/Indexer-Light) */
   async function tokenByIndexGlobal(index: number) {
     const { contract } = await getSignerAndContract(overrideAddress)
-    const id: ethers.BigNumber = await contract.tokenByIndex(index)
-    return id.toNumber()
+    const idRaw = await contract.tokenByIndex(index)
+    return toNum(idRaw)
   }
 
+  /** Admin: beliebiges Token burnen (DELETER_ROLE) */
   async function burnAny(tokenId: Bigish) {
     const { contract } = await getSignerAndContract(overrideAddress)
     const tx = await contract.burnAny(tokenId)
     return await tx.wait()
   }
 
+  /** Admin: alle Tokens einer Wallet burnen (DELETER_ROLE) */
   async function burnAllFor(holder: HexAddress, maxCount = 50) {
     const { contract } = await getSignerAndContract(overrideAddress)
     const tx = await contract.burnAllFor(holder, maxCount)
     return await tx.wait()
   }
 
+  /** Rollenprüfung (DELETER_ROLE für addr oder aktuellen User) */
   async function hasDeleterRole(addr?: HexAddress) {
     const { contract, user } = await getSignerAndContract(overrideAddress)
     const role: string = await contract.DELETER_ROLE()
     const who = addr ?? user
-    const res: boolean = await contract.hasRole(role, who)
-    return res
+    return await contract.hasRole(role, who)
   }
 
+  /** EIP-2771 Forwarder-Vertrauen (optional) */
   async function isForwarderTrusted(forwarder?: HexAddress) {
     const { contract } = await getSignerAndContract(overrideAddress)
     const fwd =
-      forwarder ||
-      (import.meta.env.VITE_FORWARDER_ADDR as HexAddress) ||
-      undefined
+      forwarder || (import.meta.env.VITE_FORWARDER_ADDR as HexAddress) || undefined
     if (!fwd) throw new Error('Kein Forwarder gesetzt.')
-    const res: boolean = await contract.isTrustedForwarder(fwd)
-    return res
+    return await contract.isTrustedForwarder(fwd)
   }
 
+  /** Eigene Wallet-Adresse */
   async function getMyAddress(): Promise<HexAddress> {
     const { signer } = await getSignerAndContract(overrideAddress)
     return (await signer.getAddress()) as HexAddress
   }
 
+  /** TokenURI lesen */
   async function getTokenURI(tokenId: Bigish) {
     const { contract } = await getSignerAndContract(overrideAddress)
     return await contract.tokenURI(tokenId)
   }
 
+  /** Punkte je Token (robust) */
   async function getTokenPoints(tokenId: Bigish) {
     const { contract } = await getSignerAndContract(overrideAddress)
-    const p: ethers.BigNumber = await contract.tokenPoints(tokenId)
-    return p.toNumber()
+    const p = await contract.tokenPoints(tokenId) // v6: bigint, v5: BigNumber
+    return toNum(p)
   }
 
-  // --------- Owner/Adapter ---------
+  /* ---------- Owner-Adapter ---------- */
 
   async function getOwnerOf(tokenId: Bigish) {
     const { contract } = await getSignerAndContract(overrideAddress)
@@ -264,7 +291,7 @@ export function useErc721(overrideAddress?: string) {
     return addr as HexAddress | undefined
   }
 
-  // --------- weitere Adapter/Legacy-Namen ---------
+  /* ---------- Legacy/Convenience ---------- */
 
   async function getTotalSupply() {
     const i = await getInfo()
@@ -282,7 +309,7 @@ export function useErc721(overrideAddress?: string) {
       getTokenURI(tokenId),
       getTokenPoints(tokenId),
     ])
-    return { tokenId: Number(tokenId), owner, uri, points }
+    return { tokenId: Number(tokenId), owner: owner as HexAddress, uri, points }
   }
 
   async function listNfts(owner?: HexAddress) {
@@ -317,14 +344,15 @@ export function useErc721(overrideAddress?: string) {
     return await tokenByIndexGlobal(index)
   }
 
-  // Hole das Bytes32 des Deleter-Roles (du hast DELETER_ROLE() bereits)
-  async function getDeleterRoleId () {
+  /* ---------- Rollen-Helpers ---------- */
+
+  async function getDeleterRoleId() {
     const { contract } = await getSignerAndContract(overrideAddress)
     return await contract.DELETER_ROLE()
   }
 
-// Prüfen, ob verbundene Wallet Admin dieses Roles ist
-  async function getDeleterRoleAdmin (): Promise<boolean> {
+  // Prüfen, ob verbundene Wallet Admin dieses Roles ist
+  async function getDeleterRoleAdmin(): Promise<boolean> {
     const { contract, user } = await getSignerAndContract(overrideAddress)
     const role = await contract.DELETER_ROLE()
     const adminRole = await contract.getRoleAdmin(role)
@@ -332,19 +360,21 @@ export function useErc721(overrideAddress?: string) {
     return !!has
   }
 
-  async function grantDeleterRole (addr: `0x${string}`) {
+  async function grantDeleterRole(addr: `0x${string}`) {
     const { contract } = await getSignerAndContract(overrideAddress)
     const role = await contract.DELETER_ROLE()
     const tx = await contract.grantRole(role, addr)
     return await tx.wait()
   }
 
-  async function revokeDeleterRole (addr: `0x${string}`) {
+  async function revokeDeleterRole(addr: `0x${string}`) {
     const { contract } = await getSignerAndContract(overrideAddress)
     const role = await contract.DELETER_ROLE()
     const tx = await contract.revokeRole(role, addr)
     return await tx.wait()
   }
+
+  /* ---------- Export ---------- */
 
   return {
     // moderne Methoden
@@ -387,14 +417,6 @@ export function useErc721(overrideAddress?: string) {
     getDeleterRoleAdmin,
     grantDeleterRole,
     revokeDeleterRole,
-  }
-}
-
-/** Safe-Wrapper: gibt undefined statt Fehler zurück */
-async function safeCall<T>(fn: () => Promise<T>): Promise<T | undefined> {
-  try {
-    return await fn()
-  } catch {
-    return undefined
+    getDeleterRoleId,
   }
 }

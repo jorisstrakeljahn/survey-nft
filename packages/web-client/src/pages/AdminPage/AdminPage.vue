@@ -21,13 +21,6 @@
         </div>
       </header>
 
-      <div class="help">
-        <span v-if="isDeleter">{{ t('admin.badges.deleter') }}</span>
-        <span v-else>{{ t('admin.badges.noDeleter') }}</span>
-        <span v-if="canManage">{{ t('admin.badges.roleAdmin') }}</span>
-        <span v-else>{{ t('admin.badges.noRoleAdmin') }}</span>
-      </div>
-
       <!-- Wallet Suche -->
       <section class="box">
         <h2>{{ t('admin.search.title') }}</h2>

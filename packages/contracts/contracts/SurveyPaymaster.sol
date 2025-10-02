@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
 import "@opengsn/contracts/src/BasePaymaster.sol";
@@ -13,22 +14,21 @@ interface ISurveyNFT {
 contract SurveyPaymaster is BasePaymaster {
     // Ziel-Contract (SurveyNFT)
     address public target;
-    // RelayHub-Referenz (v2)
-    IRelayHub public hub;
 
     // Rollen-Hashes (müssen mit NFT übereinstimmen)
     bytes32 public constant DELETER_ROLE = keccak256("DELETER_ROLE");
     bytes32 public constant DEFAULT_ADMIN_ROLE = 0x00;
 
-    // Funktions-Selectoren (4-Byte)
+    // Funktions-Selectoren
     bytes4 private constant SEL_CLAIM        = bytes4(keccak256("claimNFT(uint256,uint8)"));
     bytes4 private constant SEL_BURN_ANY     = bytes4(keccak256("burnAny(uint256)"));
     bytes4 private constant SEL_BURN_ALL     = bytes4(keccak256("burnAllFor(address,uint256)"));
     bytes4 private constant SEL_BURN_OWNER   = bytes4(keccak256("burn(uint256)"));                  // optional
     bytes4 private constant SEL_GRANT_ROLE   = bytes4(keccak256("grantRole(bytes32,address)"));
     bytes4 private constant SEL_REVOKE_ROLE  = bytes4(keccak256("revokeRole(bytes32,address)"));
-    // (Optional) bytes4 private constant SEL_ADMIN_REPOINT = bytes4(keccak256("adminRepoint(uint256)"));
-    // (Optional) bytes4 private constant SEL_SET_BASE_URI  = bytes4(keccak256("setBaseTokenURI(string)"));
+    // // Optional:
+    // bytes4 private constant SEL_ADMIN_REPOINT = bytes4(keccak256("adminRepoint(uint256)"));
+    // bytes4 private constant SEL_SET_BASE_URI  = bytes4(keccak256("setBaseTokenURI(string)"));
 
     constructor(
         address relayHub_,
@@ -38,7 +38,6 @@ contract SurveyPaymaster is BasePaymaster {
         require(relayHub_ != address(0) && forwarder_ != address(0) && targetContract_ != address(0), "zero addr");
         setRelayHub(IRelayHub(relayHub_));
         setTrustedForwarder(forwarder_);
-        hub    = IRelayHub(relayHub_);
         target = targetContract_;
     }
 
@@ -51,7 +50,6 @@ contract SurveyPaymaster is BasePaymaster {
 
     function setRelayHubAddress(address relayHub_) external onlyOwner {
         setRelayHub(IRelayHub(relayHub_));
-        hub = IRelayHub(relayHub_);
     }
 
     function setForwarder(address forwarder_) external onlyOwner {
@@ -60,15 +58,11 @@ contract SurveyPaymaster is BasePaymaster {
 
     /* ====================== GSN v2 API ====================== */
 
-    // Vom Client beim init() aufgerufen
-    function versionPaymaster() external pure override returns (string memory) {
+    function versionPaymaster() public view override returns (string memory) {
         return "2.2.6+opengsn.survey-paymaster";
     }
 
-    // >>> WICHTIG: v2-Client erwartet diesen Getter
-    function getHubAddr() external view override returns (address) {
-        return address(hub);
-    }
+    // getHubAddr() NICHT überschreiben – kommt aus BasePaymaster (non-virtual)
 
     function preRelayedCall(
         GsnTypes.RelayRequest calldata req,
@@ -80,22 +74,21 @@ contract SurveyPaymaster is BasePaymaster {
     override
     returns (bytes memory context, bool rejectOnRecipientRevert)
     {
-        require(msg.sender == address(hub), "only RelayHub");
+        require(msg.sender == getHubAddr(), "only RelayHub");
         require(req.request.to == target,   "unauthorized target");
 
-        // Funktions-Selector
+        // Funktions-Selector aus calldata
         bytes4 sel;
         bytes calldata cd = req.request.data;
         assembly { sel := calldataload(cd.offset) }
 
         address from = req.request.from;
+        ISurveyNFT nft = ISurveyNFT(target);
 
-        // 1) claimNFT(...) → erlauben (gaslos für alle)
+        // 1) claimNFT(...) → gaslos für alle
         if (sel == SEL_CLAIM) {
             return ("", false);
         }
-
-        ISurveyNFT nft = ISurveyNFT(target);
 
         // 2) burnAny / burnAllFor → nur mit DELETER_ROLE
         if (sel == SEL_BURN_ANY || sel == SEL_BURN_ALL) {
@@ -105,12 +98,12 @@ contract SurveyPaymaster is BasePaymaster {
 
         // 3) (optional) burn(owner) → nur wenn from == ownerOf(tokenId)
         if (sel == SEL_BURN_OWNER) {
-            uint256 tokenId = _decodeUint256Arg(cd, 0); // burn(tokenId)
+            uint256 tokenId = _decodeUint256Arg(cd, 0);
             require(_tryOwnerOf(nft, tokenId) == from, "not token owner");
             return ("", false);
         }
 
-        // 4) grantRole/revokeRole → nur für Admin der DELETER_ROLE und nur für genau diese Rolle
+        // 4) grantRole/revokeRole → nur Role-Admin der DELETER_ROLE und nur für DELETER_ROLE
         if (sel == SEL_GRANT_ROLE || sel == SEL_REVOKE_ROLE) {
             (bytes32 roleParam, /*address account*/) = _decodeGrantRevoke(cd);
             require(roleParam == DELETER_ROLE, "role not allowed");
@@ -133,24 +126,24 @@ contract SurveyPaymaster is BasePaymaster {
         uint256 /*gasUseWithoutPost*/,
         GsnTypes.RelayData calldata /*relayData*/
     ) external override {
-        require(msg.sender == address(hub), "only RelayHub");
+        require(msg.sender == getHubAddr(), "only RelayHub");
     }
 
     /* ====================== Funds ====================== */
 
-    // MATIC ins RelayHub einzahlen (nicht via GSN, da value benötigt)
+    // MATIC ins RelayHub einzahlen (Value → nicht via GSN)
     function deposit() external payable {
-        hub.depositFor{value: msg.value}(address(this));
+        IRelayHub(getHubAddr()).depositFor{value: msg.value}(address(this));
     }
 
     function withdraw(address payable to, uint256 amount) external onlyOwner {
-        hub.withdraw(amount, to);
+        IRelayHub(getHubAddr()).withdraw(amount, to);
     }
 
     function withdrawAll(address payable to) external onlyOwner {
-        uint256 bal = hub.balanceOf(address(this));
+        uint256 bal = IRelayHub(getHubAddr()).balanceOf(address(this));
         if (bal > 0) {
-            hub.withdraw(bal, to);
+            IRelayHub(getHubAddr()).withdraw(bal, to);
         }
     }
 
@@ -166,11 +159,10 @@ contract SurveyPaymaster is BasePaymaster {
     }
 
     function _tryOwnerOf(ISurveyNFT nft, uint256 tokenId) internal view returns (address) {
-        // ownerOf revertet bei nicht-existenten Tokens → try/catch pattern wäre extern; hier reicht Annahme: UI zeigt nur existierende
         return nft.ownerOf(tokenId);
     }
 
-    // decode uint256 argument at index i (0-based) after 4-byte selector
+    // decode uint256 arg at index i (0-based) after 4-byte selector
     function _decodeUint256Arg(bytes calldata data, uint256 index) internal pure returns (uint256 v) {
         uint256 offset = 4 + 32 * index;
         require(data.length >= offset + 32, "bad calldata len");
@@ -182,7 +174,7 @@ contract SurveyPaymaster is BasePaymaster {
         require(data.length >= 4 + 64, "bad calldata len");
         assembly {
             role    := calldataload(add(data.offset, 4))
-            account := shr(96, calldataload(add(data.offset, 36))) // address is right-padded in 32 bytes
+            account := shr(96, calldataload(add(data.offset, 36))) // right-padded address
         }
     }
 }

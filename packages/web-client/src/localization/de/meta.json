@@ -1,0 +1,33 @@
+{
+  "meta": {
+    "titleFallback": "Token #{id}",
+    "a11y": {
+      "close": "Schließen"
+    },
+    "noImage": "Kein Bild",
+    "quick": {
+      "token": "Token",
+      "owner": "Inhaber",
+      "points": "Punkte"
+    },
+    "attrs": {
+      "title": "Attribute",
+      "traitFallback": "Eigenschaft"
+    },
+    "links": {
+      "tokenUri": "tokenURI",
+      "explorer": "Explorer",
+      "image": "Bild"
+    },
+    "raw": {
+      "title": "Rohdaten (JSON)"
+    },
+    "footer": {
+      "ok": "OK"
+    },
+    "state": {
+      "loading": "Laden…",
+      "errorFetch": "Metadaten konnten nicht geladen werden: {msg}"
+    }
+  }
+}

@@ -8,6 +8,7 @@ import enHeader from '@/localization/en/header.json'
 import enNfts from '@/localization/en/nfts.json'
 import enNft from '@/localization/en/nft.json'
 import enAdmin from '@/localization/en/admin.json'
+import enMeta from '@/localization/en/meta.json'
 
 // DE
 import deHome from '@/localization/de/home.json'
@@ -16,6 +17,7 @@ import deHeader from '@/localization/de/header.json'
 import deNfts from '@/localization/de/nfts.json'
 import deNft from '@/localization/de/nft.json'
 import deAdmin from '@/localization/de/admin.json'
+import deMeta from '@/localization/de/meta.json'
 
 export const i18n = createI18n({
   legacy: false,
@@ -23,8 +25,8 @@ export const i18n = createI18n({
   fallbackLocale: 'en',
   globalInjection: true,
   messages: {
-    de: { ...deHome, ...deFooter, ...deHeader, ...deNfts, ...deNft, ...deAdmin },
-    en: { ...enHome, ...enFooter, ...enHeader, ...enNfts, ...enNft, ...enAdmin },
+    de: { ...deHome, ...deFooter, ...deHeader, ...deNfts, ...deNft, ...deAdmin, ...deMeta },
+    en: { ...enHome, ...enFooter, ...enHeader, ...enNfts, ...enNft, ...enAdmin, ...enMeta },
   },
 })
 

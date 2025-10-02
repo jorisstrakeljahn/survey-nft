@@ -122,20 +122,16 @@
           </div>
 
           <div class="trow" v-for="tkn in tokens" :key="tkn.tokenId">
-            <div class="cell">#{{ tkn.tokenId }}</div>
+            <div class="cell">{{ tkn.tokenId }}</div>
             <div class="cell">{{ tkn.points ?? 0 }}</div>
             <div class="cell cell--links">
-              <!-- NEU: Details öffnet Popup -->
-              <button class="link" @click="openMeta(tkn)">{{ t('admin.table.metadata') }}</button>
-              <!-- Explorer-Link bleibt -->
-              <a
-                class="link"
-                :href="`${explorerBase}/token/${erc721Address}?a=${tkn.tokenId}`"
-                target="_blank"
-                rel="noopener"
-              >
+              <!-- Metadaten & Explorer im gleichen Stil -->
+              <button class="link-btn" @click="openMeta(tkn)">
+                {{ t('admin.table.metadata') }}
+              </button>
+              <button class="link-btn" @click="openExplorer(tkn.tokenId)">
                 {{ t('admin.table.explorer') }}
-              </a>
+              </button>
             </div>
             <div class="cell">
               <button
@@ -150,7 +146,7 @@
         </div>
       </section>
 
-      <!-- NEU: Metadata-Modal -->
+      <!-- Metadata-Modal -->
       <nft-metadata-modal
         v-if="showMeta && metaToken"
         :open="showMeta"
@@ -162,7 +158,6 @@
         :contract-address="erc721Address"
         :explorer-base="explorerBase"
       />
-
     </main>
 
     <app-footer />
@@ -232,14 +227,16 @@ const showMeta = ref(false)
 const metaToken = ref<Token | null>(null)
 
 async function openMeta (tkn: Token) {
-  if (!tkn.uri) {
-    tkn.uri = await getTokenURI(tkn.tokenId)
-  }
-  if (tkn.points == null) {
-    tkn.points = await getTokenPoints(tkn.tokenId)
-  }
+  if (!tkn.uri) tkn.uri = await getTokenURI(tkn.tokenId)
+  if (tkn.points == null) tkn.points = await getTokenPoints(tkn.tokenId)
   metaToken.value = tkn
   showMeta.value = true
+}
+
+/** Explorer in neuem Tab (identischer Stil wie Metadaten) */
+function openExplorer (tokenId: number) {
+  const url = `${explorerBase.value}/token/${erc721Address}?a=${tokenId}`
+  window.open(url, '_blank', 'noopener')
 }
 
 /** Chunksize intern, UI zeigt nur „Alles löschen“ */
@@ -544,8 +541,24 @@ onMounted(() => { void initMyRole() })
 }
 .trow { padding: 8px 0; border-bottom: 1px solid #f2f2f2 }
 .cell--links { display: flex; gap: 10px; flex-wrap: wrap }
-.link { color: #2563eb; text-decoration: none; font-weight: 700 }
-.link:hover { text-decoration: underline }
+
+/* link & link-btn Styles (für einheitliche Optik) */
+.link {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 700;
+}
+.link:hover { text-decoration: underline; }
+
+.link-btn {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  color: #2563eb;
+}
+.link-btn:hover { text-decoration: underline; }
 
 /* Loader / Error */
 .state { text-align: center; padding: 28px 16px }

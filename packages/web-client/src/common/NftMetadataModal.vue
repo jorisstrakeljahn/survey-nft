@@ -4,48 +4,60 @@
       <div class="meta-modal">
         <header class="meta-header">
           <h3 class="meta-title">
-            {{ meta?.name ?? `Token #${tokenId}` }}
+            {{ meta?.name ?? t('meta.titleFallback', { id: tokenId }) }}
           </h3>
-          <button class="meta-close" @click="emitClose" aria-label="Close">×</button>
+          <button
+            class="meta-close"
+            @click="emitClose"
+            :aria-label="t('meta.a11y.close')"
+            title="Close"
+          >
+            ×
+          </button>
         </header>
 
         <section class="meta-body">
+          <!-- left: image + quick facts -->
           <div class="meta-left">
             <div class="media-wrap">
               <img
                 v-if="imageUrl"
                 :src="imageUrl"
-                :alt="meta?.name || `Token #${tokenId}`"
+                :alt="meta?.name || t('meta.quick.token') + ' #' + tokenId"
                 @error="onImgError"
               />
-              <div v-else class="media-fallback">no image</div>
+              <div v-else class="media-fallback">{{ t('meta.noImage') }}</div>
             </div>
 
             <div class="quick">
               <div class="q-row">
-                <span class="q-label">Token</span>
-                <span class="q-val">#{{ tokenId }}</span>
+                <span class="q-label">{{ t('meta.quick.token') }}</span>
+                <span class="q-val">{{ tokenId }}</span>
               </div>
               <div v-if="owner" class="q-row">
-                <span class="q-label">Owner</span>
+                <span class="q-label">{{ t('meta.quick.owner') }}</span>
                 <span class="q-val">{{ short(owner) }}</span>
               </div>
               <div v-if="typeof points === 'number'" class="q-row">
-                <span class="q-label">Points</span>
+                <span class="q-label">{{ t('meta.quick.points') }}</span>
                 <span class="q-val">{{ points }}</span>
               </div>
             </div>
           </div>
 
+          <!-- right: description + attributes + links + raw -->
           <div class="meta-right">
             <p v-if="meta?.description" class="desc">{{ meta.description }}</p>
 
-            <div v-if="Array.isArray(meta?.attributes) && meta.attributes.length" class="attrs">
-              <h4>Attributes</h4>
+            <div
+              v-if="Array.isArray(meta?.attributes) && meta.attributes.length"
+              class="attrs"
+            >
+              <h4>{{ t('meta.attrs.title') }}</h4>
               <table>
                 <tbody>
                 <tr v-for="(a, i) in meta.attributes" :key="i">
-                  <th>{{ a.trait_type || a.type || 'trait' }}</th>
+                  <th>{{ a.trait_type || a.type || t('meta.attrs.traitFallback') }}</th>
                   <td>{{ a.value }}</td>
                 </tr>
                 </tbody>
@@ -53,32 +65,47 @@
             </div>
 
             <div class="links">
-              <a v-if="normalizedUri" class="link" :href="normalizedUri" target="_blank" rel="noopener">
-                tokenURI
+              <a
+                v-if="normalizedUri"
+                class="link"
+                :href="normalizedUri"
+                target="_blank"
+                rel="noopener"
+              >
+                {{ t('meta.links.tokenUri') }}
               </a>
               <a
                 v-if="explorerBase && contractAddress && tokenId !== undefined"
                 class="link"
                 :href="`${explorerBase}/token/${contractAddress}?a=${tokenId}`"
-                target="_blank" rel="noopener"
+                target="_blank"
+                rel="noopener"
               >
-                Explorer
+                {{ t('meta.links.explorer') }}
               </a>
-              <a v-if="imageUrl" class="link" :href="imageUrl" target="_blank" rel="noopener">image</a>
+              <a
+                v-if="imageUrl"
+                class="link"
+                :href="imageUrl"
+                target="_blank"
+                rel="noopener"
+              >
+                {{ t('meta.links.image') }}
+              </a>
             </div>
 
             <details class="raw">
-              <summary>Raw JSON</summary>
+              <summary>{{ t('meta.raw.title') }}</summary>
               <pre>{{ prettyJson }}</pre>
             </details>
           </div>
         </section>
 
         <footer class="meta-footer">
-          <button class="btn" @click="emitClose">OK</button>
+          <button class="btn" @click="emitClose">{{ t('meta.footer.ok') }}</button>
         </footer>
 
-        <div v-if="loading" class="overlay-msg">Loading…</div>
+        <div v-if="loading" class="overlay-msg">{{ t('meta.state.loading') }}</div>
         <div v-if="error" class="overlay-msg overlay-err">{{ error }}</div>
       </div>
     </div>
@@ -87,6 +114,7 @@
 
 <script lang="ts" setup>
 import { ref, watch, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 type Attr = { trait_type?: string; type?: string; value?: string | number }
 type Meta = { name?: string; description?: string; image?: string; attributes?: Attr[] }
@@ -103,6 +131,8 @@ const props = defineProps<{
 
 const emit = defineEmits<{ (e: 'close'): void }>()
 
+const { t } = useI18n({ useScope: 'global' })
+
 const loading = ref(false)
 const error = ref('')
 const meta = ref<Meta | null>(null)
@@ -114,7 +144,6 @@ const prettyJson = computed(() => (meta.value ? JSON.stringify(meta.value, null,
 function normalizeUri (uri: string) {
   if (!uri) return ''
   if (uri.startsWith('ipfs://')) {
-    // du kannst hier deinen bevorzugten Gateway setzen
     return `https://ipfs.io/ipfs/${uri.slice(7)}`
   }
   return uri
@@ -151,7 +180,8 @@ async function fetchMeta () {
     meta.value = m
     imageUrl.value = normalizeImage(m?.image)
   } catch (e: any) {
-    error.value = `Failed to load metadata: ${e?.message ?? String(e)}`
+    // i18n-Fehlertext (mit Platzhalter)
+    error.value = t('meta.state.errorFetch', { msg: e?.message ?? String(e) })
   } finally {
     loading.value = false
   }

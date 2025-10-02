@@ -1,0 +1,33 @@
+{
+  "meta": {
+    "titleFallback": "Token #{id}",
+    "a11y": {
+      "close": "Close"
+    },
+    "noImage": "No image",
+    "quick": {
+      "token": "Token",
+      "owner": "Owner",
+      "points": "Points"
+    },
+    "attrs": {
+      "title": "Attributes",
+      "traitFallback": "Trait"
+    },
+    "links": {
+      "tokenUri": "tokenURI",
+      "explorer": "Explorer",
+      "image": "Image"
+    },
+    "raw": {
+      "title": "Raw JSON"
+    },
+    "footer": {
+      "ok": "OK"
+    },
+    "state": {
+      "loading": "Loading…",
+      "errorFetch": "Failed to load metadata: {msg}"
+    }
+  }
+}

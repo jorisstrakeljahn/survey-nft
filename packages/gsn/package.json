@@ -1,0 +1,29 @@
+{
+  "name": "gsn-umd-build",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:gsn": "node build-gsn.mjs"
+  },
+  "dependencies": {
+    "@opengsn/provider": "2.2.6",
+    "web3": "1.2.11",
+    "assert": "2.1.0",
+    "buffer": "6.0.3",
+    "crypto-browserify": "3.12.1",
+    "events": "3.3.0",
+    "os-browserify": "0.3.0",
+    "path-browserify": "1.0.1",
+    "process": "0.11.10",
+    "stream-browserify": "3.0.0",
+    "util": "0.12.5"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.10",
+    "@esbuild-plugins/node-globals-polyfill": "0.2.3",
+    "@esbuild-plugins/node-modules-polyfill": "0.2.2"
+  },
+  "overrides": {
+    "web3": "1.2.11"
+  }
+}

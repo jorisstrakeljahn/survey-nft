@@ -59,7 +59,10 @@ contract SurveyPaymaster is BasePaymaster {
     /* ====================== GSN v2 API ====================== */
 
     function versionPaymaster() public view override returns (string memory) {
-        return "2.2.6+opengsn.survey-paymaster";
+        // wichtig: Substring "opengsn.paymaster" MUSS enthalten sein
+        return "2.2.6+opengsn.paymaster.survey";
+        // alternativ minimal:
+        // return "2.2.6+opengsn.paymaster";
     }
 
     // getHubAddr() NICHT überschreiben – kommt aus BasePaymaster (non-virtual)

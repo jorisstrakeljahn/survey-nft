@@ -10,6 +10,11 @@
       "roleAdmin": "Role administrator",
       "noRoleAdmin": "No role admin"
     },
+    "tabs": {
+      "wallets": "Wallets & deletion",
+      "roles": "Roles",
+      "generator": "XML generator"
+    },
     "search": {
       "title": "Search wallet",
       "placeholder": "Enter 0x address …",
@@ -56,6 +61,24 @@
     "empty": {
       "title": "No NFTs found",
       "text": "There are currently no VPP NFTs for this address."
+    },
+    "generator": {
+      "title": "SoSci XML generator",
+      "desc": "Generate a SoSci template with a fixed surveyId and points value. The template already includes the script tag for gasless claiming.",
+      "fields": {
+        "surveyId": { "label": "surveyId", "placeholder": "e.g. MKT1-2025-7Q8X3Z" },
+        "points":   { "label": "Points" }
+      },
+      "actions": {
+        "download": "Download XML"
+      },
+      "preview": {
+        "title": "Script tag preview"
+      },
+      "errors": {
+        "sidRequired": "Please enter a valid surveyId.",
+        "fetchFailed": "Could not load the template. Please try again later."
+      }
     }
   }
 }

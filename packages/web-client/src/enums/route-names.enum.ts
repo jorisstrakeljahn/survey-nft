@@ -4,5 +4,5 @@ export enum ROUTE_NAMES {
   vppNFTs = 'nfts',
   vppNFTDetails = 'nft-details',
   home = 'home',
-  admin = 'admin',
+  admin = 'Admin',
 }

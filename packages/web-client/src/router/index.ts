@@ -8,6 +8,7 @@ import {
 import { ROUTE_NAMES } from '@/enums'
 import { useWeb3ProvidersStore } from '@/store'
 import { storeToRefs } from 'pinia'
+import adminRoutes from '@/pages/AdminPage'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -15,11 +16,7 @@ const routes: Array<RouteRecordRaw> = [
     name: ROUTE_NAMES.home,
     component: () => import('@/pages/HomePage'),
   },
-  {
-    path: '/admin',
-    name: ROUTE_NAMES.admin,
-    component: () => import('@/pages/AdminPage'),
-  },
+  ...adminRoutes,
   {
     path: '/nfts',
     name: ROUTE_NAMES.vppNFTs,

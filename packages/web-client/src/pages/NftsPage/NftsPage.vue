@@ -98,6 +98,7 @@
       :points="metaToken.points"
       :contract-address="erc721Address"
       :explorer-base="explorerBase"
+      :image-url="metaToken ? images[metaToken.tokenId] : ''"
     />
   </div>
 </template>
@@ -151,35 +152,49 @@ const lastTokenId = computed(() =>
   tokens.value.length ? Math.max(...tokens.value.map(t => t.tokenId)) : null,
 )
 
+function toHttp(url: string | undefined) {
+  if (!url) return '';
+  if (!url.startsWith('ipfs://')) return url;
+  // ipfs://<cid>/...  oder ipfs://ipfs/<cid>/...
+  const path = url.replace('ipfs://', '').replace(/^ipfs\//, '');
+  return `https://ipfs.io/ipfs/${path}`;
+}
+
 async function fetchTokenImage(tokenId: number, uri?: string) {
-  if (!uri) return
-  try {
-    const res = await fetch(uri, { cache: 'no-store' })
-    if (!res.ok) return
-    const meta = await res.json()
-    const img = meta?.image as string | undefined
-    if (img) images.value[tokenId] = img.startsWith('ipfs://')
-      ? `https://ipfs.io/ipfs/${img.slice(7)}`
-      : img
-  } catch {
-    /* ignore */
+  // Sicherstellen, dass wir eine URI haben
+  const tokenUri = uri || await getTokenURI(tokenId);
+  if (!tokenUri) return;
+
+  // IMPORTANT: ipfs:// → https://ipfs.io/ipfs/<cid>
+  const res = await fetch(toHttp(tokenUri), { cache: 'no-store' });
+  if (!res.ok) return;
+
+  const meta = await res.json();
+  const img = meta?.image as string | undefined;
+  if (img) {
+    images.value[tokenId] = toHttp(img); // auch das image normalisieren
   }
 }
 
 async function loadMyNfts() {
-  isLoading.value = true
-  isError.value = false
+  isLoading.value = true;
+  isError.value = false;
   try {
-    myAddress.value = (await getMyAddress()) || ''
-    const list = await loadTokensOf()
-    tokens.value = list
-    await Promise.all(list.map(t => fetchTokenImage(t.tokenId, t.uri)))
-  } catch (e: unknown) {
-    // eslint-disable-next-line no-console
-    console.error(e)
-    isError.value = true
+    myAddress.value = (await getMyAddress()) || '';
+    const list = await loadTokensOf();
+    tokens.value = list;
+
+    // URI & Points ggf. nachladen und dann Bilder fetchen
+    await Promise.all(list.map(async (t) => {
+      if (!t.uri) t.uri = await getTokenURI(t.tokenId);
+      if (t.points == null) t.points = await getTokenPoints(t.tokenId);
+      await fetchTokenImage(t.tokenId, t.uri);
+    }));
+  } catch (e) {
+    isError.value = true;
+  } finally {
+    isLoading.value = false;
   }
-  isLoading.value = false
 }
 
 /** Details-Popup öffnen; fehlende Felder on the fly nachladen */
@@ -287,7 +302,6 @@ onMounted(loadMyNfts)
 }
 .card__image {
   width: 100%;
-  height: 100%;
   object-fit: cover;
   display: block;
 }
@@ -306,7 +320,6 @@ onMounted(loadMyNfts)
 /* Punkte-Badge */
 .badge {
   position: absolute;
-  bottom: 8px;
   left: 8px;
   padding: 6px 10px;
   border-radius: 999px;

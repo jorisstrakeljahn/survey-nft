@@ -10,6 +10,11 @@
       "roleAdmin": "Rollen-Administrator",
       "noRoleAdmin": "Kein Rollen-Administrator"
     },
+    "tabs": {
+      "wallets": "Wallets & Löschung",
+      "roles": "Rollen",
+      "generator": "XML-Generator"
+    },
     "search": {
       "title": "Wallet suchen",
       "placeholder": "0xAdresse eingeben …",
@@ -56,6 +61,24 @@
     "empty": {
       "title": "Keine NFTs gefunden",
       "text": "Für diese Adresse existieren derzeit keine VPP-NFTs."
+    },
+    "generator": {
+      "title": "SoSci XML-Generator",
+      "desc": "Erzeuge eine SoSci-Vorlage mit fester surveyId und Punktewert. Die Vorlage enthält bereits den Script-Tag für den gaslosen Claim.",
+      "fields": {
+        "surveyId": { "label": "surveyId", "placeholder": "z. B. MKT1-2025-7Q8X3Z" },
+        "points":   { "label": "Punkte" }
+      },
+      "actions": {
+        "download": "XML herunterladen"
+      },
+      "preview": {
+        "title": "Vorschau des Script-Tags"
+      },
+      "errors": {
+        "sidRequired": "Bitte eine gültige surveyId eingeben.",
+        "fetchFailed": "Vorlage konnte nicht geladen werden. Bitte später erneut versuchen."
+      }
     }
   }
 }

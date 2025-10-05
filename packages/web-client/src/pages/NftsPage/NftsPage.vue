@@ -153,47 +153,47 @@ const lastTokenId = computed(() =>
 )
 
 function toHttp(url: string | undefined) {
-  if (!url) return '';
-  if (!url.startsWith('ipfs://')) return url;
+  if (!url) return ''
+  if (!url.startsWith('ipfs://')) return url
   // ipfs://<cid>/...  oder ipfs://ipfs/<cid>/...
-  const path = url.replace('ipfs://', '').replace(/^ipfs\//, '');
-  return `https://ipfs.io/ipfs/${path}`;
+  const path = url.replace('ipfs://', '').replace(/^ipfs\//, '')
+  return `https://ipfs.io/ipfs/${path}`
 }
 
 async function fetchTokenImage(tokenId: number, uri?: string) {
   // Sicherstellen, dass wir eine URI haben
-  const tokenUri = uri || await getTokenURI(tokenId);
-  if (!tokenUri) return;
+  const tokenUri = uri || await getTokenURI(tokenId)
+  if (!tokenUri) return
 
   // IMPORTANT: ipfs:// → https://ipfs.io/ipfs/<cid>
-  const res = await fetch(toHttp(tokenUri), { cache: 'no-store' });
-  if (!res.ok) return;
+  const res = await fetch(toHttp(tokenUri), { cache: 'no-store' })
+  if (!res.ok) return
 
-  const meta = await res.json();
-  const img = meta?.image as string | undefined;
+  const meta = await res.json()
+  const img = meta?.image as string | undefined
   if (img) {
-    images.value[tokenId] = toHttp(img); // auch das image normalisieren
+    images.value[tokenId] = toHttp(img)
   }
 }
 
 async function loadMyNfts() {
-  isLoading.value = true;
-  isError.value = false;
+  isLoading.value = true
+  isError.value = false
   try {
-    myAddress.value = (await getMyAddress()) || '';
-    const list = await loadTokensOf();
-    tokens.value = list;
+    myAddress.value = (await getMyAddress()) || ''
+    const list = await loadTokensOf()
+    tokens.value = list
 
     // URI & Points ggf. nachladen und dann Bilder fetchen
     await Promise.all(list.map(async (t) => {
-      if (!t.uri) t.uri = await getTokenURI(t.tokenId);
-      if (t.points == null) t.points = await getTokenPoints(t.tokenId);
-      await fetchTokenImage(t.tokenId, t.uri);
-    }));
+      if (!t.uri) t.uri = await getTokenURI(t.tokenId)
+      if (t.points == null) t.points = await getTokenPoints(t.tokenId)
+      await fetchTokenImage(t.tokenId, t.uri)
+    }))
   } catch (e) {
-    isError.value = true;
+    isError.value = true
   } finally {
-    isLoading.value = false;
+    isLoading.value = false
   }
 }
 

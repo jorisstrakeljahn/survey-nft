@@ -24,12 +24,6 @@ const routes: Array<RouteRecordRaw> = [
     meta: { requiresMetaMask: true, hideNavbar: true },
   },
   {
-    path: '/nfts/:id',
-    name: ROUTE_NAMES.vppNFTDetails,
-    component: () => import('@/pages/NftDetailsPage'),
-    meta: { requiresMetaMask: true, hideNavbar: true },
-  },
-  {
     path: '/connect',
     name: 'ConnectPage',
     component: () => import('@/pages/ConnectPage/ConnectPage.vue'),

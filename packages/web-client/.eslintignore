@@ -7,3 +7,5 @@ index.html
 *.md
 static/env.js
 src/types/contracts
+
+src/pages/*

@@ -61,7 +61,7 @@
       </div>
 
       <div class="trow" v-for="tkn in tokens" :key="tkn.tokenId">
-        <div class="cell">#{{ tkn.tokenId }}</div>
+        <div class="cell">{{ tkn.tokenId }}</div>
         <div class="cell">{{ tkn.points ?? 0 }}</div>
         <div class="cell cell--links">
           <button class="link-btn" @click="openMeta(tkn)">{{ t('admin.table.metadata') }}</button>

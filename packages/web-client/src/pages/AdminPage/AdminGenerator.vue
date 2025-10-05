@@ -102,11 +102,11 @@ async function onDownload() {
     const repl2   = enc.encode(`data-points="${pts.value}"`)
 
     // 3) erst survey-id, dann points ersetzen (genau 1x jeweils)
-    let i1 = findBytes(buf, needle1)
+    const i1 = findBytes(buf, needle1)
     if (i1 === -1) throw new Error('placeholder surveyId not found')
     let out = replaceBytesAt(buf, i1, needle1.length, repl1)
 
-    let i2 = findBytes(out, needle2)
+    const i2 = findBytes(out, needle2)
     if (i2 === -1) throw new Error('placeholder points not found')
     out = replaceBytesAt(out, i2, needle2.length, repl2)
 

@@ -2,7 +2,6 @@
   <div class="vpp-page">
     <!-- HERO -->
     <section class="header-section">
-      <img :src="HeaderImage" alt="VPP Header" class="header-section__image" />
 
       <h1 class="header-section__title">
         {{ t('home.hero.title') }}
@@ -106,7 +105,6 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import AppFooter from '@/common/AppFooter.vue'
 import AccordionItem from '@/common/AccordionItem.vue'
-import HeaderImage from '@/assets/vpp-start-image.jpg'
 
 const { t } = useI18n()
 
@@ -167,14 +165,6 @@ const faqItems = computed(() => [
 .header-section {
   text-align: center;
   padding: 2rem 1rem;
-
-  &__image {
-    width: 480px;
-    max-width: 100%;
-    height: auto;
-    border-radius: 12px;
-    object-fit: cover;
-  }
 
   &__title {
     font-size: 2rem;

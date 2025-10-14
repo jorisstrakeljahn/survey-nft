@@ -1,7 +1,7 @@
 <template>
-  <div class="nfts-page">
-    <app-navbar />
+  <app-navbar />
 
+  <div class="nfts-page">
     <main class="nfts-page__main">
       <header class="nfts-page__header">
         <h1>{{ t('nfts.title') }}</h1>

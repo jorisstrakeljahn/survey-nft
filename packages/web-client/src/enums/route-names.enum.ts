@@ -6,4 +6,5 @@ export enum ROUTE_NAMES {
   admin = 'Admin',
   imprint = 'imprint',
   privacy = 'privacy',
+  accessibility = 'accessibility',
 }

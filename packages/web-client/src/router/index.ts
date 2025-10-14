@@ -47,6 +47,14 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       requiresMetaMask: false,
     },
+  },
+  {
+    path: '/accessibility',
+    name: ROUTE_NAMES.accessibility,
+    component: () => import('@/pages/AccessibilityPage'),
+    meta: {
+      requiresMetaMask: false,
+    },
   }
 ]
 

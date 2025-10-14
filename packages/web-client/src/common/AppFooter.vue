@@ -29,21 +29,32 @@
           }}
         </p>
       </div>
-    </div>
-    <div class="footer-links">
-      <router-link
-        :to="{ name: ROUTE_NAMES.imprint }"
-        class="footer-link"
-      >
-        {{ t('footer.imprint') }}
-      </router-link>
 
-      <router-link
-        :to="{ name: ROUTE_NAMES.privacy }"
-        class="footer-link"
-      >
-        {{ t('footer.datenschutz') }}
-      </router-link>
+      <div class="app-footer__bottom">
+        <small class="app-footer__copy">
+          © {{ year }} HSBI
+        </small>
+
+        <nav class="footer-legal" aria-label="Rechtliche Links">
+          <ul class="footer-legal__list">
+            <li class="footer-legal__item">
+              <router-link :to="{ name: ROUTE_NAMES.imprint }" class="footer-legal__link">
+                {{ t('footer.imprint') }}
+              </router-link>
+            </li>
+            <li class="footer-legal__item">
+              <router-link :to="{ name: ROUTE_NAMES.privacy }" class="footer-legal__link">
+                {{ t('footer.datenschutz') }}
+              </router-link>
+            </li>
+            <li class="footer-legal__item">
+              <router-link :to="{ name: ROUTE_NAMES.accessibility }" class="footer-legal__link">
+                {{ t('footer.accessibility') }}
+              </router-link>
+            </li>
+          </ul>
+        </nav>
+      </div>
     </div>
   </section>
 </template>
@@ -93,22 +104,72 @@ const mail = t('footer.contactEmail', {
     font-size: 1rem;
     margin: 0.25rem 0;
   }
+}
 
-  .footer-links {
-    text-align: center;
-    margin-top: 1rem;
+.app-footer__divider {
+  margin: 18px 0;
+  border: 0;
+  border-top: 1px solid #e7e7e7;
+}
 
-    .footer-link {
-      color: #fff;
-      text-decoration: none;
-      margin: 0 0.5rem;
-    }
+.app-footer__bottom {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1fr;
+  align-items: center;
+  justify-content: center;
 
-    .footer-separator {
-      color: #fff;
-      margin: 0 0.5rem;
-    }
+  @media (min-width: 680px) {
+    grid-template-columns: auto 1fr;
   }
+}
+
+.app-footer__copy {
+  color: #f8f8f8;
+  font-size: 13px;
+}
+
+.footer-legal__list {
+  display: flex;
+  flex-wrap: wrap;         /* <-- die Magie: bricht bei wenig Platz um */
+  gap: 8px 16px;           /* vertikal / horizontaler Abstand */
+  justify-content: flex-start;
+  color: #fff;
+
+  /* Bei schmalen Screens zentrieren */
+  @media (max-width: 679px) {
+    justify-content: center;
+  }
+
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.footer-legal__item {
+  flex: 0 1 auto;          /* Items dürfen umbrechen */
+  position: relative;
+}
+
+/* Optional: Trennerpunkte nur auf breiten Screens (wirken wie "·" zwischen Links) */
+@media (min-width: 680px) {
+  .footer-legal__item + .footer-legal__item::before {
+    content: "·";
+    position: absolute;
+    left: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #bdbdbd;
+  }
+}
+
+.footer-legal__link {
+  display: inline-block;   /* bessere Klickfläche */
+  padding: 4px 8px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #fff7ed;
+  border: 1px solid transparent;
 }
 
 /* Responsive Anpassungen */
@@ -149,5 +210,7 @@ const mail = t('footer.contactEmail', {
       font-size: 0.8rem;
     }
   }
+
+  .app-footer__copy { display: none; }
 }
 </style>

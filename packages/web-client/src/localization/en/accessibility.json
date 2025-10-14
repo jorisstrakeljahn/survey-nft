@@ -1,0 +1,58 @@
+{
+  "accessibility": {
+    "title": "Accessibility Statement",
+    "lastUpdatedPrefix": "Last updated:",
+    "lastUpdated": "14 October 2025",
+    "backToTop": "Back to top",
+    "sections": [
+      {
+        "id": "status",
+        "title": "Conformance Status",
+        "paras": [
+          "Hochschule Bielefeld is committed to making its web services accessible in accordance with Sec. 3 BITV 2.0 and Directive (EU) 2016/2102.",
+          "This website (https://vpstunden.hsbi.de/) is currently partially conformant. The non-accessible content is listed below."
+        ]
+      },
+      {
+        "id": "non-accessible",
+        "title": "Non-accessible Content",
+        "list": [
+          "Some images/icons do not yet provide suitable alternative text.",
+          "In some cases, keyboard focus visibility and/or focus order are insufficient.",
+          "Some PDF/download documents are not yet fully accessible.",
+          "Dynamic content (e.g., charts) is not yet fully usable with screen readers."
+        ],
+        "paras": [
+          "We are working on gradually remedying the issues mentioned."
+        ]
+      },
+      {
+        "id": "feedback",
+        "title": "Feedback and Contact",
+        "paras": [
+          "Have you encountered barriers on our website? Please let us know—we will make every effort to resolve them promptly."
+        ],
+        "contact": [
+          { "label": "Email", "value": "vpstunden@hsbi.de", "href": "mailto:vpstunden@hsbi.de" }
+        ]
+      },
+      {
+        "id": "enforcement",
+        "title": "Enforcement Procedure",
+        "paras": [
+          "If you do not receive a satisfactory response from us within a reasonable period, you can contact the responsible enforcement or conciliation body.",
+          "Please insert the details of the authority responsible for your institution (state enforcement body/conciliation body)."
+        ]
+      },
+      {
+        "id": "creation",
+        "title": "Preparation of This Statement",
+        "paras": [
+          "This statement was created on 14 October 2025.",
+          "Assessment of compliance with the requirements was carried out by means of a self-evaluation.",
+          "This statement was last reviewed on 14 October 2025."
+        ]
+      }
+    ]
+  }
+}

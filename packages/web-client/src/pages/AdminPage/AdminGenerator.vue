@@ -32,16 +32,6 @@
         {{ t('common.clear') }}
       </button>
     </div>
-
-    <details class="preview">
-      <summary>{{ t('admin.generator.preview.title') }}</summary>
-      <pre class="preview__code">
-&lt;script defer src="https://vpstunden.hsbi.de/vpp/claim.js?v=1"
-  data-survey-id="{{ sid || '__SURVEY_ID__' }}"
-  data-points="{{ pts || 1 }}"&gt;&lt;/script&gt;</pre>
-    </details>
-
-    <div v-if="err" class="help help--error">{{ err }}</div>
   </section>
 </template>
 

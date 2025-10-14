@@ -33,12 +33,15 @@
       </RouterView>
     </main>
   </div>
+
+  <AppFooter/>
 </template>
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useErc721 } from '@/composables/contracts/use-erc721'
+import AppFooter from '@/common/AppFooter.vue'
 
 const { t } = useI18n({ useScope: 'global' })
 
@@ -55,6 +58,12 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.admin-page{
+  min-height:100vh;
+  overflow-y:auto;
+  scrollbar-gutter: stable both-edges;
+}
+
 .admin-page__main{max-width:1240px;margin:0 auto;padding:24px 16px}
 .admin-page__header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
 .badges{display:flex;gap:8px;flex-wrap:wrap}

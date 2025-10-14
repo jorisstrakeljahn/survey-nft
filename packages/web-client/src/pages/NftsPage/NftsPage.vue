@@ -59,7 +59,7 @@
             <div v-else class="card__placeholder"></div>
 
             <span class="badge" :class="`badge--p${tkn.points || 0}`">
-              {{ t('nfts.card.points', { n: tkn.points || 0 }) }}
+              {{ t('nfts.card.points', tkn.points || 0, { n: tkn.points || 0 }) }}
             </span>
           </div>
 
@@ -336,11 +336,11 @@ onMounted(loadMyNfts)
 .card__meta { padding: 12px 14px; }
 .card__row {
   display: flex;
-  justify-content: space-between;
+  justify-content: right;
   align-items: center;
   margin-bottom: 6px;
 }
-.card__label { color: #666; font-size: 0.9rem; }
+.card__label { color: #666; padding-right: 4px;}
 .card__value { font-weight: 800; }
 
 /* Links / Buttons im Link-Stil */

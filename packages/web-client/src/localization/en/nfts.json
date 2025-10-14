@@ -18,7 +18,7 @@
       "text": "Please try again later or refresh the page."
     },
     "card": {
-      "points": "{n} points",
+      "points": "No points | {n} point | {n} points",
       "tokenId": "Token ID",
       "metadata": "Metadata",
       "explorer": "Explorer"

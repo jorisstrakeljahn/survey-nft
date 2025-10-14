@@ -1,0 +1,143 @@
+{
+  "privacy": {
+    "title": "Datenschutzerklärung",
+    "lastUpdatedPrefix": "Stand:",
+    "lastUpdated": "14. Oktober 2025",
+    "tocTitle": "Inhalt",
+    "backToTop": "Zurück nach oben",
+    "sections": [
+      {
+        "id": "intro",
+        "title": "Kurzfassung",
+        "paras": [
+          "Der Schutz Ihrer personenbezogenen Daten ist uns wichtig. Diese Erklärung informiert Sie darüber, welche Daten wir verarbeiten, zu welchen Zwecken, auf welcher Rechtsgrundlage und welche Rechte Sie haben.",
+          "Die Nutzung unserer Website ist grundsätzlich ohne Angabe personenbezogener Daten möglich. Soweit auf unseren Seiten personenbezogene Daten (z. B. Name, E-Mail) erhoben werden, erfolgt dies – soweit möglich – stets auf freiwilliger Basis."
+        ]
+      },
+      {
+        "id": "controller",
+        "title": "Verantwortliche Stelle",
+        "paras": [
+          "Verantwortlich im Sinne der DSGVO ist:"
+        ],
+        "address": [
+          "Prof. Dr. rer. nat. Axel Schneider",
+          "Hochschule Bielefeld – HSBI",
+          "Interaktion 1",
+          "D-33619 Bielefeld",
+          "Deutschland"
+        ],
+        "contact": [
+          { "label": "E-Mail", "value": "vpstunden@hsbi.de", "href": "mailto:vpstunden@hsbi.de" }
+        ]
+      },
+      {
+        "id": "server-logs",
+        "title": "Server-Logdateien",
+        "paras": [
+          "Beim Aufruf unserer Website werden durch den Hosting-Provider automatisch Informationen in sog. Server-Logdateien gespeichert.",
+          "Diese Daten sind technisch erforderlich, um die Website auszuliefern, die Stabilität und Sicherheit zu gewährleisten und ggf. Störungen zu analysieren."
+        ],
+        "list": [
+          "Datum und Uhrzeit des Abrufs",
+          "IP-Adresse des anfragenden Geräts (gekürzt/gekürzte Speicherung, sofern möglich)",
+          "User-Agent (Browser und ggf. Betriebssystem)",
+          "aufgerufene URL bzw. Ressource",
+          "HTTP-Statuscode"
+        ],
+        "paras2": [
+          "Die Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der sicheren Bereitstellung der Website). Logdaten werden regelmäßig kurzfristig gelöscht, sofern keine weitere Aufbewahrung zu Beweiszwecken erforderlich ist."
+        ]
+      },
+      {
+        "id": "cookies",
+        "title": "Cookies und lokale Speicherung",
+        "paras": [
+          "Wir verwenden nur technisch notwendige Cookies bzw. gleichwertige lokale Speichertechniken, soweit dies für den Betrieb der Website erforderlich ist (z. B. Session-ID, Spracheinstellungen).",
+          "Soweit optionale Cookies eingesetzt werden sollten, informieren wir gesondert und holen – sofern nötig – Ihre Einwilligung ein."
+        ],
+        "list": [
+          "Rechtsgrundlage für notwendige Cookies: Art. 6 Abs. 1 lit. f DSGVO",
+          "Rechtsgrundlage für optionale Cookies: Art. 6 Abs. 1 lit. a DSGVO (Einwilligung)"
+        ]
+      },
+      {
+        "id": "contact",
+        "title": "Kontaktaufnahme",
+        "paras": [
+          "Wenn Sie uns per E-Mail kontaktieren, verarbeiten wir Ihre Angaben zur Bearbeitung der Anfrage sowie für den Fall von Anschlussfragen.",
+          "Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (vorvertragliche/vertragliche Maßnahmen) bzw. Art. 6 Abs. 1 lit. f DSGVO (allgemeine Kommunikation)."
+        ]
+      },
+      {
+        "id": "purposes-legal-basis",
+        "title": "Zwecke und Rechtsgrundlagen",
+        "paras": [
+          "Wir verarbeiten personenbezogene Daten nur, soweit dies zur Bereitstellung der Website, zur Kommunikation, zur IT-Sicherheit, zur Fehleranalyse sowie ggf. zur Rechtsverfolgung erforderlich ist.",
+          "Je nach Verarbeitungsvorgang stützen wir uns auf Art. 6 Abs. 1 lit. a (Einwilligung), lit. b (Vertrag/Anbahnung), lit. c (rechtliche Verpflichtung) oder lit. f (berechtigtes Interesse) DSGVO."
+        ]
+      },
+      {
+        "id": "recipients",
+        "title": "Empfänger und Auftragsverarbeitung",
+        "paras": [
+          "Wir setzen ggf. Dienstleister (Auftragsverarbeiter) für Hosting, Wartung und Support ein. Diese verarbeiten Daten nur nach unserer Weisung und auf Grundlage eines Auftragsverarbeitungsvertrags gem. Art. 28 DSGVO."
+        ]
+      },
+      {
+        "id": "transfer",
+        "title": "Drittlandübermittlung",
+        "paras": [
+          "Eine Übermittlung in Drittländer findet grundsätzlich nicht statt, es sei denn, dies ist ausnahmsweise erforderlich und es liegen die Voraussetzungen der Art. 44 ff. DSGVO (z. B. Angemessenheitsbeschluss, Standardvertragsklauseln) vor."
+        ]
+      },
+      {
+        "id": "retention",
+        "title": "Speicherdauer",
+        "paras": [
+          "Wir speichern personenbezogene Daten nur so lange, wie es für die jeweiligen Zwecke erforderlich ist oder gesetzliche Aufbewahrungspflichten bestehen. Danach werden die Daten gelöscht oder anonymisiert."
+        ]
+      },
+      {
+        "id": "rights",
+        "title": "Ihre Rechte",
+        "paras": [
+          "Sie haben gegenüber uns folgende Rechte hinsichtlich der Sie betreffenden personenbezogenen Daten:"
+        ],
+        "rights": [
+          { "name": "Auskunft (Art. 15 DSGVO)", "desc": "Sie erhalten Auskunft über die verarbeiteten Daten und weitere Informationen gemäß Art. 15 DSGVO." },
+          { "name": "Berichtigung (Art. 16 DSGVO)", "desc": "Sie können die Berichtigung unrichtiger oder Vervollständigung unvollständiger Daten verlangen." },
+          { "name": "Löschung (Art. 17 DSGVO)", "desc": "Sie können die Löschung Ihrer Daten verlangen, sofern keine Aufbewahrungspflichten oder überwiegenden Interessen entgegenstehen." },
+          { "name": "Einschränkung (Art. 18 DSGVO)", "desc": "Unter bestimmten Voraussetzungen können Sie die Einschränkung der Verarbeitung verlangen." },
+          { "name": "Datenübertragbarkeit (Art. 20 DSGVO)", "desc": "Sie erhalten die von Ihnen bereitgestellten Daten in einem strukturierten, gängigen und maschinenlesbaren Format." },
+          { "name": "Widerspruch (Art. 21 DSGVO)", "desc": "Sie können aus Gründen, die sich aus Ihrer besonderen Situation ergeben, gegen Verarbeitungen, die auf Art. 6 Abs. 1 lit. e oder f DSGVO beruhen, Widerspruch einlegen." },
+          { "name": "Widerruf von Einwilligungen (Art. 7 Abs. 3 DSGVO)", "desc": "Sie können eine erteilte Einwilligung jederzeit mit Wirkung für die Zukunft widerrufen." }
+        ],
+        "paras2": [
+          "Zudem haben Sie das Recht, sich bei einer Datenschutzaufsichtsbehörde über die Verarbeitung Ihrer personenbezogenen Daten zu beschweren."
+        ]
+      },
+      {
+        "id": "security",
+        "title": "Sicherheit",
+        "paras": [
+          "Wir treffen technische und organisatorische Maßnahmen, um Ihre Daten gegen Verlust, Zerstörung, Zugriff, Veränderung oder Verbreitung durch unbefugte Personen zu schützen."
+        ]
+      },
+      {
+        "id": "changes",
+        "title": "Änderungen dieser Datenschutzerklärung",
+        "paras": [
+          "Wir passen diese Datenschutzerklärung gelegentlich an, wenn sich rechtliche Vorgaben oder unsere Verarbeitungen ändern. Es gilt stets die jeweils aktuelle, hier veröffentlichte Fassung."
+        ]
+      },
+      {
+        "id": "contact-end",
+        "title": "Fragen zum Datenschutz",
+        "paras": [
+          "Bei Fragen oder zur Ausübung Ihrer Rechte kontaktieren Sie uns bitte unter den oben angegebenen Kontaktdaten."
+        ]
+      }
+    ]
+  }
+}

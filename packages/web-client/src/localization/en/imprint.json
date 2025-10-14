@@ -1,0 +1,95 @@
+{
+  "imprint": {
+    "title": "Imprint",
+    "lastUpdatedPrefix": "Last updated:",
+    "lastUpdated": "14 October 2025",
+    "backToTop": "Back to top",
+    "sections": [
+      {
+        "id": "provider",
+        "title": "Provider",
+        "address": [
+          "Hochschule Bielefeld",
+          "Faculty of Business",
+          "Interaktion 1",
+          "D-33619 Bielefeld",
+          "Germany",
+          "P.O. Box: 10 11 13",
+          "D-33511 Bielefeld"
+        ],
+        "contact": [
+          { "label": "Phone", "value": "+49 521 106-01", "href": "tel:+4952110601" },
+          { "label": "Fax", "value": "+49 521 106-7790", "href": "tel:+495211067790" },
+          { "label": "Email", "value": "info@hsbi.de", "href": "mailto:info@hsbi.de" },
+          { "label": "Website", "value": "www.hsbi.de", "href": "https://www.hsbi.de" }
+        ]
+      },
+      {
+        "id": "legal-form",
+        "title": "Legal Form",
+        "paras": [
+          "Hochschule Bielefeld is a public corporation under German law."
+        ]
+      },
+      {
+        "id": "representation",
+        "title": "Statutory Representation",
+        "paras": [
+          "It is legally represented by the President, Prof. Dr. Ingeborg Schramm-Wölk."
+        ]
+      },
+      {
+        "id": "supervisory",
+        "title": "Supervisory Authority",
+        "paras": [
+          "Ministry of Culture and Science of the State of North Rhine-Westphalia (MKW), 40190 Düsseldorf"
+        ]
+      },
+      {
+        "id": "vat",
+        "title": "VAT Identification Number",
+        "paras": [
+          "pursuant to Section 27a of the German VAT Act: DE124007838"
+        ]
+      },
+      {
+        "id": "content-resp",
+        "title": "Content Responsibility (Sec. 55(2) RStV)",
+        "address": [
+          "Prof. Dr. Alexander Haubrock",
+          "Hochschule Bielefeld – HSBI",
+          "Interaktion 1",
+          "D-33619 Bielefeld",
+          "Germany"
+        ]
+      },
+      {
+        "id": "copyright",
+        "title": "Copyright",
+        "paras": [
+          "Unless otherwise stated, copyrights and usage rights for texts, graphics and images on all pages referring to this imprint are held by Hochschule Bielefeld.",
+          "Creating, using, and distributing electronic copies requires permission."
+        ]
+      },
+      {
+        "id": "liability",
+        "title": "Disclaimer",
+        "sub": [
+          {
+            "name": "Liability for Our Own Content",
+            "paras": [
+              "We are liable for the content of our own pages in accordance with statutory provisions. No guarantee or liability is assumed for the accuracy or completeness of the content and information provided on this website."
+            ]
+          },
+          {
+            "name": "Liability for External Links",
+            "paras": [
+              "Our offer contains links to external websites of third parties. Unlawful content was not recognizable at the time of linking. We have no influence on the content of the linked pages; responsibility lies solely with the respective provider or operator. We therefore accept no guarantee or liability for the legality, accuracy, or completeness of such content. Permanent content monitoring of the linked pages is not reasonable and cannot be provided by us.",
+              "We kindly request visitors to our website to inform us immediately of any unlawful content on linked pages. If we become aware of legal violations, we will remove such links without delay."
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

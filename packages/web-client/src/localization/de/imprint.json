@@ -1,0 +1,95 @@
+{
+  "imprint": {
+    "title": "Impressum",
+    "lastUpdatedPrefix": "Stand:",
+    "lastUpdated": "14. Oktober 2025",
+    "backToTop": "Zurück nach oben",
+    "sections": [
+      {
+        "id": "provider",
+        "title": "Anbieter",
+        "address": [
+          "Hochschule Bielefeld",
+          "Fachbereich Wirtschaft",
+          "Interaktion 1",
+          "D-33619 Bielefeld",
+          "Deutschland",
+          "Postfach: 10 11 13",
+          "D-33511 Bielefeld"
+        ],
+        "contact": [
+          { "label": "Telefon", "value": "+49 521 106-01", "href": "tel:+4952110601" },
+          { "label": "Telefax", "value": "+49 521 106-7790", "href": "tel:+495211067790" },
+          { "label": "E-Mail", "value": "info@hsbi.de", "href": "mailto:info@hsbi.de" },
+          { "label": "Web", "value": "www.hsbi.de", "href": "https://www.hsbi.de" }
+        ]
+      },
+      {
+        "id": "legal-form",
+        "title": "Rechtsform",
+        "paras": [
+          "Die Hochschule Bielefeld ist eine Körperschaft des Öffentlichen Rechts."
+        ]
+      },
+      {
+        "id": "representation",
+        "title": "Gesetzliche Vertretung",
+        "paras": [
+          "Sie wird gesetzlich vertreten durch die Präsidentin Prof. Dr. Ingeborg Schramm-Wölk."
+        ]
+      },
+      {
+        "id": "supervisory",
+        "title": "Zuständige Aufsichtsbehörde",
+        "paras": [
+          "Ministerium für Kultur und Wissenschaft des Landes Nordrhein-Westfalen (MKW), 40190 Düsseldorf"
+        ]
+      },
+      {
+        "id": "vat",
+        "title": "Umsatzsteuer-Identifikationsnummer",
+        "paras": [
+          "gemäß § 27 a Umsatzsteuergesetz: DE124007838"
+        ]
+      },
+      {
+        "id": "content-resp",
+        "title": "Inhaltliche Verantwortung nach § 55 Abs. 2 RStV",
+        "address": [
+          "Prof. Dr. Alexander Haubrock",
+          "Hochschule Bielefeld – HSBI",
+          "Interaktion 1",
+          "D-33619 Bielefeld",
+          "Deutschland"
+        ]
+      },
+      {
+        "id": "copyright",
+        "title": "Copyright",
+        "paras": [
+          "Die Urheber- und Nutzungsrechte (Copyright) für Texte, Grafiken und Bilder auf allen Seiten, die auf dieses Impressum verweisen, liegen – soweit nicht anders angegeben – bei der Hochschule Bielefeld.",
+          "Die Erstellung, Verwendung und Weitergabe von Kopien in elektronischer Form bedarf der Genehmigung."
+        ]
+      },
+      {
+        "id": "liability",
+        "title": "Haftungsausschluss",
+        "sub": [
+          {
+            "name": "Haftung für eigene Inhalte",
+            "paras": [
+              "Für die Inhalte unserer eigenen Seite haften wir nach den gesetzlichen Bestimmungen. Es wird keine Gewähr oder Haftung für die Richtigkeit oder Vollständigkeit der auf dieser Webseite zur Verfügung gestellten Inhalte und Informationen übernommen."
+            ]
+          },
+          {
+            "name": "Haftung für externe Links",
+            "paras": [
+              "Unser Angebot enthält Links zu externen Webseiten Dritter. Rechtswidrige Inhalte waren zum Zeitpunkt der Verlinkung nicht erkennbar. Auf die Inhalte der verlinkten Seiten haben wir keinen Einfluss. Verantwortlich hierfür ist stets allein der jeweilige Anbieter oder Betreiber der Seiten. Daher übernehmen wir keine Gewähr oder Haftung für die Rechtmäßigkeit, die Richtigkeit oder die Vollständigkeit der entsprechenden Inhalte. Eine permanente inhaltliche Kontrolle der verlinkten Seiten ist nicht zumutbar, und wir können dies nicht leisten.",
+              "Wir bitten die Besucherinnen und Besucher unserer Internetseiten, uns umgehend auf etwaige rechtswidrige Inhalte der verlinkten Seiten aufmerksam zu machen. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige Links umgehend entfernen."
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

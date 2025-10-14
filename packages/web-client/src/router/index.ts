@@ -32,6 +32,22 @@ const routes: Array<RouteRecordRaw> = [
     path: '/:catchAll(.*)',
     redirect: { name: ROUTE_NAMES.home },
   },
+  {
+    path: '/privacy',
+    name: ROUTE_NAMES.privacy,
+    component: () => import('@/pages/PrivacyPage'),
+    meta: {
+      requiresMetaMask: false,
+    },
+  },
+  {
+    path: '/imprint',
+    name: ROUTE_NAMES.imprint,
+    component: () => import('@/pages/ImprintPage'),
+    meta: {
+      requiresMetaMask: false,
+    },
+  }
 ]
 
 const router = createRouter({

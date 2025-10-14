@@ -1,0 +1,143 @@
+{
+  "privacy": {
+    "title": "Privacy Policy",
+    "lastUpdatedPrefix": "Last updated:",
+    "lastUpdated": "14 October 2025",
+    "tocTitle": "Contents",
+    "backToTop": "Back to top",
+    "sections": [
+      {
+        "id": "intro",
+        "title": "Summary",
+        "paras": [
+          "Protecting your personal data is important to us. This notice explains which data we process, for what purposes, the legal bases we rely on, and what rights you have.",
+          "You can generally use our website without providing personal data. Where personal data (e.g., name, email) is collected on our pages, this is—where possible—always on a voluntary basis."
+        ]
+      },
+      {
+        "id": "controller",
+        "title": "Controller",
+        "paras": [
+          "The controller within the meaning of the GDPR is:"
+        ],
+        "address": [
+          "Prof. Dr. rer. nat. Axel Schneider",
+          "Hochschule Bielefeld – HSBI",
+          "Interaktion 1",
+          "D-33619 Bielefeld",
+          "Germany"
+        ],
+        "contact": [
+          { "label": "Email", "value": "vpstunden@hsbi.de", "href": "mailto:vpstunden@hsbi.de" }
+        ]
+      },
+      {
+        "id": "server-logs",
+        "title": "Server Log Files",
+        "paras": [
+          "When you visit our website, our hosting provider automatically stores information in so-called server log files.",
+          "These data are technically necessary to deliver the website, ensure stability and security, and, where applicable, analyze faults."
+        ],
+        "list": [
+          "Date and time of access",
+          "IP address of the requesting device (truncated/shortened storage where possible)",
+          "User agent (browser and, where applicable, operating system)",
+          "Requested URL or resource",
+          "HTTP status code"
+        ],
+        "paras2": [
+          "The legal basis is Art. 6(1)(f) GDPR (legitimate interest in securely providing the website). Log data are regularly deleted after a short period unless further retention is required for evidence purposes."
+        ]
+      },
+      {
+        "id": "cookies",
+        "title": "Cookies and Local Storage",
+        "paras": [
+          "We only use technically necessary cookies or equivalent local storage technologies insofar as this is required for operating the website (e.g., session ID, language settings).",
+          "If optional cookies are used, we will inform you separately and—where necessary—obtain your consent."
+        ],
+        "list": [
+          "Legal basis for necessary cookies: Art. 6(1)(f) GDPR",
+          "Legal basis for optional cookies: Art. 6(1)(a) GDPR (consent)"
+        ]
+      },
+      {
+        "id": "contact",
+        "title": "Contacting Us",
+        "paras": [
+          "If you contact us by email, we process your details to handle the inquiry and in case of follow-up questions.",
+          "The legal basis is Art. 6(1)(b) GDPR (pre-contractual/contractual measures) or Art. 6(1)(f) GDPR (general communication)."
+        ]
+      },
+      {
+        "id": "purposes-legal-basis",
+        "title": "Purposes and Legal Bases",
+        "paras": [
+          "We process personal data only to the extent necessary for providing the website, communication, IT security, error analysis, and, where applicable, legal enforcement.",
+          "Depending on the processing activity, we rely on Art. 6(1)(a) (consent), (b) (contract/contract initiation), (c) (legal obligation) or (f) (legitimate interests) GDPR."
+        ]
+      },
+      {
+        "id": "recipients",
+        "title": "Recipients and Processing on Our Behalf",
+        "paras": [
+          "We may use service providers (processors) for hosting, maintenance, and support. They process data only in accordance with our instructions and on the basis of a data processing agreement pursuant to Art. 28 GDPR."
+        ]
+      },
+      {
+        "id": "transfer",
+        "title": "Transfers to Third Countries",
+        "paras": [
+          "Data transfers to third countries generally do not take place unless this is exceptionally required and the conditions of Art. 44 et seq. GDPR are met (e.g., adequacy decision, standard contractual clauses)."
+        ]
+      },
+      {
+        "id": "retention",
+        "title": "Retention Period",
+        "paras": [
+          "We store personal data only for as long as necessary for the respective purposes or as required by statutory retention obligations. Afterwards the data are deleted or anonymized."
+        ]
+      },
+      {
+        "id": "rights",
+        "title": "Your Rights",
+        "paras": [
+          "You have the following rights regarding your personal data:"
+        ],
+        "rights": [
+          { "name": "Access (Art. 15 GDPR)", "desc": "You can obtain information about the data processed and further information pursuant to Art. 15 GDPR." },
+          { "name": "Rectification (Art. 16 GDPR)", "desc": "You can request the correction of inaccurate data or completion of incomplete data." },
+          { "name": "Erasure (Art. 17 GDPR)", "desc": "You can request the deletion of your data unless retention obligations or overriding interests prevent this." },
+          { "name": "Restriction (Art. 18 GDPR)", "desc": "Under certain conditions, you can request restriction of processing." },
+          { "name": "Data Portability (Art. 20 GDPR)", "desc": "You can receive the data you have provided in a structured, commonly used and machine-readable format." },
+          { "name": "Objection (Art. 21 GDPR)", "desc": "You can object, on grounds relating to your particular situation, to processing based on Art. 6(1)(e) or (f) GDPR." },
+          { "name": "Withdrawal of Consent (Art. 7(3) GDPR)", "desc": "You can withdraw any consent given at any time with effect for the future." }
+        ],
+        "paras2": [
+          "You also have the right to lodge a complaint with a data protection supervisory authority regarding the processing of your personal data."
+        ]
+      },
+      {
+        "id": "security",
+        "title": "Security",
+        "paras": [
+          "We take technical and organizational measures to protect your data against loss, destruction, access, alteration, or disclosure by unauthorized persons."
+        ]
+      },
+      {
+        "id": "changes",
+        "title": "Changes to This Privacy Policy",
+        "paras": [
+          "We may adapt this privacy policy from time to time if legal requirements or our processing activities change. The current version published here shall apply."
+        ]
+      },
+      {
+        "id": "contact-end",
+        "title": "Questions About Data Protection",
+        "paras": [
+          "If you have questions or wish to exercise your rights, please contact us using the contact details provided above."
+        ]
+      }
+    ]
+  }
+}

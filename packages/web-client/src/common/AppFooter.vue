@@ -31,20 +31,26 @@
       </div>
     </div>
     <div class="footer-links">
-      <a
-        href="https://www.hsbi.de/datenschutzerklaerung"
+      <router-link
+        :to="{ name: ROUTE_NAMES.imprint }"
         class="footer-link"
-        target="_blank"
-        rel="noopener noreferrer"
+      >
+        {{ t('footer.imprint') }}
+      </router-link>
+
+      <router-link
+        :to="{ name: ROUTE_NAMES.privacy }"
+        class="footer-link"
       >
         {{ t('footer.datenschutz') }}
-      </a>
+      </router-link>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+import { ROUTE_NAMES } from '@/enums'
 
 /** GLOBALER Composer */
 const { t } = useI18n({ useScope: 'global' })

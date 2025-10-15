@@ -79,6 +79,25 @@
         "sidRequired": "Please enter a valid surveyId.",
         "fetchFailed": "Could not load the template. Please try again later."
       }
+    },
+    "rolesView": {
+      "heading": "Roles overview",
+      "roleNames": {
+        "deleter": "DELETER_ROLE",
+        "admin": "DEFAULT_ADMIN_ROLE"
+      },
+      "noneFound": "No entries found.",
+      "quick": "Quick mode (last {count} blocks only)",
+      "progress": {
+        "scanning": "Scanning {role}",
+        "blocks": "blocks",
+        "foundLabel": "Found:",
+        "cancel": "Cancel"
+      },
+      "scan": {
+        "cancelled": "Scan cancelled.",
+        "failed": "Loading roles from events failed (wallet/RPC)."
+      }
     }
   }
 }

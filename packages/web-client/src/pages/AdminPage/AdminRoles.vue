@@ -41,43 +41,51 @@
 
   <!-- Rollen-Übersicht -->
   <section class="box" style="margin-top:12px;">
-    <h3>Rollen-Übersicht</h3>
+    <h3>{{ t('admin.rolesView.heading') }}</h3>
 
     <!-- Fortschritt & Steuerung -->
     <div v-if="scan.active" class="scanbox">
       <div class="scanrow">
-        <strong>Scanne {{ scan.roleLabel }}</strong>
-        <span>{{ scan.pct }}% ({{ scan.processed.toLocaleString() }}/{{ scan.total.toLocaleString() }} Blöcke)</span>
+        <strong>{{ t('admin.rolesView.progress.scanning', { role: scan.roleLabel }) }}</strong>
+        <span>
+          {{ scan.pct }}%
+          ({{ scan.processed.toLocaleString() }}/{{ scan.total.toLocaleString() }}
+          {{ t('admin.rolesView.progress.blocks') }})
+        </span>
       </div>
       <div class="progress"><div class="bar" :style="{ width: scan.pct + '%' }"></div></div>
       <div class="scanrow">
-        <span>Gefunden: {{ scan.found }}</span>
-        <button class="btn btn--ghost" @click="cancelScan()" :disabled="!scan.active">Abbrechen</button>
+        <span>{{ t('admin.rolesView.progress.foundLabel') }} {{ scan.found }}</span>
+        <button class="btn btn--ghost" @click="cancelScan()" :disabled="!scan.active">
+          {{ t('admin.rolesView.progress.cancel') }}
+        </button>
       </div>
     </div>
 
     <label class="scanrow" style="margin:8px 0;">
       <input type="checkbox" v-model="quickMode" :disabled="scan.active" />
-      <span style="margin-left:6px;">Schnellmodus (nur letzte {{ QUICK_BLOCKS.toLocaleString() }} Blöcke)</span>
+      <span style="margin-left:6px;">
+        {{ t('admin.rolesView.quick', { count: QUICK_BLOCKS.toLocaleString() }) }}
+      </span>
     </label>
 
     <div v-if="membersLoading"><Loader /></div>
 
     <template v-else>
       <div class="role-block">
-        <h4>DELETER_ROLE</h4>
+        <h4>{{ t('admin.rolesView.roleNames.deleter') }}</h4>
         <ul v-if="deleters.length">
           <li v-for="a in deleters" :key="a" class="mono">{{ a }}</li>
         </ul>
-        <div v-else class="help">Keine Einträge gefunden.</div>
+        <div v-else class="help">{{ t('admin.rolesView.noneFound') }}</div>
       </div>
 
       <div class="role-block" style="margin-top:10px;">
-        <h4>DEFAULT_ADMIN_ROLE</h4>
+        <h4>{{ t('admin.rolesView.roleNames.admin') }}</h4>
         <ul v-if="admins.length">
           <li v-for="a in admins" :key="a" class="mono">{{ a }}</li>
         </ul>
-        <div v-else class="help">Keine Einträge gefunden.</div>
+        <div v-else class="help">{{ t('admin.rolesView.noneFound') }}</div>
       </div>
 
       <div class="help help--error" v-if="membersErr" style="margin-top:8px;">
@@ -88,7 +96,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, reactive } from 'vue'
+import { ref, onMounted, reactive, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ethers } from 'ethers'
 import Loader from '@/common/Loader.vue'
@@ -257,14 +265,14 @@ async function loadRoleMembersViaEvents () {
     }
 
     // 1) DELETER_ROLE
-    deleters.value = await scanRole(deleterRole.value, 'DELETER_ROLE', deleters.value)
+    deleters.value = await scanRole(deleterRole.value, t('admin.rolesView.roleNames.deleter'), deleters.value)
     // 2) DEFAULT_ADMIN_ROLE
-    admins.value   = await scanRole(DEFAULT_ADMIN_ROLE, 'DEFAULT_ADMIN_ROLE', admins.value)
+    admins.value   = await scanRole(DEFAULT_ADMIN_ROLE, t('admin.rolesView.roleNames.admin'), admins.value)
 
   } catch (e:any) {
     membersErr.value = e?.message === 'scan_cancelled'
-      ? 'Scan abgebrochen.'
-      : 'Rollen über Events laden fehlgeschlagen (Wallet/RPC).'
+      ? t('admin.rolesView.scan.cancelled')
+      : t('admin.rolesView.scan.failed')
   } finally {
     scan.active = false
     membersLoading.value = false
@@ -344,6 +352,9 @@ async function revokeRole () {
 onMounted(async () => {
   try { await loadDeleterRole() } finally { await loadRoleMembersViaEvents() }
 })
+
+// Wenn QUICK_BLOCKS sich jemals ändern sollte, könnte man neu scannen:
+watch(() => quickMode.value, () => { /* optional: neu scannen */ })
 </script>
 
 <style scoped>

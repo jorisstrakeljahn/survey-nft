@@ -79,6 +79,25 @@
         "sidRequired": "Bitte eine gültige surveyId eingeben.",
         "fetchFailed": "Vorlage konnte nicht geladen werden. Bitte später erneut versuchen."
       }
+    },
+    "rolesView": {
+      "heading": "Rollen-Übersicht",
+      "roleNames": {
+        "deleter": "DELETER_ROLE",
+        "admin": "DEFAULT_ADMIN_ROLE"
+      },
+      "noneFound": "Keine Einträge gefunden.",
+      "quick": "Schnellmodus (nur letzte {count} Blöcke)",
+      "progress": {
+        "scanning": "Scanne {role}",
+        "blocks": "Blöcke",
+        "foundLabel": "Gefunden:",
+        "cancel": "Abbrechen"
+      },
+      "scan": {
+        "cancelled": "Scan abgebrochen.",
+        "failed": "Rollen über Events laden fehlgeschlagen (Wallet/RPC)."
+      }
     }
   }
 }

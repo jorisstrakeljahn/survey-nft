@@ -1,0 +1,20 @@
+{
+  "connect-page": {
+    "title": "Verbinde deine Wallet",
+    "subtitle": "Um fortzufahren, verbinde bitte deine Wallet und wechsle auf die richtige Blockchain.",
+    "connect-modal-title": "Wallet verbinden",
+    "connect-modal-subtitle": "Mit einem Klick öffnet sich MetaMask. Danach wechseln wir dich automatisch auf das richtige Netzwerk.",
+    "install-metamask-btn": "MetaMask installieren",
+    "connect-btn": "Mit MetaMask verbinden",
+    "switch-network-btn": "Auf {{network}} wechseln",
+    "connected-btn": "Verbunden",
+    "status": {
+      "request": "Wallet-Anfrage gesendet…",
+      "rejected": "Anfrage abgelehnt.",
+      "failed": "Verbindung fehlgeschlagen.",
+      "switch-failed": "Netzwerkwechsel fehlgeschlagen.",
+      "disconnected": "Verbindung getrennt.",
+      "ready": "Verbunden."
+    }
+  }
+}

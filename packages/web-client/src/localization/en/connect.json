@@ -1,0 +1,20 @@
+{
+  "connect-page": {
+    "title": "Connect your wallet",
+    "subtitle": "To continue, please connect your wallet and switch to the correct blockchain.",
+    "connect-modal-title": "Connect Wallet",
+    "connect-modal-subtitle": "Click to open MetaMask. We'll switch you to the correct network afterwards.",
+    "install-metamask-btn": "Install MetaMask",
+    "connect-btn": "Connect with MetaMask",
+    "switch-network-btn": "Switch to {{network}}",
+    "connected-btn": "Connected",
+    "status": {
+      "request": "Wallet request sent…",
+      "rejected": "Request rejected.",
+      "failed": "Connection failed.",
+      "switch-failed": "Network switch failed.",
+      "disconnected": "Disconnected.",
+      "ready": "Connected."
+    }
+  }
+}

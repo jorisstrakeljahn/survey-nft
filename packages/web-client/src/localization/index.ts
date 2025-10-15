@@ -12,6 +12,7 @@ import enMeta from '@/localization/en/meta.json'
 import enPrivacy from '@/localization/en/privacy.json'
 import enImprint from '@/localization/en/imprint.json'
 import enAccessibility from '@/localization/en/accessibility.json'
+import enConnect from '@/localization/en/connect.json'
 
 // DE
 import deHome from '@/localization/de/home.json'
@@ -24,6 +25,7 @@ import deMeta from '@/localization/de/meta.json'
 import dePrivacy from '@/localization/de/privacy.json'
 import deImprint from '@/localization/de/imprint.json'
 import deAccessibility from '@/localization/de/accessibility.json'
+import deConnect from '@/localization/de/connect.json'
 
 export const i18n = createI18n({
   legacy: false,
@@ -31,8 +33,30 @@ export const i18n = createI18n({
   fallbackLocale: 'en',
   globalInjection: true,
   messages: {
-    de: { ...deHome, ...deFooter, ...deHeader, ...deNfts, ...deNft, ...deAdmin, ...deMeta, ...dePrivacy, ...deImprint, ...deAccessibility },
-    en: { ...enHome, ...enFooter, ...enHeader, ...enNfts, ...enNft, ...enAdmin, ...enMeta, ...enPrivacy, ...enImprint, ...enAccessibility },
+    de: {
+      ...deHome,
+      ...deFooter,
+      ...deHeader,
+      ...deNfts,
+      ...deNft,
+      ...deAdmin,
+      ...deMeta,
+      ...dePrivacy,
+      ...deImprint,
+      ...deAccessibility,
+      ...deConnect },
+    en: {
+      ...enHome,
+      ...enFooter,
+      ...enHeader,
+      ...enNfts,
+      ...enNft,
+      ...enAdmin,
+      ...enMeta,
+      ...enPrivacy,
+      ...enImprint,
+      ...enAccessibility,
+      ...enConnect },
   },
 })
 

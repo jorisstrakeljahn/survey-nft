@@ -55,7 +55,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       requiresMetaMask: false,
     },
-  }
+  },
 ]
 
 const router = createRouter({

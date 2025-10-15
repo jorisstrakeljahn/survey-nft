@@ -1,5 +1,6 @@
 import { ethers } from 'ethers'
 import { config } from '@/config'
+import type { Eip1193Provider } from '@/types/ethereum'
 
 /**
  * Minimal-ABI für SurveyNFT
@@ -51,10 +52,10 @@ export interface LoadedToken {
 }
 
 /** EIP-1193 Provider Typ (vermeidet "any") */
-type Eip1193Provider = {
-  request: (args: { method: string; params?: unknown[] }) => Promise<unknown>
-  on?: (...args: unknown[]) => void
-}
+// type Eip1193Provider = {
+//   request: (args: { method: string; params?: unknown[] }) => Promise<unknown>
+//   on?: (...args: unknown[]) => void
+// }
 
 /* -------------------------------------------------------- */
 /* Helpers                                                  */

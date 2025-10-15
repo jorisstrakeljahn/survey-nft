@@ -16,12 +16,22 @@
 
       <!-- i18n-beschriftete Tabs -->
       <nav class="admin-tabs" role="tablist" aria-label="Admin Sections">
+        <!-- Wallets: sichtbar für Deleter (und Admin) -->
         <RouterLink class="tab" active-class="tab--active" :to="{ name: 'AdminWallets' }">
           {{ t('admin.tabs.wallets') }}
         </RouterLink>
-        <RouterLink class="tab" active-class="tab--active" :to="{ name: 'AdminRoles' }">
+
+        <!-- Roles: NUR sichtbar, wenn Admin -->
+        <RouterLink
+          v-if="canManage"
+          class="tab"
+          active-class="tab--active"
+          :to="{ name: 'AdminRoles' }"
+        >
           {{ t('admin.tabs.roles') }}
         </RouterLink>
+
+        <!-- Generator: sichtbar für Deleter (und Admin) -->
         <RouterLink class="tab" active-class="tab--active" :to="{ name: 'AdminGenerator' }">
           {{ t('admin.tabs.generator') }}
         </RouterLink>
@@ -45,15 +55,38 @@ import AppFooter from '@/common/AppFooter.vue'
 
 const { t } = useI18n({ useScope: 'global' })
 
+// Wir nutzen weiterhin deine bestehenden Composables.
+// hasDeleterRole() => Burn-Rechte
+// getDeleterRoleAdmin() => Admin-Rechte (DEFAULT_ADMIN_ROLE als Admin der Deleter-Rolle)
 const { getMyAddress, hasDeleterRole, getDeleterRoleAdmin } = useErc721()
-const isDeleter = ref(false)
-const canManage = ref(false)
 
-onMounted(async () => {
-  // sorgt für Verbindung/Signer (falls nötig), dann Rollen laden
-  await getMyAddress()
-  isDeleter.value = await hasDeleterRole()
-  canManage.value = await getDeleterRoleAdmin()
+const isDeleter = ref(false)  // steuert Wallets/Generator
+const canManage = ref(false)  // steuert Roles-Tab (Admin-only)
+
+async function refreshRoles() {
+  try {
+    await getMyAddress()               // sorgt für Verbindung/Signer (falls nötig)
+    const [deleter, admin] = await Promise.all([
+      hasDeleterRole(),
+      getDeleterRoleAdmin(),
+    ])
+    isDeleter.value = !!deleter
+    canManage.value = !!admin
+  } catch {
+    isDeleter.value = false
+    canManage.value = false
+  }
+}
+
+onMounted(() => {
+  refreshRoles()
+
+  // Bei Account- oder Chain-Wechsel Berechtigungen neu laden
+  const eth = (window as any).ethereum
+  if (eth?.on) {
+    eth.on('accountsChanged', () => refreshRoles())
+    eth.on('chainChanged',   () => refreshRoles())
+  }
 })
 </script>
 

@@ -66,6 +66,8 @@ import { ROUTE_NAMES } from '@/enums'
 /** GLOBALER Composer */
 const { t } = useI18n({ useScope: 'global' })
 
+const year = new Date().getFullYear()
+
 const mail = t('footer.contactEmail', {
   account: 'vpstunden',
   domain: 'hsbi.de',

@@ -67,6 +67,8 @@ const expectedHex = toHex(expectedDec)
 
 const expectedLabel = computed(() => chainLabelFromId(expectedDec))
 
+function isMetamaskExtension(){ return !!(window as any).ethereum?.isMetaMask }
+
 async function getProvider() {
   if (!eth) throw new Error('MetaMask nicht gefunden')
   return new ethers.providers.Web3Provider(eth as unknown as any, 'any')

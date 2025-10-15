@@ -1,3 +1,10 @@
+import { Buffer } from 'buffer'
+import process from 'process'
+
+  ;(globalThis as any).global  ??= globalThis
+  ;(globalThis as any).Buffer  ??= Buffer
+  ;(globalThis as any).process ??= process
+
 import '@/styles/app.scss'
 import 'virtual:svg-icons-register'
 

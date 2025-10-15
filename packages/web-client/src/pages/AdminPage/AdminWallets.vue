@@ -102,7 +102,7 @@ import { config } from '@/config'
 const { t } = useI18n({ useScope: 'global' })
 
 /** Props vom Layout (Rollen) */
-defineProps<{ isDeleter: boolean }>()
+defineProps<{ canManage?: boolean; isDeleter?: boolean }>()
 
 /** Typ für Tokens */
 type Token = { tokenId: number; owner: `0x${string}`; uri?: string; points?: number }

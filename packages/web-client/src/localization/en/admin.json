@@ -98,6 +98,9 @@
         "cancelled": "Scan cancelled.",
         "failed": "Loading roles from events failed (wallet/RPC)."
       }
+    },
+    "access": {
+      "denied": "No access. Please sign in with a wallet that has the Deleter or Admin role."
     }
   }
 }

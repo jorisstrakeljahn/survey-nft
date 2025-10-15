@@ -98,6 +98,9 @@
         "cancelled": "Scan abgebrochen.",
         "failed": "Rollen über Events laden fehlgeschlagen (Wallet/RPC)."
       }
+    },
+    "access": {
+      "denied": "Kein Zugriff. Bitte melde dich mit einer Wallet an, die die Deleter- oder Admin-Rolle besitzt."
     }
   }
 }

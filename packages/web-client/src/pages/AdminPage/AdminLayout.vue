@@ -14,8 +14,8 @@
         </div>
       </header>
 
-      <!-- i18n-beschriftete Tabs -->
-      <nav class="admin-tabs" role="tablist" aria-label="Admin Sections">
+      <!-- Tabs nur zeigen, wenn mindestens eine Rolle vorhanden ist -->
+      <nav v-if="canAccess" class="admin-tabs" role="tablist" aria-label="Admin Sections">
         <!-- Wallets: sichtbar für Deleter (und Admin) -->
         <RouterLink class="tab" active-class="tab--active" :to="{ name: 'AdminWallets' }">
           {{ t('admin.tabs.wallets') }}
@@ -37,8 +37,13 @@
         </RouterLink>
       </nav>
 
-      <!-- Child-Views bekommen die Berechtigungen als Props -->
-      <RouterView v-slot="{ Component }">
+      <!-- Hinweis, wenn keine Berechtigung -->
+      <div v-else class="help help--error" style="margin: 12px 0;">
+        {{ t('admin.access.denied') }}
+      </div>
+
+      <!-- Child-Views nur rendern, wenn Zugriff -->
+      <RouterView v-if="canAccess" v-slot="{ Component }">
         <component :is="Component" :isDeleter="isDeleter" :canManage="canManage" />
       </RouterView>
     </main>
@@ -48,19 +53,20 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ethers } from 'ethers'
 import { readRpc } from '@/lib/gsn-client.v5'
 import { NFT_ADDRESS } from '@/config/addresses'
 import AppFooter from '@/common/AppFooter.vue'
 
-// Du kannst useErc721 drin lassen, wir nutzen hier aber on-chain Reads direkt,
-// damit die Badges garantiert korrekt sind.
 const { t } = useI18n({ useScope: 'global' })
 
 const isDeleter = ref(false)  // steuert Wallets/Generator & Burn-Badge
 const canManage = ref(false)  // steuert Roles-Tab & Admin-Badge
+
+// Zugriff insgesamt (mind. eine Rolle)
+const canAccess = computed(() => isDeleter.value || canManage.value)
 
 async function getActiveAccount(): Promise<string | null> {
   const eth = (window as any).ethereum
@@ -84,18 +90,16 @@ async function refreshRoles() {
       rpc
     )
 
-    const [DELETER_ROLE, hasAdmin, hasDel] = await (async () => {
-      const dr = await c.DELETER_ROLE()
-      const DEFAULT_ADMIN_ROLE = ethers.constants.HashZero // 0x00…00
-      const [adm, del] = await Promise.all([
-        c.hasRole(DEFAULT_ADMIN_ROLE, addr),
-        c.hasRole(dr, addr),
-      ])
-      return [dr, adm, del] as const
-    })()
+    const dr = await c.DELETER_ROLE()
+    const DEFAULT_ADMIN_ROLE = ethers.constants.HashZero // 0x00…00
 
-    isDeleter.value = Boolean(hasDel)
-    canManage.value = Boolean(hasAdmin)
+    const [adm, del] = await Promise.all([
+      c.hasRole(DEFAULT_ADMIN_ROLE, addr),
+      c.hasRole(dr, addr),
+    ])
+
+    isDeleter.value = Boolean(del)
+    canManage.value = Boolean(adm)
   } catch {
     isDeleter.value = false
     canManage.value = false

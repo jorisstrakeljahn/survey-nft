@@ -98,6 +98,11 @@ import NftMetadataModal from '@/common/NftMetadataModal.vue'
 import { useErc721 } from '@/composables/contracts/use-erc721'
 import { config } from '@/config'
 
+// ⬇️ GSN für gaslose Writes
+import { gsnTx } from '@/lib/gsn-client.v5'
+import { NFT_ADDRESS } from '@/config/addresses'
+import { ABI_SURVEY_NFT } from '@/abi/surveyNft'
+
 /** i18n global, damit der Switch aus der Navbar sofort greift */
 const { t } = useI18n({ useScope: 'global' })
 
@@ -107,10 +112,8 @@ defineProps<{ canManage?: boolean; isDeleter?: boolean }>()
 /** Typ für Tokens */
 type Token = { tokenId: number; owner: `0x${string}`; uri?: string; points?: number }
 
-/** Contract-Helpers */
-const {
-  loadTokensOf, getTokenURI, getTokenPoints, burnAny, burnAllFor,
-} = useErc721()
+/** Contract-Helpers (nur READS hier aus dem Composable) */
+const { loadTokensOf, getTokenURI, getTokenPoints } = useErc721()
 
 /** Explorer-Base + Contract-Adresse */
 const chainId = Number(config.SUPPORTED_CHAIN_ID || 137)
@@ -139,7 +142,7 @@ const metaToken = ref<Token | null>(null)
 function short (addr?: string) { return addr ? `${addr.slice(0,6)}…${addr.slice(-4)}` : '' }
 function isAddress (s: string) { return /^0x[a-fA-F0-9]{40}$/.test(s.trim()) }
 
-/** Aktionen */
+/** Aktionen: READS */
 async function openMeta (tkn: Token) {
   if (!tkn.uri) tkn.uri = await getTokenURI(tkn.tokenId)
   if (tkn.points == null) tkn.points = await getTokenPoints(tkn.tokenId)
@@ -192,15 +195,16 @@ watch(walletInput, (val) => {
   }
 })
 
-/** Burn-Aktionen */
+/** Burn-Aktionen – jetzt GASLOS via GSN */
 async function burnOne (id: number) {
   try {
     isLoading.value = true
-    await burnAny(id)
+    // gaslos: burnAny(tokenId)
+    await gsnTx(NFT_ADDRESS, ABI_SURVEY_NFT, 'burnAny', [id])
     await loadWallet()
   } catch (e) {
     // eslint-disable-next-line no-console
-    console.error(e)
+    console.error('[burnAny(gsn)]', e)
     isLoading.value = false
   }
 }
@@ -209,23 +213,31 @@ async function confirmBurnOne (id: number) {
   await burnOne(id)
 }
 
+/**
+ * Burn-All gaslos:
+ * Falls dein Contract die Methode `burnAllFor(address user, uint256 count)` hat (was dein bisheriger Code impliziert),
+ * nutzen wir sie in CHUNKS, damit einzelne Transaktionen nicht zu groß werden.
+ * Alternativ könntest du statt dessen jedes Token einzeln via burnAny(...) loopen.
+ */
 const CHUNK_SIZE = 50
 async function burnAllForTarget () {
   if (!target.value) return
   try {
     isLoading.value = true
-    let safety = 40 // Hard-Stop
+    let safety = 40 // Hard-Stop gegen Endlosschleifen
     while (safety-- > 0) {
       await loadWallet()
       const count = tokens.value.length
       if (!count) break
       const n = Math.min(CHUNK_SIZE, count)
-      await burnAllFor(target.value, n)
+      // gaslos: burnAllFor(target, n)
+      await gsnTx(NFT_ADDRESS, ABI_SURVEY_NFT, 'burnAllFor', [target.value, n])
+      // kleine Pause ist i. d. R. nicht nötig; GSN wartet ohnehin auf das Receipt in gsnTx
     }
     await loadWallet()
   } catch (e) {
     // eslint-disable-next-line no-console
-    console.error(e)
+    console.error('[burnAllFor(gsn)]', e)
     isLoading.value = false
   }
 }

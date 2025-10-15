@@ -50,28 +50,52 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useErc721 } from '@/composables/contracts/use-erc721'
+import { ethers } from 'ethers'
+import { readRpc } from '@/lib/gsn-client.v5'
+import { NFT_ADDRESS } from '@/config/addresses'
 import AppFooter from '@/common/AppFooter.vue'
 
+// Du kannst useErc721 drin lassen, wir nutzen hier aber on-chain Reads direkt,
+// damit die Badges garantiert korrekt sind.
 const { t } = useI18n({ useScope: 'global' })
 
-// Wir nutzen weiterhin deine bestehenden Composables.
-// hasDeleterRole() => Burn-Rechte
-// getDeleterRoleAdmin() => Admin-Rechte (DEFAULT_ADMIN_ROLE als Admin der Deleter-Rolle)
-const { getMyAddress, hasDeleterRole, getDeleterRoleAdmin } = useErc721()
+const isDeleter = ref(false)  // steuert Wallets/Generator & Burn-Badge
+const canManage = ref(false)  // steuert Roles-Tab & Admin-Badge
 
-const isDeleter = ref(false)  // steuert Wallets/Generator
-const canManage = ref(false)  // steuert Roles-Tab (Admin-only)
+async function getActiveAccount(): Promise<string | null> {
+  const eth = (window as any).ethereum
+  if (!eth?.request) return null
+  const accs = await eth.request({ method: 'eth_accounts' }).catch(() => [])
+  return Array.isArray(accs) && accs.length ? String(accs[0]) : null
+}
 
 async function refreshRoles() {
   try {
-    await getMyAddress()               // sorgt für Verbindung/Signer (falls nötig)
-    const [deleter, admin] = await Promise.all([
-      hasDeleterRole(),
-      getDeleterRoleAdmin(),
-    ])
-    isDeleter.value = !!deleter
-    canManage.value = !!admin
+    const addr = await getActiveAccount()
+    if (!addr) { isDeleter.value = false; canManage.value = false; return }
+
+    const rpc = readRpc()
+    const c = new ethers.Contract(
+      NFT_ADDRESS,
+      [
+        'function DELETER_ROLE() view returns (bytes32)',
+        'function hasRole(bytes32 role, address account) view returns (bool)'
+      ],
+      rpc
+    )
+
+    const [DELETER_ROLE, hasAdmin, hasDel] = await (async () => {
+      const dr = await c.DELETER_ROLE()
+      const DEFAULT_ADMIN_ROLE = ethers.constants.HashZero // 0x00…00
+      const [adm, del] = await Promise.all([
+        c.hasRole(DEFAULT_ADMIN_ROLE, addr),
+        c.hasRole(dr, addr),
+      ])
+      return [dr, adm, del] as const
+    })()
+
+    isDeleter.value = Boolean(hasDel)
+    canManage.value = Boolean(hasAdmin)
   } catch {
     isDeleter.value = false
     canManage.value = false
@@ -79,13 +103,13 @@ async function refreshRoles() {
 }
 
 onMounted(() => {
-  refreshRoles()
+  refreshRoles().catch(() => {})
 
   // Bei Account- oder Chain-Wechsel Berechtigungen neu laden
   const eth = (window as any).ethereum
   if (eth?.on) {
-    eth.on('accountsChanged', () => refreshRoles())
-    eth.on('chainChanged',   () => refreshRoles())
+    eth.on('accountsChanged', () => refreshRoles().catch(() => {}))
+    eth.on('chainChanged',   () => refreshRoles().catch(() => {}))
   }
 })
 </script>

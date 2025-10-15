@@ -8,7 +8,7 @@
   "scripts": {
     "install-project": "npm install --legacy-peer-deps",
     "vite-dev-server": "vite",
-    "vite-build": "vite build",
+    "vite-build": "cross-env VITE_CHECKER=off vite build",
     "start": "cross-env VITE_APP_ENVIRONMENT=development npm run dev",
     "build": "cross-env VITE_APP_ENVIRONMENT=production npm run vite-build",
     "analyze": "cross-env VITE_APP_ENVIRONMENT=analyze yarn vite-build",

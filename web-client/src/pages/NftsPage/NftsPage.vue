@@ -5,12 +5,13 @@
     <main class="nfts-page__main">
       <header class="nfts-page__header">
         <h1>{{ t('nfts.title') }}</h1>
+        <!-- Explicit refresh keeps UX predictable (no auto-polling surprises) -->
         <button class="btn" @click="loadMyNfts" :disabled="isLoading">
           {{ t('nfts.actions.refresh') }}
         </button>
       </header>
 
-      <!-- Summary -->
+      <!-- Summary (only when data is present and healthy) -->
       <section class="summary" v-if="!isLoading && !isError">
         <div class="summary__card">
           <div class="summary__item">
@@ -23,19 +24,19 @@
       <!-- Loader -->
       <loader v-if="isLoading" class="nfts-page__loader" />
 
-      <!-- Error -->
+      <!-- Error state (generic copy; we keep details in the console for support) -->
       <section v-if="!isLoading && isError" class="state state--error">
         <h3>{{ t('nfts.error.title') }}</h3>
         <p>{{ t('nfts.error.text') }}</p>
       </section>
 
-      <!-- Empty -->
+      <!-- Empty state -->
       <section v-if="!isLoading && !isError && tokens.length === 0" class="state state--empty">
         <h3>{{ t('nfts.empty.title') }}</h3>
         <p>{{ t('nfts.empty.text') }}</p>
       </section>
 
-      <!-- Grid -->
+      <!-- Grid (lazy images; show a placeholder until metadata is resolved) -->
       <section v-if="!isLoading && !isError && tokens.length > 0" class="grid">
         <article v-for="tkn in tokens" :key="tkn.tokenId" class="card">
           <div class="card__image-wrap">
@@ -48,6 +49,7 @@
             />
             <div v-else class="card__placeholder"></div>
 
+            <!-- Points badge: defensive fallback to 0 -->
             <span class="badge" :class="`badge--p${tkn.points || 0}`">
               {{ t('nfts.card.points', tkn.points || 0, { n: tkn.points || 0 }) }}
             </span>
@@ -60,7 +62,6 @@
             </div>
 
             <div class="card__links">
-              <!-- Explorer im gleichen Stil -->
               <button class="link-btn" @click="openExplorer(tkn.tokenId)">
                 {{ t('nfts.card.explorer') }}
               </button>
@@ -75,17 +76,23 @@
 </template>
 
 <script lang="ts" setup>
+/**
+ * NFTs overview:
+ * - Read user's VPP tokens and render a compact, responsive grid.
+ * - Metadata (URI/points) and images are pulled lazily to keep first paint fast.
+ * - All writes happen elsewhere; this page is read-only.
+ */
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import AppNavbar from '@/common/AppNavbar.vue'
 import AppFooter from '@/common/AppFooter.vue'
 import Loader from '@/common/Loader.vue'
-import NftMetadataModal from '@/common/NftMetadataModal.vue'
 
 import { useErc721 } from '@/composables/contracts/use-erc721'
 import { config } from '@/config'
 
+/** Minimal token shape used by the UI */
 type Token = {
   tokenId: number
   owner: `0x${string}`
@@ -96,57 +103,67 @@ type Token = {
 const { t } = useI18n({ useScope: 'global' })
 const { loadTokensOf, getMyAddress, getTokenURI, getTokenPoints } = useErc721()
 
+/** Page state */
 const isLoading = ref(false)
 const isError = ref(false)
-const myAddress = ref<`0x${string}` | ''>('')
-const tokens = ref<Token[]>([])
-const images = ref<Record<number, string>>({})
+const myAddress = ref<`0x${string}` | ''>('')      // purely informative; not required for reads
+const tokens = ref<Token[]>([])                    // source-of-truth for the grid
+const images = ref<Record<number, string>>({})     // tokenId -> resolved image URL
 
-const showMeta = ref(false)
-const metaToken = ref<Token | null>(null)
-
+/** Explorer base (lint-friendly map instead of nested ternaries) */
 const erc721Address = config.ERC721_ADDRESS as string
 const chainId = Number(config.SUPPORTED_CHAIN_ID || 137)
-const explorerBase = computed(() =>
-  chainId === 137
-    ? 'https://polygonscan.com'
-    : chainId === 80001
-      ? 'https://mumbai.polygonscan.com'
-      : 'https://polygonscan.com',
-)
+const POLYGON_EXPLORERS: Record<number, string> = {
+  137:   'https://polygonscan.com',
+  80001: 'https://mumbai.polygonscan.com',
+}
+const explorerBase = computed(() => POLYGON_EXPLORERS[chainId] ?? POLYGON_EXPLORERS[137])
 
+/** Aggregate points (defensive towards undefined points) */
 const totalPoints = computed(() =>
   tokens.value.reduce((sum, t) => sum + (t.points || 0), 0),
 )
 
+/** Highest token id (handy for debugging or deep links) */
 const lastTokenId = computed(() =>
   tokens.value.length ? Math.max(...tokens.value.map(t => t.tokenId)) : null,
 )
 
+/** Translate ipfs:// URLs to a public HTTP gateway (simple, robust) */
 function toHttp(url: string | undefined) {
   if (!url) return ''
   if (!url.startsWith('ipfs://')) return url
-  // ipfs://<cid>/...  oder ipfs://ipfs/<cid>/...
+  // ipfs://<cid>/...  or ipfs://ipfs/<cid>/...
   const path = url.replace('ipfs://', '').replace(/^ipfs\//, '')
   return `https://ipfs.io/ipfs/${path}`
 }
 
+/**
+ * Resolve one token's metadata and cache its image URL.
+ * Any single failure is non-fatal; we just keep the placeholder.
+ */
 async function fetchTokenImage(tokenId: number, uri?: string) {
-  // Sicherstellen, dass wir eine URI haben
   const tokenUri = uri || await getTokenURI(tokenId)
   if (!tokenUri) return
-
-  // IMPORTANT: ipfs:// → https://ipfs.io/ipfs/<cid>
-  const res = await fetch(toHttp(tokenUri), { cache: 'no-store' })
-  if (!res.ok) return
-
-  const meta = await res.json()
-  const img = meta?.image as string | undefined
-  if (img) {
-    images.value[tokenId] = toHttp(img)
+  try {
+    const res = await fetch(toHttp(tokenUri), { cache: 'no-store' })
+    if (!res.ok) return
+    const meta = await res.json().catch(() => null)
+    const img = (meta as any)?.image as string | undefined
+    if (img) images.value[tokenId] = toHttp(img)
+  } catch {
+    // Swallow image/metadata failures; the card will keep a placeholder.
   }
 }
 
+/**
+ * Load current user's tokens:
+ * - fetch base list
+ * - lazily fill missing URI/points
+ * - resolve images in parallel
+ *
+ * Errors are handled visibly (log and state) to satisfy lint rules and aid support.
+ */
 async function loadMyNfts() {
   isLoading.value = true
   isError.value = false
@@ -155,38 +172,30 @@ async function loadMyNfts() {
     const list = await loadTokensOf()
     tokens.value = list
 
-    // URI & Points ggf. nachladen und dann Bilder fetchen
+    // Enrich each token (URI/points) and fetch image in parallel
     await Promise.all(list.map(async (t) => {
-      if (!t.uri) t.uri = await getTokenURI(t.tokenId)
+      if (!t.uri)         t.uri   = await getTokenURI(t.tokenId)
       if (t.points == null) t.points = await getTokenPoints(t.tokenId)
       await fetchTokenImage(t.tokenId, t.uri)
     }))
-  } catch (e) {
+  } catch (e: unknown) {
+    // Visible handling (lint-friendly) + actionable diagnostics
+    const msg = e instanceof Error ? e.message : String(e)
+    console.error('NftsPage load failed:', msg)
     isError.value = true
+    return
   } finally {
     isLoading.value = false
   }
 }
 
-/** Details-Popup öffnen; fehlende Felder on the fly nachladen */
-async function openMeta(tkn: Token) {
-  try {
-    if (!tkn.uri) tkn.uri = await getTokenURI(tkn.tokenId)
-    if (tkn.points == null) tkn.points = await getTokenPoints(tkn.tokenId)
-    metaToken.value = tkn
-    showMeta.value = true
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.error('openMeta failed:', e)
-  }
-}
-
-/** Explorer in neuem Tab, gleicher Stil wie „Metadaten“ */
+/** Open token in the block explorer (contract page filtered by token id) */
 function openExplorer(tokenId: number) {
   const url = `${explorerBase.value}/token/${erc721Address}?a=${tokenId}`
   window.open(url, '_blank', 'noopener')
 }
 
+/** Initial load on mount */
 onMounted(loadMyNfts)
 </script>
 

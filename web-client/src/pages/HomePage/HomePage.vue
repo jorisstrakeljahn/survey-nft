@@ -223,7 +223,7 @@ const faqPlusItems = computed(() => {
 
 .card__title {
   font-weight: 800;
-  margin: 0 0 .5rem;
+  margin: 0 0 0.5rem;
 }
 
 .card__text {
@@ -259,12 +259,10 @@ const faqPlusItems = computed(() => {
   margin: 0.25rem auto 0;
 }
 
-
 .faq__group {
   max-width: 1000px;
   margin: 0 auto;
 }
-
 
 @media (max-width: 600px) {
   .hero {

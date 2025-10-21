@@ -38,7 +38,9 @@
         class="privacy__toc privacy__toc--desktop"
         aria-label="Inhaltsverzeichnis"
       >
-        <h2 class="privacy__section-title">{{ t('privacy.tocTitle') }}</h2>
+        <h2 class="privacy__section-title">
+          {{ t('privacy.tocTitle') }}
+        </h2>
         <ul class="privacy__toc-list">
           <li v-for="s in sections" :key="s.id">
             <a class="privacy__toc-link" :href="`#${s.id}`">
@@ -57,11 +59,12 @@
           class="privacy__card privacy__section"
         >
           <header class="privacy__card-header">
-            <h2 class="privacy__card-title">{{ section.title }}</h2>
+            <h2 class="privacy__card-title">
+              {{ section.title }}
+            </h2>
           </header>
 
           <div class="privacy__card-body">
-            <!-- Absätze -->
             <p
               v-for="(p, idx) in section.paras || []"
               :key="`p-${idx}`"
@@ -70,14 +73,12 @@
               {{ p }}
             </p>
 
-            <!-- Liste -->
             <ul v-if="section.list && section.list.length" class="privacy__list">
               <li v-for="(item, i) in section.list" :key="`li-${i}`">
                 {{ item }}
               </li>
             </ul>
 
-            <!-- Adresse / Kontakt -->
             <address
               v-if="section.address || section.contact"
               class="privacy__address"
@@ -95,7 +96,6 @@
               </p>
             </address>
 
-            <!-- Rechte -->
             <div
               v-for="(right, i) in section.rights || []"
               :key="`right-${i}`"
@@ -111,7 +111,6 @@
           </div>
         </article>
 
-        <!-- Zurück nach oben -->
         <div class="privacy__backtop">
           <a href="#top" class="privacy__backtop-btn">
             {{ t('privacy.backToTop') }}

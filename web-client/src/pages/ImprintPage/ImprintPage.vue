@@ -77,7 +77,7 @@
       </div>
     </section>
 
-    <AppFooter />
+    <app-footer />
   </main>
 </template>
 
@@ -106,16 +106,15 @@ html { scroll-behavior: smooth; }
 </style>
 
 <style scoped lang="scss">
-/* White Mode – gleiche Optik wie die Privacy-Seite */
 .imprint {
   --bg: #ffffff;
   --surface: #ffffff;
   --text: #1b1b1b;
   --muted: #5f6368;
   --border: #e7e7e7;
-  --shadow: 0 1px 2px rgba(0,0,0,.05), 0 6px 16px rgba(0,0,0,.06);
+  --shadow: 0 1px 2px rgba(0,0,0,0.05), 0 6px 16px rgba(0,0,0,0.06);
   --accent: #0b57d0;
-  --accent-underline: rgba(11,87,208,.25);
+  --accent-underline: rgba(11,87,208,0.25);
 
   color: var(--text);
   background: var(--bg);
@@ -142,7 +141,7 @@ html { scroll-behavior: smooth; }
 .imprint__title {
   margin: 0 0 6px 0;
   font-weight: 800;
-  letter-spacing: .2px;
+  letter-spacing: 0.2px;
   font-size: clamp(24px, 3vw, 34px);
 }
 
@@ -152,7 +151,6 @@ html { scroll-behavior: smooth; }
   font-size: clamp(13px, 1.2vw, 15px);
 }
 
-/* Cards */
 .imprint__content {
   padding-block: clamp(18px, 3vw, 28px);
 }
@@ -179,7 +177,7 @@ html { scroll-behavior: smooth; }
   margin: 0;
   font-weight: 750;
   font-size: clamp(18px, 1.8vw, 22px);
-  letter-spacing: .2px;
+  letter-spacing: 0.2px;
 }
 
 .imprint__card-body {
@@ -196,7 +194,9 @@ html { scroll-behavior: smooth; }
   padding: 0;
   max-width: 70ch;
 
-  li { margin: 4px 0; }
+  li {
+    margin: 4px 0;
+  }
 }
 
 .imprint__address {
@@ -226,7 +226,6 @@ html { scroll-behavior: smooth; }
   font-size: clamp(15px, 1.4vw, 18px);
 }
 
-/* Back to top */
 .imprint__backtop {
   display: flex;
   justify-content: center;
@@ -252,17 +251,14 @@ html { scroll-behavior: smooth; }
   &:active { transform: translateY(1px); }
 }
 
-/* Anker-Offset (falls fester Header) */
 .imprint__section { scroll-margin-top: 96px; }
 
-/* Footer-Demo */
 .imprint__footer-example {
   margin-block: 18px 36px;
   padding-top: 8px;
   border-top: 1px dashed var(--border);
 }
 
-/* Fokus-Styles */
 a:focus-visible,
 button:focus-visible {
   outline: 2px solid color-mix(in srgb, var(--accent) 60%, #000);
@@ -270,11 +266,24 @@ button:focus-visible {
   border-radius: 8px;
 }
 
-/* Print */
 @media print {
-  .imprint__hero { background: none; border: 0; }
-  .imprint__backtop, .imprint__footer-example { display: none !important; }
-  .imprint__card { box-shadow: none; border-color: #bbb; }
-  .imprint__container { max-width: 100%; padding-inline: 0; }
+  .imprint__hero {
+    background: none;
+    border: 0;
+  }
+
+  .imprint__backtop, .imprint__footer-example {
+    display: none !important;
+  }
+
+  .imprint__card {
+    box-shadow: none;
+    border-color: #bbb;
+  }
+
+  .imprint__container {
+    max-width: 100%;
+    padding-inline: 0;
+  }
 }
 </style>

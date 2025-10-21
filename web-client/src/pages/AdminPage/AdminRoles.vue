@@ -4,6 +4,7 @@
     <h2>{{ t('admin.roles.title') }}</h2>
     <div class="help">{{ t('admin.roles.help') }}</div>
 
+    <!-- Inline role editor: enter address, grant/revoke, clear -->
     <div class="roles-line">
       <input
         v-model="roleAddr"
@@ -32,18 +33,18 @@
       </div>
     </div>
 
-    <!-- Inline Loader / Status -->
+    <!-- Inline status / loader -->
     <div class="help" :class="{ 'help--error': isErr }" v-if="roleMsg">
       {{ roleMsg }}
     </div>
     <Loader v-if="isBusy" style="margin-top:8px;" />
   </section>
 
-  <!-- Rollen-Übersicht -->
+  <!-- Role members overview (derived from on-chain events) -->
   <section class="box" style="margin-top:12px;">
     <h3>{{ t('admin.rolesView.heading') }}</h3>
 
-    <!-- Fortschritt & Steuerung -->
+    <!-- Long-running scan state with progress & cancel -->
     <div v-if="scan.active" class="scanbox">
       <div class="scanrow">
         <strong>{{ t('admin.rolesView.progress.scanning', { role: scan.roleLabel }) }}</strong>
@@ -62,6 +63,7 @@
       </div>
     </div>
 
+    <!-- Quick mode reduces scan window to recent N blocks -->
     <label class="scanrow" style="margin:8px 0;">
       <input type="checkbox" v-model="quickMode" :disabled="scan.active" />
       <span style="margin-left:6px;">
@@ -69,6 +71,7 @@
       </span>
     </label>
 
+    <!-- Members loading/err states -->
     <div v-if="membersLoading"><Loader /></div>
 
     <template v-else>
@@ -107,33 +110,35 @@ import { ABI_SURVEY_NFT } from '@/abi/surveyNft'
 const { t } = useI18n({ useScope: 'global' })
 defineProps<{ canManage?: boolean; isDeleter?: boolean }>()
 
-/** UI-State */
+/** --- UI state (input, inline status, busy flag) --- */
 const roleAddr = ref(''); const roleMsg = ref(''); const isErr = ref(false); const isBusy = ref(false)
 
-/** Rollen-IDs */
-const deleterRole = ref<string>('')
-const DEFAULT_ADMIN_ROLE = '0x' + '00'.repeat(32)
+/** --- Role IDs --- */
+const deleterRole = ref<string>('')                 // loaded from contract (DELETER_ROLE)
+const DEFAULT_ADMIN_ROLE = '0x' + '00'.repeat(32)   // OpenZeppelin AccessControl default admin (0x00…00)
 
-/** Mitglieder-Listen */
+/** --- Members view state --- */
 const membersLoading = ref(false)
 const membersErr = ref<string|null>(null)
 const deleters = ref<string[]>([])
 const admins  = ref<string[]>([])
 
-/** Fortschritt & Steuerung */
+/** --- Scan progress state & controls --- */
 const scan = reactive({
   active:false, roleLabel:'', processed:0, total:0, pct:0, found:0
 })
 let _scanCancel = false
 function cancelScan(){ _scanCancel = true }
 
-/** Schnellmodus: nur die letzten N Blöcke scannen */
+/** Quick mode: scan only recent N blocks to keep UI responsive on first load */
 const QUICK_BLOCKS = 200_000
 const quickMode = ref(true)
 
-/** Utils */
+/** --- Small helpers (sleep, hex, EIP-1193 access, address checks) --- */
 const sleep = (ms:number)=> new Promise(r=>setTimeout(r, ms))
 const toHex = (n:number)=> '0x' + Math.max(0,n).toString(16)
+
+/** Prefer EIP-1193 provider from the user (MetaMask/Wallet) for getLogs throttling */
 function getEth() {
   const eth = (window as any).ethereum
   if (!eth?.request) throw new Error('MetaMask/EIP-1193 nicht verfügbar')
@@ -147,14 +152,14 @@ function isAddress (s: string) { return /^0x[a-fA-F0-9]{40}$/.test((s || '').tri
 function short (addr: string) { return addr ? `${addr.slice(0,6)}…${addr.slice(-4)}` : '' }
 function clear () { roleAddr.value=''; roleMsg.value=''; isErr.value=false }
 
-/** Rolle einmalig laden */
+/** --- One-time contract read: fetch DELETER_ROLE id --- */
 async function loadDeleterRole () {
   const rpc = readRpc()
   const c = new ethers.Contract(NFT_ADDRESS, ['function DELETER_ROLE() view returns (bytes32)'], rpc)
   deleterRole.value = await c.DELETER_ROLE()
 }
 
-/** Einzelprüfung */
+/** --- Single address check against DELETER_ROLE --- */
 async function hasDeleterRole (addr: string): Promise<boolean> {
   if (!deleterRole.value) await loadDeleterRole()
   const rpc = readRpc()
@@ -166,7 +171,12 @@ async function hasDeleterRole (addr: string): Promise<boolean> {
   return c.hasRole(deleterRole.value, addr)
 }
 
-/** Wallet-only Log Scan mit Progress-Callbacks */
+/**
+ * --- Wallet-backed, paginated getLogs with backoff & progress ---
+ * We query logs directly via the user's provider (EIP-1193) to avoid strict
+ * public RPC rate limits. On errors (throttling/window too wide), we halve the
+ * window and retry; if already minimal, we skip the window to keep UI snappy.
+ */
 async function getLogsPagedViaWalletOR(
   address: string,
   topics: (string | string[])[],
@@ -175,7 +185,7 @@ async function getLogsPagedViaWalletOR(
   onPage?: (logs:any[], range:{from:number;to:number})=>void,
   onProgress?: (info:{processed:number; total:number})=>void,
 ) {
-  let step = 2000          // klein starten → weniger Throttling
+  let step = 2000          // start small to reduce throttling risk
   let cur  = fromBlock
   const total = Math.max(0, toBlock - fromBlock + 1)
   let processed = 0
@@ -192,18 +202,30 @@ async function getLogsPagedViaWalletOR(
       processed += (end - cur + 1)
       onProgress?.({ processed, total })
       cur = end + 1
-      await sleep(150)
-    } catch (e:any) {
-      // throttled/zu groß → Fenster halbieren; wenn zu klein, Bereich überspringen, damit UI nicht hängt
-      step = Math.max(Math.floor(step/2), 500)
-      if (step <= 500) { processed += (end - cur + 1); onProgress?.({processed,total}); cur = end + 1 }
+      await sleep(150) // cooperative yielding
+    } catch (e: unknown) {
+      // Visible handling + diagnostics for linters and support
+      const msg = e instanceof Error ? e.message : String(e)
+      console.warn('AdminRoles window failed — backing off', { msg, step, cur, end })
+
+      // Backoff: halve the window; if already minimal, skip to preserve UX
+      step = Math.max(Math.floor(step / 2), 500)
+      if (step <= 500) {
+        processed += (end - cur + 1)
+        onProgress?.({ processed, total })
+        cur = end + 1
+      }
       await sleep(300)
     }
   }
   return out
 }
 
-/** Mitglieder via Events + Progress rekonstruieren */
+/**
+ * --- Reconstruct role members from RoleGranted/RoleRevoked events ---
+ * Uses a local cache (last scanned block + members) per role to keep rescans fast.
+ * UI stays responsive via progress updates and a cancel path.
+ */
 async function loadRoleMembersViaEvents () {
   membersErr.value = null
   membersLoading.value = true
@@ -211,8 +233,10 @@ async function loadRoleMembersViaEvents () {
 
   try {
     const latestChain = await getLatestBlockViaWallet()
-    const latestStart = quickMode.value ? Math.max(SURVEY_NFT_DEPLOY_BLOCK, latestChain - QUICK_BLOCKS)
+    const latestStart = quickMode.value
+      ? Math.max(SURVEY_NFT_DEPLOY_BLOCK, latestChain - QUICK_BLOCKS)
       : SURVEY_NFT_DEPLOY_BLOCK
+
     if (!deleterRole.value) await loadDeleterRole()
 
     const iface = new ethers.utils.Interface([
@@ -222,23 +246,25 @@ async function loadRoleMembersViaEvents () {
     const TOPIC_GRANTED = iface.getEventTopic('RoleGranted')
     const TOPIC_REVOKED = iface.getEventTopic('RoleRevoked')
 
+    // Scans one role id and returns the current member set (sorted)
     async function scanRole(roleId: string, label:string, seed:string[] = []) {
       const cacheKey = `roles:${NFT_ADDRESS}:${roleId}`
       const cached = JSON.parse(localStorage.getItem(cacheKey) || '{}') as { members?: string[]; last?: number }
       const start = Math.max(latestStart, (cached.last ?? latestStart) + 1)
       const set = new Set<string>([...seed, ...(cached.members || [])].map(s => s.toLowerCase()))
 
-      // Progress init
+      // Init progress
       scan.active = true; scan.roleLabel = label; _scanCancel = false
       scan.processed = 0; scan.total = Math.max(0, latestChain - start + 1); scan.pct = scan.total ? 0 : 100
       scan.found = set.size
 
+      // We OR the topics so a single window returns both grant & revoke events
       const topics:(string|string[])[] = [[TOPIC_GRANTED, TOPIC_REVOKED], roleId]
 
       if (start <= latestChain) {
         await getLogsPagedViaWalletOR(
           NFT_ADDRESS, topics, start, latestChain,
-          // onPage: Mitglieder live updaten
+          // onPage: fold logs into the current member set
           (logs) => {
             for (const lg of logs) {
               const parsed = iface.parseLog(lg)
@@ -248,7 +274,7 @@ async function loadRoleMembersViaEvents () {
             }
             scan.found = set.size
           },
-          // onProgress: Balken updaten
+          // onProgress: update progress bar
           ({ processed, total }) => {
             scan.processed = processed
             scan.total = total
@@ -257,6 +283,7 @@ async function loadRoleMembersViaEvents () {
         )
         localStorage.setItem(cacheKey, JSON.stringify({ members: Array.from(set), last: latestChain }))
       } else {
+        // Already up-to-date
         scan.pct = 100
       }
 
@@ -264,12 +291,13 @@ async function loadRoleMembersViaEvents () {
       return Array.from(set).sort()
     }
 
-    // 1) DELETER_ROLE
+    // 1) DELETER_ROLE members
     deleters.value = await scanRole(deleterRole.value, t('admin.rolesView.roleNames.deleter'), deleters.value)
-    // 2) DEFAULT_ADMIN_ROLE
+    // 2) DEFAULT_ADMIN_ROLE members
     admins.value   = await scanRole(DEFAULT_ADMIN_ROLE, t('admin.rolesView.roleNames.admin'), admins.value)
 
   } catch (e:any) {
+    // User-cancel is expected; anything else is an error worth surfacing
     membersErr.value = e?.message === 'scan_cancelled'
       ? t('admin.rolesView.scan.cancelled')
       : t('admin.rolesView.scan.failed')
@@ -279,7 +307,9 @@ async function loadRoleMembersViaEvents () {
   }
 }
 
-/** Aktionen */
+/** --- UI actions --------------------------------------------------------- */
+
+/** Quick single-check: does the given address have DELETER_ROLE? */
 async function checkRole () {
   roleMsg.value = ''; isErr.value = false
   const a = roleAddr.value.trim()
@@ -288,10 +318,14 @@ async function checkRole () {
     isBusy.value = true
     const has = await hasDeleterRole(a)
     roleMsg.value = has ? t('admin.badges.deleter') : t('admin.badges.noDeleter')
-  } catch { roleMsg.value = t('admin.roles.error'); isErr.value = true }
-  finally { isBusy.value = false }
+  } catch {
+    roleMsg.value = t('admin.roles.error'); isErr.value = true
+  } finally {
+    isBusy.value = false
+  }
 }
 
+/** Grant DELETER_ROLE (gasless via GSN), then verify and refresh list lazily */
 async function grantRole () {
   roleMsg.value=''; isErr.value=false
   const a = roleAddr.value.trim()
@@ -301,18 +335,18 @@ async function grantRole () {
     if (!deleterRole.value) await loadDeleterRole()
     await gsnTx(NFT_ADDRESS, ABI_SURVEY_NFT, 'grantRole', [deleterRole.value, a])
 
-    // Sofort in der UI anzeigen:
+    // Optimistic UI update
     const al = a.toLowerCase()
     if (!deleters.value.includes(al)) {
       deleters.value = [...deleters.value, al].sort()
     }
 
-    // Verifizieren (Read) + Nachricht
+    // Verify (read) and message
     const has = await hasDeleterRole(a)
     roleMsg.value = has ? t('admin.roles.granted', { addr: short(a) }) : t('admin.roles.error')
     isErr.value = !has
 
-    // Liste im Hintergrund „rechtfertigen“
+    // Reconcile in the background (event-driven)
     loadRoleMembersViaEvents().catch(()=>{})
   } catch {
     roleMsg.value = t('admin.roles.error'); isErr.value = true
@@ -321,6 +355,7 @@ async function grantRole () {
   }
 }
 
+/** Revoke DELETER_ROLE (gasless via GSN), then verify and refresh list lazily */
 async function revokeRole () {
   roleMsg.value=''; isErr.value=false
   const a = roleAddr.value.trim()
@@ -330,16 +365,16 @@ async function revokeRole () {
     if (!deleterRole.value) await loadDeleterRole()
     await gsnTx(NFT_ADDRESS, ABI_SURVEY_NFT, 'revokeRole', [deleterRole.value, a])
 
-    // Sofort in der UI entfernen:
+    // Optimistic UI update
     const al = a.toLowerCase()
     deleters.value = deleters.value.filter(x => x !== al)
 
-    // Verifizieren (Read) + Nachricht
+    // Verify (read) and message
     const has = await hasDeleterRole(a)
     roleMsg.value = !has ? t('admin.roles.revoked', { addr: short(a) }) : t('admin.roles.error')
     isErr.value = has
 
-    // Liste im Hintergrund „rechtfertigen“
+    // Reconcile in the background (event-driven)
     loadRoleMembersViaEvents().catch(()=>{})
   } catch {
     roleMsg.value = t('admin.roles.error'); isErr.value = true
@@ -348,13 +383,15 @@ async function revokeRole () {
   }
 }
 
-/** Init */
+/** --- Init: prefetch role id, then build members lists (with cache) --- */
 onMounted(async () => {
   try { await loadDeleterRole() } finally { await loadRoleMembersViaEvents() }
 })
 
-watch(() => quickMode.value, () => { /* optional: neu scannen */ })
+/** Future hook: re-scan on quickMode change if desired */
+watch(() => quickMode.value, () => { /* optional: trigger a fresh scan */ })
 </script>
+
 
 <style scoped>
 .box {

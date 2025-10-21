@@ -2,98 +2,36 @@
   "home": {
     "hero": {
       "title": "VPP-Punkte digital – einfach & fälschungssicher",
-      "subtitle": "Du nimmst an einer Studie teil, bestätigst am Ende kurz – und dein Punkt erscheint kostenlos in deiner Wallet. Keine Zettelwirtschaft, jederzeit nachvollziehbar.",
-      "badges": [
-        "Kostenlos",
-        "Kein Kryptoguthaben nötig",
-        "Sicher & nachvollziehbar"
-      ]
+      "subtitle": "Du nimmst an einer Studie teil, bestätigst am Ende kurz – und dein Punkt erscheint kostenlos in deiner Wallet. Kein Papierkram, jederzeit nachvollziehbar.",
+      "badges": ["Kostenlos", "Kein Kryptoguthaben nötig", "Sicher & nachvollziehbar"]
     },
+
     "cta": {
       "student": "Meine Punkte ansehen",
       "admin": "Lehrenden‑Bereich"
     },
 
-    "gettingStarted": {
-      "title": "So startest du",
-      "students": {
-        "title": "Ich bin Student:in",
-        "steps": [
-          "Wallet installieren (z. B. MetaMask). Verbindest du erst, wenn es gebraucht wird.",
-          "An einer registrierten Studie teilnehmen.",
-          "Auf der letzten Seite kurz bestätigen – dein Punkt erscheint in deiner Wallet.",
-          "Punktestand jederzeit prüfen (z. B. 7/10 VPP bis zur Bachelor‑Anmeldung)."
-        ]
-      },
-      "teachers": {
-        "title": "Ich bin Lehrende:r",
-        "steps": [
-          "Studie im Lehrenden‑Bereich anlegen (Kennung & Punktewert festlegen).",
-          "SoSci‑Starterdatei (XML) herunterladen – der Abschluss‑/Bestätigungsschritt ist enthalten.",
-          "In SoSci Inhalte ergänzen und Studie veröffentlichen.",
-          "Punkte im Portal prüfen; bei Bedarf Tokens gezielt oder vollständig löschen (rollenbasiert)."
-        ]
-      }
+    "intro": {
+      "title": "Worum geht’s hier?",
+      "lead": "Survey NFT ist das HSBI-System, das Versuchspersonenpunkte (VPP) digital erfasst. Statt Zetteln bekommst du nach einer Studie einen fälschungssicheren Punkt in deine Wallet – ohne, dass persönliche Daten gespeichert werden. So behältst du deinen Stand jederzeit im Blick, Lehrende können ihn schnell prüfen, und die Organisation rund um die Anmeldung zur Bachelorarbeit wird einfacher. Die Nutzung ist für dich kostenlos; die Gebühren übernimmt das System im Hintergrund."
     },
 
-    "howItWorks": {
-      "title": "Wie funktioniert’s?",
-      "items": {
-        "participate": {
-          "title": "Teilnehmen → bestätigen",
-          "text": "Nach Abschluss einer Studie bestätigst du einmal – das war’s."
+    "highlights": {
+      "title": "Auf einen Blick",
+      "items": [
+        {
+          "title": "Für Studierende",
+          "text": "Du siehst deinen Punktestand jederzeit – ohne Belege sammeln. Nur am Ende der Studie kurz bestätigen, fertig."
         },
-        "prove": {
-          "title": "Nachweisen → fertig",
-          "text": "Deine Punkte sind als digitale Nachweise sichtbar. Lehrende können sie schnell prüfen."
-        },
-        "secure": {
-          "title": "Sicher & nachvollziehbar",
-          "text": "Pro Studie nur ein Punkt pro Wallet. Alles bleibt fälschungssicher und transparent."
+        {
+          "title": "Für Lehrende",
+          "text": "Studien anlegen, Punkte einsehen, bei Bedarf Tokens löschen – alles ohne Gebühren, mit Rollen & Explorer‑Links."
         }
-      }
-    },
-
-    "requirements": {
-      "title": "Was brauche ich?",
-      "bullets": [
-        "Einen aktuellen Browser und eine Wallet (z. B. MetaMask).",
-        "Kein Kryptoguthaben nötig – Gebühren werden vom System gesponsert.",
-        "Die App hilft beim Wechsel ins richtige Netzwerk (Polygon)."
       ]
-    },
-
-    "security": {
-      "title": "Sicherheit & Datenschutz",
-      "points": [
-        "Keine Namen, keine Matrikelnummern im System.",
-        "Öffentlich sichtbar: Wallet‑Adresse, Blockzeit, Token‑Ereignisse.",
-        "Einmalige Nutzung pro Studie – doppelte Vergaben sind ausgeschlossen."
-      ]
-    },
-
-    "target": {
-      "title": "Für wen ist das?",
-      "student": {
-        "title": "Studierende",
-        "bullets": [
-          "Punktestand jederzeit sichtbar",
-          "Kein Papier, keine Nachträge",
-          "Direkter Nachweis für Prüfungen"
-        ]
-      },
-      "admin": {
-        "title": "Lehrende & Organisation",
-        "bullets": [
-          "Schnelle Prüfung pro Wallet",
-          "Gezieltes oder vollständiges Löschen (rollenbasiert)",
-          "Explorer‑Links & kompakte Übersicht"
-        ]
-      }
     },
 
     "faqPlus": {
-      "title": "Häufige Fragen (ausführlich)",
+      "title": "Häufige Fragen",
       "items": [
         { "q": "Muss ich etwas bezahlen?", "a": "Nein. Die Transaktionsgebühren übernimmt ein Paymaster – für dich ist es kostenfrei." },
         { "q": "Kann ich dieselbe Studie mehrfach nutzen?", "a": "Nein. Pro Wallet und Studie gibt es genau einen Punkt." },

@@ -3,11 +3,15 @@
     "hero": {
       "title": "VPP-Punkte digital – einfach & fälschungssicher",
       "subtitle": "Du nimmst an einer Studie teil, bestätigst am Ende kurz – und dein Punkt erscheint kostenlos in deiner Wallet. Keine Zettelwirtschaft, jederzeit nachvollziehbar.",
-      "gsnHint": "Keine Gebühren für dich (gaslos über OpenGSN)."
+      "badges": [
+        "Kostenlos",
+        "Kein Kryptoguthaben nötig",
+        "Sicher & nachvollziehbar"
+      ]
     },
     "cta": {
       "student": "Meine Punkte ansehen",
-      "admin": "Lehrenden-Bereich"
+      "admin": "Lehrenden‑Bereich"
     },
 
     "gettingStarted": {
@@ -15,17 +19,17 @@
       "students": {
         "title": "Ich bin Student:in",
         "steps": [
-          "Wallet installieren (z. B. MetaMask) und später bei Bedarf verbinden.",
+          "Wallet installieren (z. B. MetaMask). Verbindest du erst, wenn es gebraucht wird.",
           "An einer registrierten Studie teilnehmen.",
           "Auf der letzten Seite kurz bestätigen – dein Punkt erscheint in deiner Wallet.",
-          "Punktestand jederzeit prüfen (z. B. 7/10 VPP bis zur Bachelor-Anmeldung)."
+          "Punktestand jederzeit prüfen (z. B. 7/10 VPP bis zur Bachelor‑Anmeldung)."
         ]
       },
       "teachers": {
         "title": "Ich bin Lehrende:r",
         "steps": [
-          "Studie im Lehrenden-Bereich anlegen (Kennung & Punktewert festlegen).",
-          "SoSci-Starterdatei (XML) herunterladen – Claim-Schritt ist schon enthalten.",
+          "Studie im Lehrenden‑Bereich anlegen (Kennung & Punktewert festlegen).",
+          "SoSci‑Starterdatei (XML) herunterladen – der Abschluss‑/Bestätigungsschritt ist enthalten.",
           "In SoSci Inhalte ergänzen und Studie veröffentlichen.",
           "Punkte im Portal prüfen; bei Bedarf Tokens gezielt oder vollständig löschen (rollenbasiert)."
         ]
@@ -53,7 +57,7 @@
     "requirements": {
       "title": "Was brauche ich?",
       "bullets": [
-        "Einen aktuellen Browser und eine Wallet (z. B. MetaMask).",
+        "Einen aktuellen Browser und eine Wallet (z. B. MetaMask).",
         "Kein Kryptoguthaben nötig – Gebühren werden vom System gesponsert.",
         "Die App hilft beim Wechsel ins richtige Netzwerk (Polygon)."
       ]
@@ -63,7 +67,7 @@
       "title": "Sicherheit & Datenschutz",
       "points": [
         "Keine Namen, keine Matrikelnummern im System.",
-        "Öffentlich sichtbar: Wallet-Adresse, Blockzeit, Token-Ereignisse.",
+        "Öffentlich sichtbar: Wallet‑Adresse, Blockzeit, Token‑Ereignisse.",
         "Einmalige Nutzung pro Studie – doppelte Vergaben sind ausgeschlossen."
       ]
     },
@@ -83,7 +87,7 @@
         "bullets": [
           "Schnelle Prüfung pro Wallet",
           "Gezieltes oder vollständiges Löschen (rollenbasiert)",
-          "Explorer-Links & kompakte Übersicht"
+          "Explorer‑Links & kompakte Übersicht"
         ]
       }
     },
@@ -91,62 +95,20 @@
     "faqPlus": {
       "title": "Häufige Fragen (ausführlich)",
       "items": [
-        {
-          "q": "Muss ich etwas bezahlen?",
-          "a": "Nein. Die Transaktionsgebühren übernimmt ein Paymaster – für dich ist es kostenfrei."
-        },
-        {
-          "q": "Kann ich dieselbe Studie mehrfach nutzen?",
-          "a": "Nein. Pro Wallet und Studie gibt es genau einen Punkt."
-        },
-        {
-          "q": "Welches Netzwerk wird genutzt?",
-          "a": "Polygon. Die App hilft beim Wechsel, falls nötig."
-        },
-        {
-          "q": "Welche Daten werden gespeichert?",
-          "a": "Wir speichern keine personenbezogenen Daten – nur die technischen Nachweise der Punkte."
-        },
-        {
-          "q": "Ich habe noch keine Wallet – was mache ich?",
-          "a": "Installiere z. B. MetaMask im Browser oder als App und folge den kurzen Schritten. Danach kannst du Studienabschluss bestätigen und Punkte empfangen."
-        },
-        {
-          "q": "Brauche ich Kryptogeld?",
-          "a": "Nein. Die Gebühren bezahlt ein Paymaster im Hintergrund – für dich entstehen keine Kosten."
-        },
-        {
-          "q": "Wie sehe ich meine Punkte?",
-          "a": "Öffne deine Wallet – die Punkte erscheinen als digitale Einträge. Außerdem kannst du sie im Lehrenden-Portal bei Bedarf prüfen lassen."
-        },
-        {
-          "q": "Kann ich Punkte übertragen oder verkaufen?",
-          "a": "Nein. Die Punkte sind nicht übertragbar und bleiben deiner Wallet zugeordnet."
-        },
-        {
-          "q": "Ich habe am Ende der Studie nichts bekommen – was tun?",
-          "a": "Prüfe Wallet-Verbindung und Netzwerk. Wenn es trotzdem nicht klappt, wende dich mit deiner Wallet-Adresse an die Lehrperson."
-        },
-        {
-          "q": "Ich habe meine Wallet verloren – sind die Punkte weg?",
-          "a": "Punkte sind an die Wallet gebunden. Wende dich an die Lehrperson: In begründeten Fällen können Tokens gelöscht werden, damit eine korrekte Zuweisung möglich wird."
-        },
-        {
-          "q": "Wie viele Punkte brauche ich bis zur Bachelor-Anmeldung?",
-          "a": "Insgesamt 10 VPP. Deinen Fortschritt kannst du jederzeit prüfen."
-        },
-        {
-          "q": "Welche Daten sieht die Öffentlichkeit?",
-          "a": "Nur Wallet-Adresse, Zeitangaben (über den Block) und Ereignisse wie „Punkt erstellt/gelöscht“ – keine Namen oder Matrikelnummern."
-        },
-        {
-          "q": "Was machen Lehrende genau im Portal?",
-          "a": "Studien anlegen, SoSci-Vorlagen erstellen, Punkte pro Wallet prüfen und bei Bedarf Tokens löschen – abgesichert über Rollen."
-        },
-        {
-          "q": "Warum kostet das alles nichts?",
-          "a": "Weil ein Paymaster die Gebühren übernimmt. Die Transaktionen werden als Meta-Transaktionen über OpenGSN gesponsert."
-        }
+        { "q": "Muss ich etwas bezahlen?", "a": "Nein. Die Transaktionsgebühren übernimmt ein Paymaster – für dich ist es kostenfrei." },
+        { "q": "Kann ich dieselbe Studie mehrfach nutzen?", "a": "Nein. Pro Wallet und Studie gibt es genau einen Punkt." },
+        { "q": "Welches Netzwerk wird genutzt?", "a": "Polygon. Die App hilft beim Wechsel, falls nötig." },
+        { "q": "Welche Daten werden gespeichert?", "a": "Wir speichern keine personenbezogenen Daten – nur die technischen Nachweise der Punkte." },
+        { "q": "Ich habe noch keine Wallet – was mache ich?", "a": "Installiere z. B. MetaMask im Browser oder als App und folge den kurzen Schritten. Danach kannst du Studienabschluss bestätigen und Punkte empfangen." },
+        { "q": "Brauche ich Kryptogeld?", "a": "Nein. Die Gebühren bezahlt ein Paymaster im Hintergrund – für dich entstehen keine Kosten." },
+        { "q": "Wie sehe ich meine Punkte?", "a": "Öffne deine Wallet – die Punkte erscheinen als digitale Einträge. Außerdem kannst du sie im Lehrenden‑Portal bei Bedarf prüfen lassen." },
+        { "q": "Kann ich Punkte übertragen oder verkaufen?", "a": "Nein. Die Punkte sind nicht übertragbar und bleiben deiner Wallet zugeordnet." },
+        { "q": "Ich habe am Ende der Studie nichts bekommen – was tun?", "a": "Prüfe Wallet‑Verbindung und Netzwerk. Wenn es trotzdem nicht klappt, wende dich mit deiner Wallet‑Adresse an die Lehrperson." },
+        { "q": "Ich habe meine Wallet verloren – sind die Punkte weg?", "a": "Punkte sind an die Wallet gebunden. Wende dich an die Lehrperson: In begründeten Fällen können Tokens gelöscht werden, damit eine korrekte Zuweisung möglich wird." },
+        { "q": "Wie viele Punkte brauche ich bis zur Bachelor‑Anmeldung?", "a": "Insgesamt 10 VPP. Deinen Fortschritt kannst du jederzeit prüfen." },
+        { "q": "Welche Daten sieht die Öffentlichkeit?", "a": "Nur Wallet‑Adresse, Zeitangaben (über den Block) und Ereignisse wie „Punkt erstellt/gelöscht“ – keine Namen oder Matrikelnummern." },
+        { "q": "Was machen Lehrende genau im Portal?", "a": "Studien anlegen, SoSci‑Vorlagen erstellen, Punkte pro Wallet prüfen und bei Bedarf Tokens löschen – abgesichert über Rollen." },
+        { "q": "Warum kostet das alles nichts?", "a": "Weil ein Paymaster die Gebühren übernimmt. Die Transaktionen werden als Meta‑Transaktionen über OpenGSN gesponsert." }
       ]
     }
   }

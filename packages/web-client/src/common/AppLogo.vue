@@ -2,8 +2,7 @@
   <div class="app-logo">
     <img
       class="app-logo__img"
-      src="/branding/logo-arbeitskreis.png"
-      width="40" height="44"
+      src="/branding/logo.svg"
       :alt="$config.APP_NAME"
     />
     <router-link class="app-logo__link" :to="{ name: $routes.home }" aria-label="Startseite"/>

@@ -1,11 +1,9 @@
 <template>
-  <main class="vpp-page">
-    <div v-if="isAppInitialized" class="app__container">
-      <app-navbar v-if="!hideNavbar" />
-      <router-view />
-    </div>
-    <loader v-else class="app__loader" />
-  </main>
+  <div v-if="isAppInitialized" class="app__container">
+    <app-navbar v-if="!hideNavbar" />
+    <router-view />
+  </div>
+  <loader v-else class="app__loader" />
 </template>
 
 <script lang="ts" setup>

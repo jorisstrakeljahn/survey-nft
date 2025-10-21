@@ -4,6 +4,7 @@
       <header class="admin-page__header">
         <h1>{{ t('admin.title') }}</h1>
 
+        <!-- Role badges: reflect current privileges at a glance -->
         <div class="badges">
           <span class="badge" :class="isDeleter ? 'badge--ok' : 'badge--warn'">
             {{ t(isDeleter ? 'admin.badges.deleter' : 'admin.badges.noDeleter') }}
@@ -14,36 +15,41 @@
         </div>
       </header>
 
-      <!-- Tabs nur zeigen, wenn mindestens eine Rolle vorhanden ist -->
-      <nav v-if="canAccess" class="admin-tabs" role="tablist" aria-label="Admin Sections">
-        <!-- Wallets: sichtbar für Deleter (und Admin) -->
-        <RouterLink class="tab" active-class="tab--active" :to="{ name: 'AdminWallets' }">
-          {{ t('admin.tabs.wallets') }}
-        </RouterLink>
+      <!-- Navigation appears only when the user has at least one role.
+           A11y: real navigation (list of links), no forced "tab" roles. -->
+      <nav v-if="canAccess" class="admin-nav" aria-label="Admin sections">
+        <ul class="admin-tabs">
+          <!-- Wallets: visible for Deleter (and Admin) -->
+          <li>
+            <RouterLink class="tab" active-class="tab--active" :to="{ name: 'AdminWallets' }">
+              {{ t('admin.tabs.wallets') }}
+            </RouterLink>
+          </li>
 
-        <!-- Roles: NUR sichtbar, wenn Admin -->
-        <RouterLink
-          v-if="canManage"
-          class="tab"
-          active-class="tab--active"
-          :to="{ name: 'AdminRoles' }"
-        >
-          {{ t('admin.tabs.roles') }}
-        </RouterLink>
+          <!-- Roles: visible only for Admin -->
+          <li v-if="canManage">
+            <RouterLink class="tab" active-class="tab--active" :to="{ name: 'AdminRoles' }">
+              {{ t('admin.tabs.roles') }}
+            </RouterLink>
+          </li>
 
-        <!-- Generator: sichtbar für Deleter (und Admin) -->
-        <RouterLink class="tab" active-class="tab--active" :to="{ name: 'AdminGenerator' }">
-          {{ t('admin.tabs.generator') }}
-        </RouterLink>
+          <!-- Generator: visible for Deleter (and Admin) -->
+          <li>
+            <RouterLink class="tab" active-class="tab--active" :to="{ name: 'AdminGenerator' }">
+              {{ t('admin.tabs.generator') }}
+            </RouterLink>
+          </li>
+        </ul>
       </nav>
 
-      <!-- Hinweis, wenn keine Berechtigung -->
+      <!-- Friendly notice when no privileges -->
       <div v-else class="help help--error" style="margin: 12px 0;">
         {{ t('admin.access.denied') }}
       </div>
 
-      <!-- Child-Views nur rendern, wenn Zugriff -->
+      <!-- Render child views only when the user can access something -->
       <RouterView v-if="canAccess" v-slot="{ Component }">
+        <!-- Pass down permission flags so children can hide/disable controls accordingly -->
         <component :is="Component" :isDeleter="isDeleter" :canManage="canManage" />
       </RouterView>
     </main>
@@ -62,12 +68,33 @@ import AppFooter from '@/common/AppFooter.vue'
 
 const { t } = useI18n({ useScope: 'global' })
 
-const isDeleter = ref(false)  // steuert Wallets/Generator & Burn-Badge
-const canManage = ref(false)  // steuert Roles-Tab & Admin-Badge
+/**
+ * OpenZeppelin AccessControl: DEFAULT_ADMIN_ROLE == 0x00..00
+ * Make this robust across ethers v5/v6.
+ */
+const DEFAULT_ADMIN_ROLE: string =
+  // ethers v5
+  ((ethers as any).constants?.HashZero) ??
+  // ethers v6
+  ((ethers as any).ZeroHash) ??
+  // hard fallback
+  '0x0000000000000000000000000000000000000000000000000000000000000000'
 
-// Zugriff insgesamt (mind. eine Rolle)
+/**
+ * Permission flags:
+ *  - isDeleter: can delete/burn tokens and access Wallets/Generator
+ *  - canManage: has DEFAULT_ADMIN_ROLE; can manage roles
+ */
+const isDeleter = ref(false)
+const canManage = ref(false)
+
+/** Gate for the whole admin area. If false, we render a friendly denial message. */
 const canAccess = computed(() => isDeleter.value || canManage.value)
 
+/**
+ * Returns the currently active EIP-1193 account or null if not connected.
+ * We do NOT request connection here; this layout only reflects current state.
+ */
 async function getActiveAccount(): Promise<string | null> {
   const eth = (window as any).ethereum
   if (!eth?.request) return null
@@ -75,6 +102,10 @@ async function getActiveAccount(): Promise<string | null> {
   return Array.isArray(accs) && accs.length ? String(accs[0]) : null
 }
 
+/**
+ * Read role flags from the on-chain contract using a read-only RPC.
+ * Fast path: fetch DELETER_ROLE id once, then run two hasRole checks in parallel.
+ */
 async function refreshRoles() {
   try {
     const addr = await getActiveAccount()
@@ -94,21 +125,26 @@ async function refreshRoles() {
 
     const [adm, del] = await Promise.all([
       c.hasRole(DEFAULT_ADMIN_ROLE, addr),
-      c.hasRole(dr, addr),
+      c.hasRole(dr, addr)
     ])
 
     isDeleter.value = Boolean(del)
     canManage.value = Boolean(adm)
-  } catch {
+  } catch (e) {
+    // On any failure, fall back to "no access" to be safe and log for diagnostics.
+    console.error('refreshRoles failed:', e)
     isDeleter.value = false
     canManage.value = false
   }
 }
 
+/**
+ * Initial role fetch and event wiring.
+ * We listen to account/chain changes to keep the header badges and tabs in sync.
+ */
 onMounted(() => {
   refreshRoles().catch(() => {})
 
-  // Bei Account- oder Chain-Wechsel Berechtigungen neu laden
   const eth = (window as any).ethereum
   if (eth?.on) {
     eth.on('accountsChanged', () => refreshRoles().catch(() => {}))
@@ -184,5 +220,13 @@ onMounted(() => {
   text-decoration: none;
   color: #111;
   font-weight: 700;
+}
+
+.admin-nav {
+  margin: 8px 0 12px;
+}
+
+.tab--active {
+  background: #eef3ff;
 }
 </style>

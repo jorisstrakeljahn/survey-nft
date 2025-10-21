@@ -44,7 +44,8 @@ export const i18n = createI18n({
       ...dePrivacy,
       ...deImprint,
       ...deAccessibility,
-      ...deConnect },
+      ...deConnect,
+    },
     en: {
       ...enHome,
       ...enFooter,
@@ -56,7 +57,8 @@ export const i18n = createI18n({
       ...enPrivacy,
       ...enImprint,
       ...enAccessibility,
-      ...enConnect },
+      ...enConnect,
+    },
   },
 })
 

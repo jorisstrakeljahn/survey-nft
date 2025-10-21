@@ -1,11 +1,10 @@
 import { Buffer } from 'buffer'
 import process from 'process'
-
 ;(globalThis as any).global ??= globalThis
 ;(globalThis as any).Buffer ??= Buffer
 ;(globalThis as any).process ??= process
 
-import "@fontsource-variable/inter";
+import '@fontsource-variable/inter'
 
 import 'virtual:svg-icons-register'
 
@@ -47,8 +46,8 @@ app.config.errorHandler = function (err, vm, info) {
 
 app.mount('#app')
 
-if ("requestIdleCallback" in window) {
-  ;(window as any).requestIdleCallback(() => import("@/lazy-styles"))
+if ('requestIdleCallback' in window) {
+  ;(window as any).requestIdleCallback(() => import('@/lazy-styles'))
 } else {
-  setTimeout(() => import("@/lazy-styles"), 0)
+  setTimeout(() => import('@/lazy-styles'), 0)
 }

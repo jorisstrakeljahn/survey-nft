@@ -8,6 +8,8 @@
     "contactEmail": "{account}{'@'}{domain}",
     "datenschutz": "Privacy Policy",
     "imprint": "Imprint",
-    "accessibility": "Accessibility"
+    "accessibility": "Accessibility",
+    "copyright": "©",
+    "hsbi": "HSBI"
   }
 }

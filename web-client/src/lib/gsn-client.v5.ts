@@ -1,11 +1,15 @@
 // src/lib/gsn-client.v4.ts
 import { ethers } from 'ethers'
 import {
-  CHAIN_ID, POLYGON_HEX,
-  PAYMASTER_ADDRESS, PREFERRED_RELAYS
+  CHAIN_ID,
+  POLYGON_HEX,
+  PAYMASTER_ADDRESS,
+  PREFERRED_RELAYS,
 } from '@/config/addresses'
 
-type Eip1193 = { request: (args: { method: string; params?: any[] | object }) => Promise<any> }
+type Eip1193 = {
+  request: (args: { method: string; params?: any[] | object }) => Promise<any>
+}
 
 function getEthereum(): Eip1193 {
   const eth = (window as any).ethereum as Eip1193 | undefined
@@ -22,16 +26,19 @@ async function ensurePolygon(eth: Eip1193) {
       await eth.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: POLYGON_HEX }] })
     } catch (e: any) {
       if (e?.code === 4902) {
-        await eth.request({
-          method: 'wallet_addEthereumChain',
-          params: [{
-            chainId: POLYGON_HEX,
-            chainName: 'Polygon Mainnet',
-            nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 },
-            rpcUrls: ['https://polygon-rpc.com'],
-            blockExplorerUrls: ['https://polygonscan.com/']
-          }]
-        });
+        await eth.request(
+          {
+            method: 'wallet_addEthereumChain',
+            params: [{
+                chainId: POLYGON_HEX,
+                chainName: 'Polygon Mainnet',
+                nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 },
+                rpcUrls: ['https://polygon-rpc.com'],
+                blockExplorerUrls: ['https://polygonscan.com/'],
+              }
+            ]
+          }
+        )
       } else {
         throw e
       }
@@ -49,14 +56,11 @@ export async function getGsnSigner() {
 
   const config = {
     paymasterAddress:  PAYMASTER_ADDRESS,
-
-    // ⬇️ wichtig gegen 10k-Log-Limit
-    relayLookupWindowBlocks:       10_000,  // wie in deinem claim.js
+    relayLookupWindowBlocks: 10_000,
     relayRegistrationLookupBlocks: 10_000,
-    pastEventsQueryMaxPageSize:     5_000,
-
-    preferredRelays:   PREFERRED_RELAYS,   // z.B. enzyme
-    auditorsCount:     0,
+    pastEventsQueryMaxPageSize: 5_000,
+    preferredRelays: PREFERRED_RELAYS,
+    auditorsCount: 0,
     loggerConfiguration: { logLevel: 'error' },
   } as any
 
@@ -72,7 +76,7 @@ export async function gsnTx(
   abi: readonly string[],
   method: string,
   args: any[] = [],
-  overrides: Record<string, any> = {}
+  overrides: Record<string, any> = {},
 ) {
   const signer = await getGsnSigner()
   const c = new ethers.Contract(address, abi, signer)
@@ -83,6 +87,9 @@ export async function gsnTx(
 export function readRpc() {
   return new ethers.providers.JsonRpcProvider(
     'https://polygon-rpc.com',
-    { name: 'matic', chainId: CHAIN_ID }
+    {
+      name: 'matic',
+      chainId: CHAIN_ID
+    },
   )
 }

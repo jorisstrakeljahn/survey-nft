@@ -32,7 +32,7 @@
 
       <div class="app-footer__bottom">
         <small class="app-footer__copy">
-          © {{ year }} HSBI
+          {{ t('footer.copyright') }} {{ year }} {{ t('footer.hsbi') }}
         </small>
 
         <nav class="footer-legal" aria-label="Rechtliche Links">

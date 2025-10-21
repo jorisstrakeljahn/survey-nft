@@ -78,6 +78,24 @@
         ]
       },
       {
+        "id": "web3",
+        "title": "Web3 / Wallets and Blockchain",
+        "paras": [
+          "When you connect a wallet, we process your public wallet address, chain/network information and technical metadata to provide the service (e.g., to display balances, execute transactions).",
+          "On-chain data are publicly accessible and permanently stored on the respective blockchain. Please do not include personal data in transaction metadata.",
+          "Legal basis: Art. 6(1)(b) GDPR (contract-like use of the service) and Art. 6(1)(f) GDPR (IT security and fraud prevention).",
+          "Recipients: where applicable, infrastructure/RPC providers used to access the blockchain. Transfers to third countries may occur depending on the provider; appropriate safeguards pursuant to Art. 44 et seq. GDPR are applied.",
+          "Retention: on-chain data are not under our control. Off-chain technical logs are deleted after a short period unless required for evidence."
+        ]
+      },
+      {
+        "id": "fonts",
+        "title": "Fonts",
+        "paras": [
+          "We deliver web fonts from our own servers (self-hosted). No connection to Google Fonts is established."
+        ]
+      },
+      {
         "id": "recipients",
         "title": "Recipients and Processing on Our Behalf",
         "paras": [

@@ -78,6 +78,24 @@
         ]
       },
       {
+        "id": "web3",
+        "title": "Web3 / Wallets und Blockchain",
+        "paras": [
+          "Beim Verbinden einer Wallet verarbeiten wir Ihre öffentliche Wallet-Adresse, Chain/Netzwerk-Informationen und technische Metadaten zur Bereitstellung des Dienstes (z. B. Anzeige von Beständen, Ausführung von Transaktionen).",
+          "On-Chain-Daten sind öffentlich zugänglich und dauerhaft auf der jeweiligen Blockchain gespeichert. Bitte hinterlegen Sie keine personenbezogenen Daten in Transaktions-Metadaten.",
+          "Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (nutzungsvertragliche Zwecke) und Art. 6 Abs. 1 lit. f DSGVO (IT-Sicherheit/Betrugsprävention).",
+          "Empfänger: ggf. Infrastruktur-/RPC-Provider zum Zugriff auf die Blockchain. Je nach Provider kann eine Drittlandübermittlung erfolgen; es werden geeignete Garantien gem. Art. 44 ff. DSGVO angewandt.",
+          "Speicherdauer: On-Chain-Daten entziehen sich unserer Kontrolle. Off-Chain-Logs werden nach kurzer Zeit gelöscht, sofern keine Beweiszwecke entgegenstehen."
+        ]
+      },
+      {
+        "id": "fonts",
+        "title": "Schriften",
+        "paras": [
+          "Webfonts werden von unseren eigenen Servern ausgeliefert (Self-Hosting). Es wird keine Verbindung zu Google Fonts hergestellt."
+        ]
+      },
+      {
         "id": "recipients",
         "title": "Empfänger und Auftragsverarbeitung",
         "paras": [

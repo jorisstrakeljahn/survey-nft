@@ -64,8 +64,6 @@ init()
 </script>
 
 <style lang="scss" scoped>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
 .app__container {
   display: grid;
   grid-template-rows: toRem(85) 1fr max-content;

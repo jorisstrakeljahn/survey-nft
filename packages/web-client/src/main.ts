@@ -5,6 +5,12 @@ import process from 'process'
 ;(globalThis as any).Buffer ??= Buffer
 ;(globalThis as any).process ??= process
 
+import "@fontsource/inter/300.css";
+import "@fontsource/inter/400.css";
+import "@fontsource/inter/500.css";
+import "@fontsource/inter/600.css";
+import "@fontsource/inter/700.css";
+
 import '@/styles/app.scss'
 import 'virtual:svg-icons-register'
 

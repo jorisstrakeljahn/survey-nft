@@ -24,6 +24,7 @@
   "dependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
+    "@fontsource-variable/inter": "^5.2.8",
     "@fontsource/inter": "^5.2.8",
     "@opengsn/provider": "^3.0.0-beta.6",
     "@vuelidate/core": "^2.0.0",
@@ -72,7 +73,7 @@
     "eslint-plugin-vue": "^9.8.0",
     "happy-dom": "^8.1.1",
     "prettier": "^2.8.1",
-    "rollup-plugin-visualizer": "^5.9.0",
+    "rollup-plugin-visualizer": "^5.14.0",
     "sass": "^1.57.1",
     "stylelint": "^14.16.1",
     "stylelint-config-standard-scss": "^6.1.0",

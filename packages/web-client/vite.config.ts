@@ -79,6 +79,8 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       commonjsOptions: { transformMixedEsModules: true },
+      target: "es2020"
     },
+    esbuild: { target: "es2020" }
   }
 })

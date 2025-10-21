@@ -1,81 +1,65 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" dir="ltr">
-
 <head>
-  <title>Laboratory work</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <noscript>
-    <style>
-      #noscript {
-        display: none;
-      }
-    </style>
-  </noscript>
+  <title>Survey NFT – HSBI</title>
+  <meta name="description" content="Survey NFT: Reward participation with secure and transparent NFT-based VPP points by HSBI." />
 
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="theme-color" content="#ffffff">
+  <!-- SEO / Social -->
+  <link rel="canonical" href="https://YOUR-DOMAIN.tld/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Survey NFT – HSBI" />
+  <meta property="og:description" content="Reward participation with secure and transparent NFT-based VPP points." />
+  <meta property="og:locale" content="en_GB" />
+  <meta property="og:url" content="https://YOUR-DOMAIN.tld/" />
+  <meta property="og:image" content="/branding/social-card.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="theme-color" content="#117FFF" />
 
-  <meta name="viewport"
-    content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
-  <meta name="description" content="Nft Laboratory work">
-  <meta property="og:title" content="Laboratory work">
-  <meta property="og:description" content="Nft Laboratory work">
-  <meta property="og:locale" content="en_GB">
-  <meta property="og:type" content="website">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta property="og:image" content="/branding/logo.svg">
+  <!-- Icons / Manifest -->
+  <link rel="icon" href="/branding/favicon.ico" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/branding/favicon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
 
-  <link rel="icon" href="/branding/favicon.ico">
-  <link rel="manifest" href="/site.webmanifest">
-  <link href="/branding/favicon.png" rel="icon" type="image/png">
+  <!-- Small critical CSS inline (keep this minimal) -->
+  <style>
+    html, body, #app { height: 100%; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Inter, Arial, sans-serif;
+      background: #fff;
+    }
+    .app__init {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+    }
+  </style>
 
-  <link href="/noscript/style.css" type="text/css" rel="stylesheet">
-  <link href="/init-loader/style.css" type="text/css" rel="stylesheet">
+  <!-- init-loader styles: non-blocking load -->
+  <link rel="preload" href="/init-loader/style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="/init-loader/style.css"></noscript>
 
+  <!-- noscript styles: load only when JavaScript is disabled -->
+  <noscript><link rel="stylesheet" href="/noscript/style.css"></noscript>
+
+  <!-- Vite entry point (type=module is deferred by default) -->
   <script type="module" src="/src/main.ts"></script>
-  <script type="text/javascript" src="/env.js"></script>
 </head>
 
 <body>
-  <div id="app">
-    <div id="noscript" class="app__init">
-      <img src="/init-loader/init-logo.svg" alt="Nft Laboratory work" width="280">
-    </div>
+<div id="app">
+  <div id="noscript" class="app__init">
+    <img src="/init-loader/init-logo.svg" alt="Survey NFT" width="280" height="280">
   </div>
-  <div id="modal"></div>
-  <div id="teleport-modal"></div>
-  <!-- built files will be auto injected -->
-  <noscript>
-    <div class="noscript">
-      <h1 class="noscript__title">Update your browser or enable JavaScript</h1>
-      <p class="noscript__message">Your browser either does not support JavaScript, or it has JavaScript support
-        disabled. If you want to correctly view this page, please upgrade your browser or <a
-          class="noscript__enable-support" href="http://activatejavascript.org/en/instructions/" target="_blank">enable
-          JavaScript support</a>.</p>
-      <p class="noscript__recommendations">These are the ones we recommend:</p>
-      <ul class="noscript__list">
-        <li class="noscript__list-item">
-          <a class="noscript__link" href="https://www.google.com/chrome/?hl=en%22">
-            <img class="noscript__image" src="/noscript/chrome.jpg" width="138px" height="138px" alt="chrome-logo">
-          </a>
-          <span class="noscript__browser-name">Google Chrome</span>
-        </li>
-        <li class="noscript__list-item">
-          <a class="noscript__link" href="https://www.mozilla.com/firefox/">
-            <img class="noscript__image" src="/noscript/firefox.jpg" width="138px" height="138px" alt="firefox-logo">
-          </a>
-          <span class="noscript__browser-name">Firefox</span>
-        </li>
-        <li class="noscript__list-item" style="margin-right: 0;">
-          <a class="noscript__link" href="https://www.apple.com/safari/">
-            <img class="noscript__image" src="/noscript/safari.jpg" width="138px" height="138px" alt="safari-logo">
-          </a>
-          <span class="noscript__browser-name">Safari</span>
-        </li>
-      </ul>
-    </div>
-  </noscript>
-</body>
+</div>
 
+<div id="modal"></div>
+<div id="teleport-modal"></div>
+
+<!-- env.js: deferred, non-blocking -->
+<script defer src="/env.js"></script>
+</body>
 </html>

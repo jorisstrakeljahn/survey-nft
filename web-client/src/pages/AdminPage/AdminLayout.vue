@@ -91,7 +91,6 @@ async function refreshRoles() {
     )
 
     const dr = await c.DELETER_ROLE()
-    const DEFAULT_ADMIN_ROLE = ethers.constants.HashZero // 0x00…00
 
     const [adm, del] = await Promise.all([
       c.hasRole(DEFAULT_ADMIN_ROLE, addr),
@@ -125,14 +124,65 @@ onMounted(() => {
   scrollbar-gutter: stable both-edges;
 }
 
-.admin-page__main{max-width:1240px;margin:0 auto;padding:24px 16px}
-.admin-page__header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
-.badges{display:flex;gap:8px;flex-wrap:wrap}
-.badge{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;font-size:.8rem;font-weight:800;border:1px solid #e5e5e5}
-.badge--ok{background:#e8fff3;color:#065f46;border-color:#bbf7d0}
-.badge--warn{background:#fff7ed;color:#9a3412;border-color:#fed7aa}
-.badge--muted{background:#f6f6f6;color:#444}
-.admin-tabs{display:flex;gap:8px;margin:8px 0 16px}
-.tab{padding:8px 12px;border-radius:10px;border:1px solid #eee;text-decoration:none;color:#111;font-weight:700}
-.tab--active{background:#f6f6f6}
+.admin-page__main{
+  max-width:1240px;
+  margin:0 auto;
+  padding:24px 16px;
+}
+
+.admin-page__header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:10px;
+}
+
+.badges{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:.8rem;
+  font-weight:800;
+  border:1px solid #e5e5e5;
+}
+
+.badge--ok{
+  background:#e8fff3;
+  color:#065f46;
+  border-color:#bbf7d0;
+}
+
+.badge--warn{
+  background:#fff7ed;
+  color:#9a3412;
+  border-color:#fed7aa;
+}
+
+.badge--muted{
+  background:#f6f6f6;
+  color:#444;
+}
+
+.admin-tabs{
+  display:flex;
+  gap:8px;
+  margin:8px 0 16px;
+}
+
+.tab{
+  padding:8px 12px;
+  border-radius:10px;
+  border:1px solid #eee;
+  text-decoration:none;
+  color:#111;
+  font-weight:700
+}
 </style>

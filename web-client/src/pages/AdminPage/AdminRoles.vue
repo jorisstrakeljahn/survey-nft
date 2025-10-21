@@ -358,20 +358,92 @@ watch(() => quickMode.value, () => { /* optional: neu scannen */ })
 </script>
 
 <style scoped>
-.box{border:1px solid #eee;border-radius:12px;background:#fff;padding:14px}
-.help{font-size:.95rem;color:#555;margin-top:8px}
-.help--error{color:#b00020}
-.roles-line{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;margin-top:8px}
-.roles-line input{padding:10px 12px;border:1px solid #e5e5e5;border-radius:10px;min-width:260px}
-.roles-actions{display:flex;gap:8px;flex-wrap:wrap}
-.btn{padding:6px 10px;border:1px solid #e5e5e5;border-radius:10px;background:#fff;font-weight:700;cursor:pointer}
-.btn--ghost{background:#fafafa}
-.role-block ul{margin:6px 0 0 0;padding:0 0 0 16px}
-.mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace}
+.box{
+  border:1px solid #eee;
+  border-radius:12px;
+  background:#fff;
+  padding:14px;
+}
 
-/* Fortschritt & Steuerung */
-.scanbox{border:1px dashed #eee;border-radius:10px;padding:10px;margin:8px 0;background:#fafafa}
-.scanrow{display:flex;justify-content:space-between;align-items:center;gap:12px}
-.progress{height:8px;border-radius:999px;background:#eee;margin:6px 0;overflow:hidden}
-.progress .bar{height:100%; background:#4f46e5; transition:width .2s ease}
+.help{
+  font-size:.95rem;
+  color:#555;
+  margin-top:8px;
+}
+
+.help--error{
+  color:#b00020;
+}
+
+.roles-line{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:8px;
+  align-items:center;
+  margin-top:8px;
+}
+
+.roles-line input{
+  padding:10px 12px;
+  border:1px solid #e5e5e5;
+  border-radius:10px;
+  min-width:260px;
+}
+
+.roles-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.btn{
+  padding:6px 10px;
+  border:1px solid #e5e5e5;
+  border-radius:10px;
+  background:#fff;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.btn--ghost{
+  background:#fafafa;
+}
+
+.role-block ul{
+  margin:6px 0 0 0;
+  padding:0 0 0 16px;
+}
+
+.mono{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+}
+
+.scanbox{
+  border:1px dashed #eee;
+  border-radius:10px;
+  padding:10px;
+  margin:8px 0;
+  background:#fafafa;
+}
+
+.scanrow{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+}
+
+.progress{
+  height:8px;
+  border-radius:999px;
+  background:#eee;
+  margin:6px 0;
+  overflow:hidden;
+}
+
+.progress .bar{
+  height:100%;
+  background:#4f46e5;
+  transition:width .2s ease;
+}
 </style>

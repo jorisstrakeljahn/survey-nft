@@ -115,7 +115,7 @@
       </div>
     </section>
 
-    <AppFooter />
+    <app-footer />
   </main>
 </template>
 
@@ -124,7 +124,7 @@ import AppFooter from '@/common/AppFooter.vue'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-const { t, tm, locale } = useI18n({ useScope: 'global' })
+const { t, tm } = useI18n({ useScope: 'global' })
 
 type Section = {
   id: string

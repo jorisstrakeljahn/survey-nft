@@ -1,11 +1,12 @@
 <template>
   <div class="vpp-home">
-    <!-- HERO -->
+    <!-- HERO: primary value proposition + two clear CTAs to the app’s main areas -->
     <section class="hero">
       <div class="container">
         <h1 class="hero__title">{{ t('home.hero.title') }}</h1>
         <p class="hero__subtitle">{{ t('home.hero.subtitle') }}</p>
 
+        <!-- Keep CTAs prominent; no wallet requirement on the homepage -->
         <div class="hero__cta">
           <router-link to="/nfts" class="btn btn--primary">
             {{ t('home.cta.student') }}
@@ -15,13 +16,14 @@
           </router-link>
         </div>
 
-        <ul class="hero__badges" aria-label="Vorteile">
+        <!-- Short benefit chips; aria-label helps screen readers understand the list purpose -->
+        <ul class="hero__badges" aria-label="Benefits">
           <li v-for="(b, i) in heroBadges" :key="i" class="chip">{{ b }}</li>
         </ul>
       </div>
     </section>
 
-    <!-- INTRO (kurzer Klartext) -->
+    <!-- INTRO: one-paragraph plain-language explanation (no tech jargon) -->
     <section class="intro">
       <div class="container">
         <h2 class="section-title">{{ t('home.intro.title') }}</h2>
@@ -29,7 +31,7 @@
       </div>
     </section>
 
-    <!-- HIGHLIGHTS (2 kompakte Karten) -->
+    <!-- HIGHLIGHTS: two compact cards summarizing value for students vs. lecturers -->
     <section class="highlights">
       <div class="container">
         <h2 class="section-title">{{ t('home.highlights.title') }}</h2>
@@ -42,7 +44,7 @@
       </div>
     </section>
 
-    <!-- FAQ -->
+    <!-- FAQ: expandable, non-technical answers; content is HTML-safe via v-html -->
     <section class="faq">
       <div class="container">
         <h2 class="section-title">{{ t('home.faqPlus.title') }}</h2>
@@ -69,28 +71,31 @@ import { useI18n } from 'vue-i18n'
 import AppFooter from '@/common/AppFooter.vue'
 import AccordionItem from '@/common/AccordionItem.vue'
 
+/**
+ * i18n:
+ * - t()  -> returns strings
+ * - tm() -> returns typed messages (arrays/objects). Use tm() whenever you expect arrays.
+ */
 const { t, tm } = useI18n()
 
-/** Hero */
+/** Hero chips: short, scannable benefits (array from i18n via tm()) */
 const heroBadges = computed(() => (tm('home.hero.badges') as string[]) ?? [])
 
-/** Paths */
-const studentSteps = computed(() => (tm('home.gettingStarted.students.steps') as string[]) ?? [])
-const teacherSteps = computed(() => (tm('home.gettingStarted.teachers.steps') as string[]) ?? [])
-
-/** Intro */
-const introBullets = computed(() => (tm('home.intro.bullets') as string[]) ?? [])
-
-/** Highlights */
+/** Highlights: two concise cards (title and text) pulled from i18n */
 type Highlight = { title: string; text: string }
 const highlights = computed(() => (tm('home.highlights.items') as Highlight[]) ?? [])
 
-/** FAQ ausführlich */
+/**
+ * FAQ (expanded):
+ * tm() returns an array of { q, a }; we map it to the Accordion API { title, content }.
+ * Keep content simple and accessible; avoid tech jargon here.
+ */
 const faqPlusItems = computed(() => {
   const items = (tm('home.faqPlus.items') ?? []) as Array<{ q: string; a: string }>
   return items.map(({ q, a }) => ({ title: q, content: a }))
 })
 </script>
+
 
 <style lang="scss" scoped>
 .container {

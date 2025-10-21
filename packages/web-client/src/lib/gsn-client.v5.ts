@@ -63,7 +63,7 @@ export async function getGsnSigner() {
   const gsnProvider = await RP.newProvider({ provider: eth, config }).init()
 
   // ethers v5
-  const provider = new ethers.providers.Web3Provider(gsnProvider as any, 'any')
+  const provider = new ethers.providers.Web3Provider(gsnProvider, 'any')
   return provider.getSigner()
 }
 

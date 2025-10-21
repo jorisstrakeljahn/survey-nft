@@ -3,9 +3,10 @@
     <img
       class="app-logo__img"
       src="/branding/logo-arbeitskreis.png"
+      width="40" height="44"
       :alt="$config.APP_NAME"
     />
-    <router-link class="app-logo__link" :to="{ name: $routes.home }" />
+    <router-link class="app-logo__link" :to="{ name: $routes.home }" aria-label="Startseite"/>
   </div>
 </template>
 

@@ -9,7 +9,7 @@ function loadScript(src: string): Promise<void> {
     s.onload = () => resolve()
     s.onerror = () => reject(new Error(`Failed to load ${src}`))
     document.head.appendChild(s)
-  });
+  })
 }
 
 export function ensureGsnLoaded(): Promise<void> {
@@ -19,6 +19,6 @@ export function ensureGsnLoaded(): Promise<void> {
   loadPromise ??= (async () => {
     await loadScript("/vendor/web3.min.js")
     await loadScript("/vendor/gsn-umd.js")
-  })();
+  })()
   return loadPromise
 }

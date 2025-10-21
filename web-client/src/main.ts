@@ -48,7 +48,7 @@ app.config.errorHandler = function (err, vm, info) {
 app.mount('#app')
 
 if ("requestIdleCallback" in window) {
-  (window as any).requestIdleCallback(() => import("@/lazy-styles"))
+  ;(window as any).requestIdleCallback(() => import("@/lazy-styles"))
 } else {
   setTimeout(() => import("@/lazy-styles"), 0)
 }

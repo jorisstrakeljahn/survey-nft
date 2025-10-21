@@ -52,7 +52,6 @@ const init = async () => {
     useNotifications()
     document.title = config.APP_NAME
     await web3ProvidersStore.init()
-    // WICHTIG: nicht erc721.loadDetails() (gibt es nicht), sondern unsere Methode
     await loadDetails()
   } catch (error) {
     ErrorHandler.processWithoutFeedback(error)

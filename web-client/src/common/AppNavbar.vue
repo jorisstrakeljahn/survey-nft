@@ -123,10 +123,6 @@ function setLang(code: 'de' | 'en') {
   localStorage.setItem(LS_KEY, code)
   isLangOpen.value = false
 }
-function setLangFromMobile(code: 'de' | 'en') {
-  setLang(code)
-  toggleMenu()
-}
 
 const currentLangLabel = computed(() => {
   const current = languages.find(l => l.code === locale.value)

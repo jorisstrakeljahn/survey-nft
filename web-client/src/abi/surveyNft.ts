@@ -11,4 +11,4 @@ export const ABI_SURVEY_NFT = [
   'function revokeRole(bytes32 role, address account) external',
   'function hasRole(bytes32 role, address account) view returns (bool)',
   'function DELETER_ROLE() view returns (bytes32)',
-];
+]

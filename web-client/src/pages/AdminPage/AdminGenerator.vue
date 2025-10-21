@@ -117,60 +117,60 @@ async function onDownload() {
 
 <style scoped>
 .box{
-  border:1px solid #eee;
-  border-radius:12px;
-  background:#fff;
-  padding:14px;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  background: #fff;
+  padding: 14px;
 }
 
 .help{
-  font-size:.95rem;
-  color:#555;
-  margin-top:8px
+  font-size: 0.95rem;
+  color: #555;
+  margin-top: 8px;
 }
 
 .grid{
-  display:grid;
-  grid-template-columns:2fr 1fr;
-  gap:12px;
-  margin-top:8px;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 12px;
+  margin-top: 8px;
 }
 
 @media (max-width: 720px){
   .grid{
-    grid-template-columns:1fr;
+    grid-template-columns: 1fr;
   }
 }
 
 label{
-  display:flex;
-  flex-direction:column;
-  gap:6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 input,select{
-  padding:10px 12px;
-  border:1px solid #e5e5e5;
-  border-radius:10px;
+  padding: 10px 12px;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
 }
 
 .actions{
-  margin-top:12px;
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .btn{
-  padding:6px 10px;
-  border:1px solid #e5e5e5;
-  border-radius:10px;
-  background:#fff;
-  font-weight:700;
-  cursor:pointer;
+  padding: 6px 10px;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  background: #fff;
+  font-weight: 700;
+  cursor: pointer;
 }
 
 .btn--ghost{
-  background:#fafafa;
+  background: #fafafa;
 }
 </style>

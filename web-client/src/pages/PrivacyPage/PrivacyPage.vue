@@ -88,8 +88,9 @@
               <p v-for="(c, i) in section.contact || []" :key="`contact-${i}`">
                 <strong>{{ c.label }}:</strong>
                 <a v-if="c.href" :href="c.href" class="privacy__link">{{
-                    c.value
-                  }}</a>
+                        c.value
+                    }}
+                </a>
                 <span v-else>{{ c.value }}</span>
               </p>
             </address>
@@ -100,8 +101,12 @@
               :key="`right-${i}`"
               class="privacy__sub"
             >
-              <h3 class="privacy__sub-title">{{ right.name }}</h3>
-              <p class="privacy__paragraph">{{ right.desc }}</p>
+              <h3 class="privacy__sub-title">
+                {{ right.name }}
+              </h3>
+              <p class="privacy__paragraph">
+                {{ right.desc }}
+              </p>
             </div>
           </div>
         </article>
@@ -148,16 +153,14 @@ html {
 </style>
 
 <style scoped lang="scss">
-/* White Mode – helle, gut lesbare Defaults */
 .privacy {
-  /* Farb- und Layout-Variablen */
   --bg: #ffffff;
   --surface: #ffffff;
   --text: #1b1b1b;
-  --muted: #5f6368;        /* neutral grau für Meta */
-  --border: #e7e7e7;       /* zarte Trennlinien */
+  --muted: #5f6368;
+  --border: #e7e7e7;
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.05), 0 6px 16px rgba(0, 0, 0, 0.06);
-  --accent: #0b57d0;       /* gut lesbares Blau */
+  --accent: #0b57d0;
   --accent-underline: rgba(11, 87, 208, 0.25);
 
   color: var(--text);
@@ -296,7 +299,7 @@ html {
   margin: 0;
   font-weight: 750;
   font-size: clamp(18px, 1.8vw, 22px);
-  letter-spacing: .2px;
+  letter-spacing: 0.2px;
 }
 
 .privacy__card-body {

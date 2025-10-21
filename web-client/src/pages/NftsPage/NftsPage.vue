@@ -17,16 +17,6 @@
             <div class="summary__label">{{ t('nfts.summary.points') }}</div>
             <div class="summary__value">{{ totalPoints }}</div>
           </div>
-
-          <div class="summary__item">
-            <div class="summary__label">{{ t('nfts.summary.nfts') }}</div>
-            <div class="summary__value">{{ tokens.length }}</div>
-          </div>
-
-          <div class="summary__item" v-if="lastTokenId">
-            <div class="summary__label">{{ t('nfts.summary.latestToken') }}</div>
-            <div class="summary__value">{{ lastTokenId }}</div>
-          </div>
         </div>
       </section>
 
@@ -70,11 +60,6 @@
             </div>
 
             <div class="card__links">
-              <!-- Details-Button (Modal) -->
-              <button class="link-btn" @click="openMeta(tkn)">
-                {{ t('nfts.card.metadata') }}
-              </button>
-
               <!-- Explorer im gleichen Stil -->
               <button class="link-btn" @click="openExplorer(tkn.tokenId)">
                 {{ t('nfts.card.explorer') }}
@@ -86,20 +71,6 @@
     </main>
 
     <app-footer />
-
-    <!-- Metadata-Modal -->
-    <nft-metadata-modal
-      v-if="showMeta && metaToken"
-      :open="showMeta"
-      @close="showMeta = false"
-      :token-id="metaToken.tokenId"
-      :token-uri="metaToken.uri"
-      :owner="metaToken.owner"
-      :points="metaToken.points"
-      :contract-address="erc721Address"
-      :explorer-base="explorerBase"
-      :image-url="metaToken ? images[metaToken.tokenId] : ''"
-    />
   </div>
 </template>
 
@@ -264,7 +235,6 @@ onMounted(loadMyNfts)
 .summary { margin-bottom: 16px; }
 .summary__card {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
   gap: 12px;
   background: #fff;
   border: 1px solid #eee;

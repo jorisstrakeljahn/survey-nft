@@ -58,7 +58,7 @@ export default defineComponent({
 }
 
 .accordion-item__title {
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   font-weight: 500;
   color: #000000;
 }
@@ -69,7 +69,7 @@ export default defineComponent({
 
 .accordion-item__content {
   padding: 0.5rem 0;
-  font-size: 1.2rem;
+  font-size: 1rem;
   line-height: 1.5;
 }
 

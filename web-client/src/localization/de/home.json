@@ -33,20 +33,62 @@
     "faqPlus": {
       "title": "Häufige Fragen",
       "items": [
-        { "q": "Muss ich etwas bezahlen?", "a": "Nein. Die Transaktionsgebühren übernimmt ein Paymaster – für dich ist es kostenfrei." },
-        { "q": "Kann ich dieselbe Studie mehrfach nutzen?", "a": "Nein. Pro Wallet und Studie gibt es genau einen Punkt." },
-        { "q": "Welches Netzwerk wird genutzt?", "a": "Polygon. Die App hilft beim Wechsel, falls nötig." },
-        { "q": "Welche Daten werden gespeichert?", "a": "Wir speichern keine personenbezogenen Daten – nur die technischen Nachweise der Punkte." },
-        { "q": "Ich habe noch keine Wallet – was mache ich?", "a": "Installiere z. B. MetaMask im Browser oder als App und folge den kurzen Schritten. Danach kannst du Studienabschluss bestätigen und Punkte empfangen." },
-        { "q": "Brauche ich Kryptogeld?", "a": "Nein. Die Gebühren bezahlt ein Paymaster im Hintergrund – für dich entstehen keine Kosten." },
-        { "q": "Wie sehe ich meine Punkte?", "a": "Öffne deine Wallet – die Punkte erscheinen als digitale Einträge. Außerdem kannst du sie im Lehrenden‑Portal bei Bedarf prüfen lassen." },
-        { "q": "Kann ich Punkte übertragen oder verkaufen?", "a": "Nein. Die Punkte sind nicht übertragbar und bleiben deiner Wallet zugeordnet." },
-        { "q": "Ich habe am Ende der Studie nichts bekommen – was tun?", "a": "Prüfe Wallet‑Verbindung und Netzwerk. Wenn es trotzdem nicht klappt, wende dich mit deiner Wallet‑Adresse an die Lehrperson." },
-        { "q": "Ich habe meine Wallet verloren – sind die Punkte weg?", "a": "Punkte sind an die Wallet gebunden. Wende dich an die Lehrperson: In begründeten Fällen können Tokens gelöscht werden, damit eine korrekte Zuweisung möglich wird." },
-        { "q": "Wie viele Punkte brauche ich bis zur Bachelor‑Anmeldung?", "a": "Insgesamt 10 VPP. Deinen Fortschritt kannst du jederzeit prüfen." },
-        { "q": "Welche Daten sieht die Öffentlichkeit?", "a": "Nur Wallet‑Adresse, Zeitangaben (über den Block) und Ereignisse wie „Punkt erstellt/gelöscht“ – keine Namen oder Matrikelnummern." },
-        { "q": "Was machen Lehrende genau im Portal?", "a": "Studien anlegen, SoSci‑Vorlagen erstellen, Punkte pro Wallet prüfen und bei Bedarf Tokens löschen – abgesichert über Rollen." },
-        { "q": "Warum kostet das alles nichts?", "a": "Weil ein Paymaster die Gebühren übernimmt. Die Transaktionen werden als Meta‑Transaktionen über OpenGSN gesponsert." }
+        {
+          "q": "Muss ich etwas bezahlen?",
+          "a": "Nein. Die Nutzung ist für dich kostenfrei: Ein sogenannter Paymaster übernimmt die Netzwerkgebühren im Hintergrund – möglich wird das über OpenGSN (Gas Station Network). Du brauchst also kein eigenes Kryptoguthaben, um Punkte zu erhalten."
+        },
+        {
+          "q": "Kann ich dieselbe Studie mehrfach nutzen?",
+          "a": "Nein. Pro Wallet und Studie (surveyId) gibt es genau einen Punkt. Das ist technisch im Smart Contract hinterlegt; doppelte Vergaben sind ausgeschlossen. So bleibt die Punktevergabe fair und nachvollziehbar."
+        },
+        {
+          "q": "Welches Netzwerk wird genutzt?",
+          "a": "Wir nutzen Polygon. Wenn deine Wallet nicht im richtigen Netzwerk ist, hilft dir die App beim Wechsel – zusätzliche Kosten fallen dabei nicht an, weil der Paymaster die Gebühren übernimmt."
+        },
+        {
+          "q": "Welche Daten werden gespeichert?",
+          "a": "Auf der Blockchain stehen nur das, was für den Nachweis nötig ist: deine Wallet-Adresse, der Zeitbezug über den Block und die Token-Ereignisse (z. B. erstellt/gelöscht). Namen, Matrikelnummern oder Umfrage-Antworten werden nicht gespeichert. Das System ist bewusst datensparsam aufgebaut."
+        },
+        {
+          "q": "Ich habe noch keine Wallet – was mache ich?",
+          "a": "Installiere z. B. MetaMask im Browser oder als App und richte sie kurz ein. Verbinden musst du dich erst, wenn es gebraucht wird (z. B. am Ende einer Studie). Bewahre deine Wiederherstellungsphrase sicher auf – sie ist der Zugang zu deinen Punkten."
+        },
+        {
+          "q": "Brauche ich Kryptogeld?",
+          "a": "Nein. Der Paymaster sponsert die Transaktionen, sodass weder Studierende noch Lehrende Gebühren zahlen müssen. Das System wurde genau dafür eingerichtet."
+        },
+        {
+          "q": "Wie sehe ich meine Punkte?",
+          "a": "Deine Punkte erscheinen als digitale Einträge in deiner Wallet. Zusätzlich können Lehrende deinen Stand über das Admin-Portal prüfen (Wallet-Adresse angeben → Nachweise einsehen). Damit hast du und haben Lehrende jederzeit Transparenz."
+        },
+        {
+          "q": "Kann ich Punkte übertragen oder verkaufen?",
+          "a": "Nein. Ein VPP ist ein nicht übertragbarer Token (vergleichbar mit einem persönlichen Nachweis). Das verhindert Missbrauch und stellt sicher, dass der Punkt an deine Wallet gebunden bleibt."
+        },
+        {
+          "q": "Ich habe am Ende der Studie nichts bekommen – was tun?",
+          "a": "Prüfe zuerst: War die Wallet verbunden? Warst du im richtigen Netzwerk (Polygon) und hast du den Schritt am Ende bestätigt? Wenn es weiterhin hakt, melde dich mit deiner Wallet-Adresse bei der Lehrperson. Lehrende können Fälle prüfen und bei Bedarf Korrekturen vornehmen (z. B. Tokens löschen, damit eine korrekte Vergabe erneut möglich ist)."
+        },
+        {
+          "q": "Ich habe meine Wallet verloren – sind die Punkte weg?",
+          "a": "Die Punkte sind an deine Wallet gebunden. Wende dich an die Lehrperson: Im Admin-Portal können Tokens gezielt gelöscht werden, damit eine korrekte Zuweisung erneut erfolgen kann (falls organisatorisch nötig). So bleibt der Prozess kontrolliert und fair."
+        },
+        {
+          "q": "Wie viele Punkte brauche ich bis zur Bachelor-Anmeldung?",
+          "a": "Insgesamt 10 VPP. Deinen Zwischenstand siehst du jederzeit in deiner Wallet; Lehrende können ihn im Admin-Portal schnell bestätigen."
+        },
+        {
+          "q": "Welche Daten sieht die Öffentlichkeit?",
+          "a": "Nur die Wallet-Adresse, der Zeitbezug über den Block und die Token-Ereignisse. Diese Informationen sind im Explorer einsehbar – persönliche Daten fehlen bewusst. So ist der Nachweis transparent und gleichzeitig datensparsam."
+        },
+        {
+          "q": "Was machen Lehrende genau im Portal?",
+          "a": "Studien anlegen (surveyId & Punktewert), die SoSci-Starterdatei erzeugen, Wallets prüfen und – wenn nötig – Tokens gezielt oder vollständig löschen. Berechtigungen werden über eine einfache Rollenverwaltung vergeben. Alles gaslos und ohne Zusatzkosten."
+        },
+        {
+          "q": "Warum kostet das alles nichts?",
+          "a": "Weil ein Paymaster die Gebühren übernimmt. Technisch läuft das über OpenGSN: Deine Bestätigung wird als Meta-Transaktion über einen Relayer geschickt; der Paymaster zahlt die Gebühren, und der Nachweis landet direkt in deiner Wallet."
+        }
       ]
     }
   }

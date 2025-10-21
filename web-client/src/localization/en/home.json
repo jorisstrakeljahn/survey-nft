@@ -1,70 +1,95 @@
 {
   "home": {
     "hero": {
-      "title": "Participant points — tamper-proof on the blockchain",
-      "subtitle": "From October 2025, students receive VPP points as NFTs for participating in studies and surveys. Transparent, verifiable, paperless.",
-      "gsnHint": "Gasless via OpenGSN — no MATIC required."
+      "title": "VPP points, digital — simple & tamper-proof",
+      "subtitle": "Take part in a study, confirm once at the end — and your point appears in your wallet for free. No paperwork, transparent at any time.",
+      "badges": ["Free", "No crypto required", "Secure & transparent"]
     },
+
     "cta": {
       "student": "View my points",
-      "admin": "Staff / Admin"
+      "admin": "Lecturers’ area"
     },
-    "howItWorks": {
-      "title": "How it works",
-      "items": {
-        "participate": {
-          "title": "Participate → receive",
-          "text": "After completing a study you receive your VPP-NFT directly in your wallet."
+
+    "intro": {
+      "title": "What is this?",
+      "lead": "Survey NFT is HSBI’s system that records participant points (VPP) digitally. Instead of paper slips, you receive a tamper-proof point in your wallet after a study — without any personal data being stored. This lets you keep track at any time, lecturers can verify points quickly, and the process around registering your bachelor’s thesis becomes easier. It’s free for you; the system covers the fees in the background."
+    },
+
+    "highlights": {
+      "title": "At a glance",
+      "items": [
+        {
+          "title": "For students",
+          "text": "See your points at any time — no more collecting paper receipts. Just confirm once at the end of the study and you’re done."
         },
-        "prove": {
-          "title": "Prove → manage",
-          "text": "Your points are visible as NFTs. Course requirements are easy to verify."
-        },
-        "secure": {
-          "title": "Secure → auditable",
-          "text": "Duplicate claims are prevented on-chain. Everything stays transparent and tamper-proof."
+        {
+          "title": "For lecturers",
+          "text": "Create studies, view points, delete tokens if needed — all free of charge, with roles and explorer links."
         }
-      }
+      ]
     },
-    "target": {
-      "title": "Who is it for?",
-      "student": {
-        "title": "Students",
-        "bullets": [
-          "Point balance at a glance",
-          "No paperwork or manual submissions",
-          "Direct proof for course requirements"
-        ]
-      },
-      "admin": {
-        "title": "Teaching staff & organization",
-        "bullets": [
-          "Reliable overview of points",
-          "Selective or complete removal (role-based)",
-          "Explorer links & export options"
-        ]
-      }
-    },
-    "faq": {
-      "title": "FAQ",
-      "items": {
-        "gas": {
-          "title": "Do I need to pay fees?",
-          "content": "No. Transactions are sponsored by our Paymaster (OpenGSN)."
+
+    "faqPlus": {
+      "title": "Frequently asked questions",
+      "items": [
+        {
+          "q": "Do I have to pay anything?",
+          "a": "No. It’s free for you: a Paymaster covers the network fees in the background — made possible by OpenGSN (Gas Station Network). You don’t need your own crypto balance to receive points."
         },
-        "duplicate": {
-          "title": "Can I claim multiple times for the same study?",
-          "content": "No. The smart contract blocks duplicate claims and stores already granted combinations."
+        {
+          "q": "Can I use the same study multiple times?",
+          "a": "No. There is exactly one point per wallet and study (surveyId). That rule is enforced in the smart contract; duplicate awards are prevented. This keeps point allocation fair and verifiable."
         },
-        "network": {
-          "title": "Which network is used?",
-          "content": "Polygon Mainnet. When connected, the app will guide you to switch automatically."
+        {
+          "q": "Which network is used?",
+          "a": "We use Polygon. If your wallet isn’t on the right network, the app helps you switch — and there are no extra costs because the Paymaster pays the fees."
         },
-        "privacy": {
-          "title": "Which data is stored?",
-          "content": "On-chain NFT ownership only. We do not manage personal data."
+        {
+          "q": "Which data are stored?",
+          "a": "Only what’s needed for the proof is on-chain: your wallet address, the block time reference and token events (e.g., created/deleted). Names, student IDs or survey answers are not stored. The system is intentionally data-minimising."
+        },
+        {
+          "q": "I don’t have a wallet yet — what should I do?",
+          "a": "Install, for example, MetaMask in your browser or as an app and set it up briefly. You only connect when needed (e.g., at the end of a study). Keep your recovery phrase safe — it’s the key to your points."
+        },
+        {
+          "q": "Do I need cryptocurrency?",
+          "a": "No. The Paymaster sponsors the transactions so neither students nor lecturers have to pay fees. The system is designed for that."
+        },
+        {
+          "q": "How do I see my points?",
+          "a": "Your points appear as digital entries in your wallet. Lecturers can also verify your status via the admin portal (provide your wallet address → view proofs). That gives both sides transparency at any time."
+        },
+        {
+          "q": "Can I transfer or sell points?",
+          "a": "No. A VPP is a non-transferable token (comparable to a personal proof). That prevents misuse and ensures the point remains tied to your wallet."
+        },
+        {
+          "q": "I didn’t receive anything at the end of the study — what now?",
+          "a": "First check: was the wallet connected? Were you on the right network (Polygon) and did you confirm the final step? If it still doesn’t work, contact the lecturer with your wallet address. Lecturers can review cases and, if necessary, correct them (e.g., delete tokens so a proper award can be made again)."
+        },
+        {
+          "q": "I lost my wallet — are the points gone?",
+          "a": "Points are bound to your wallet. Contact the lecturer: in the admin portal, tokens can be deleted in specific cases so that a correct reassignment can be made (if organisationally required). This keeps the process controlled and fair."
+        },
+        {
+          "q": "How many points do I need to register my bachelor’s thesis?",
+          "a": "A total of 10 VPP. You can view your progress at any time in your wallet; lecturers can quickly confirm it in the admin portal."
+        },
+        {
+          "q": "Which data are public?",
+          "a": "Only the wallet address, the block time reference and token events. This information is visible in the explorer — personal data are deliberately excluded. The proof is transparent and data-minimal at the same time."
+        },
+        {
+          "q": "What exactly do lecturers do in the portal?",
+          "a": "Create studies (surveyId & point value), generate the SoSci starter file, check wallets and — if needed — delete tokens selectively or entirely. Permissions are managed via simple roles. Everything is gasless and free of charge."
+        },
+        {
+          "q": "Why is this free?",
+          "a": "Because a Paymaster covers the fees. Technically, this runs via OpenGSN: your confirmation is sent as a meta-transaction through a relayer; the Paymaster pays the fees and the proof lands directly in your wallet."
         }
-      }
+      ]
     }
   },
   "accordion-item": {

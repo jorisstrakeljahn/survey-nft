@@ -135,6 +135,7 @@ const faqPlusItems = computed(() => {
   background: #fff; border: 1px solid #e9e9e9; border-radius: 14px; padding: 1.1rem;
   box-shadow: 0 10px 30px rgba(0,0,0,.1);
 }
+.card:hover { transform: translateY(-3px); }
 .card__title { font-weight: 800; margin: 0 0 .5rem; }
 .card__text { color: #444; line-height: 1.55; margin: 0; }
 

@@ -91,5 +91,9 @@
         }
       ]
     }
+  },
+  "accordion-item": {
+    "open": "-",
+    "close": "+"
   }
 }

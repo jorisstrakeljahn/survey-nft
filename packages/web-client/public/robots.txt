@@ -1,2 +1,13 @@
+# robots.txt for Survey NFT – HSBI (production)
+
 User-agent: *
-Disallow: /
+# Block pages that require wallet connection or admin access
+Disallow: /connect
+Disallow: /nfts
+Disallow: /admin
+
+# Allow everything else
+Allow: /
+
+# Sitemap reference
+Sitemap: https://vpstunden.hsbi.de/sitemap.xml

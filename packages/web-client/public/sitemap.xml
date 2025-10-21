@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset>
+  <url>
+    <loc>https://vpstunden.hsbi.de/</loc>
+    <priority>1.0</priority>
+  </url>
+
+  <url>
+    <loc>https://vpstunden.hsbi.de/imprint</loc>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://vpstunden.hsbi.de/privacy</loc>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://vpstunden.hsbi.de/accessibility</loc>
+    <priority>0.7</priority>
+  </url>
+</urlset>

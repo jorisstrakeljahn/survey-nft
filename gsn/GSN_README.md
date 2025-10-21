@@ -9,20 +9,20 @@ Goal: keep a **stable, local** copy for minting and other gasless actions, so yo
 
 - **`gsn-umd.js`** – an IIFE/UMD bundle that exposes the GSN provider on the **global window**:
   - `window.gsn.RelayProvider`
-  - `window.RelayProvider` (alias)  fileciteturn13file3
+  - `window.RelayProvider` (alias)
 
 The bundle expects a **global Web3** to be present (`window.Web3`). If it’s not, the shim throws a clear error:
 
-> `Global Web3 not found. Load "/gsn/web3.min.js" BEFORE gsn-umd.js`  fileciteturn13file0
+> `Global Web3 not found. Load "/gsn/web3.min.js" BEFORE gsn-umd.js`
 
 ---
 
 ## Files in this folder
 
-- `build-gsn.mjs` – esbuild config. It bundles `expose-gsn.js`, polyfills Node globals/modules for the browser, targets `es2018`, and forces `global` → `window`. It also replaces `import 'web3'` with a **shim** that reads `window.Web3`.  fileciteturn13file2
-- `expose-gsn.js` – registers `RelayProvider` on the `window` object (see above).  fileciteturn13file3
-- `web3-global-shim.js` – checks for `window.Web3` and errors if missing.  fileciteturn13file0
-- `package.json` – `scripts.build:gsn` and pinned deps (`web3@1.2.11`, `@opengsn/provider@2.2.6`).  fileciteturn13file4
+- `build-gsn.mjs` – esbuild config. It bundles `expose-gsn.js`, polyfills Node globals/modules for the browser, targets `es2018`, and forces `global` → `window`. It also replaces `import 'web3'` with a **shim** that reads `window.Web3`
+- `expose-gsn.js` – registers `RelayProvider` on the `window` object (see above)
+- `web3-global-shim.js` – checks for `window.Web3` and errors if missing
+- `package.json` – `scripts.build:gsn` and pinned deps (`web3@1.2.11`, `@opengsn/provider@2.2.6`)
 
 ---
 
@@ -35,7 +35,7 @@ npm run build:gsn
 # -> outputs gsn-umd.js next to the scripts
 ```
 
-> The build uses **esbuild** with `@esbuild-plugins/node-globals-polyfill` and `@esbuild-plugins/node-modules-polyfill` to emulate Node APIs in the browser.  fileciteturn13file2
+> The build uses **esbuild** with `@esbuild-plugins/node-globals-polyfill` and `@esbuild-plugins/node-modules-polyfill` to emulate Node APIs in the browser
 
 ---
 
@@ -105,22 +105,22 @@ async function setupGsn(paymaster, forwarder) {
 
 ## Why bundle locally?
 
-- **Stability**: you control the exact versions (`web3@1.2.11`, GSN v2).  fileciteturn13file4
-- **Privacy/Compliance**: no third‑party script loads from CDNs.
-- **Performance**: you can **lazy‑load** GSN only when a gasless action is triggered.
+- **Stability**: you control the exact versions (`web3@1.2.11`, GSN v2)
+- **Privacy/Compliance**: no third‑party script loads from CDNs
+- **Performance**: you can **lazy‑load** GSN only when a gasless action is triggered
 
 ---
 
 ## Troubleshooting
 
-- **“Global Web3 not found…”** → include `/gsn/web3.min.js` **before** `/gsn/gsn-umd.js`.  fileciteturn13file0
-- **`window.gsn` is undefined** → the UMD wasn’t loaded (or build failed). Rebuild with `npm run build:gsn`.  fileciteturn13file2
-- **Type errors during bundling** → ensure `build-gsn.mjs` runs in Node ESM mode and that `esbuild` + plugins are installed.  fileciteturn13file2
+- **“Global Web3 not found…”** → include `/gsn/web3.min.js` **before** `/gsn/gsn-umd.js`
+- **`window.gsn` is undefined** → the UMD wasn’t loaded (or build failed). Rebuild with `npm run build:gsn`
+- **Type errors during bundling** → ensure `build-gsn.mjs` runs in Node ESM mode and that `esbuild` + plugins are installed
 
 ---
 
 ## Notes
 
-- The bundle format is **IIFE/UMD** and defines `global` as `window` for browser contexts.  fileciteturn13file2
-- If you change Web3 major versions or switch to Ethers‑only flows, update the shim & entry as needed.
+- The bundle format is **IIFE/UMD** and defines `global` as `window` for browser contexts
+- If you change Web3 major versions or switch to Ethers‑only flows, update the shim and entry as needed
 

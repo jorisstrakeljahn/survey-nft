@@ -128,7 +128,7 @@ const buttonClasses = computed(() =>
   --button-transition-duration: 0.2s;
 
   outline: 0;
-  font-family: var(--app-font-family);
+  font-family: sans-serif;
   margin: 0;
   cursor: pointer;
   user-select: none;

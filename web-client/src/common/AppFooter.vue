@@ -67,15 +67,9 @@ import { ROUTE_NAMES } from '@/enums'
 const { t } = useI18n({ useScope: 'global' })
 
 const year = new Date().getFullYear()
-
-const mail = t('footer.contactEmail', {
-  account: 'vpstunden',
-  domain: 'hsbi.de',
-})
 </script>
 
 <style lang="scss" scoped>
-/* Footer-Bereich */
 .footer-section {
   background-color: #000;
   color: #fff;
@@ -133,12 +127,11 @@ const mail = t('footer.contactEmail', {
 
 .footer-legal__list {
   display: flex;
-  flex-wrap: wrap;         /* <-- die Magie: bricht bei wenig Platz um */
-  gap: 8px 16px;           /* vertikal / horizontaler Abstand */
+  flex-wrap: wrap;
+  gap: 8px 16px;
   justify-content: flex-start;
   color: #fff;
 
-  /* Bei schmalen Screens zentrieren */
   @media (max-width: 679px) {
     justify-content: center;
   }
@@ -149,11 +142,10 @@ const mail = t('footer.contactEmail', {
 }
 
 .footer-legal__item {
-  flex: 0 1 auto;          /* Items dürfen umbrechen */
+  flex: 0 1 auto;
   position: relative;
 }
 
-/* Optional: Trennerpunkte nur auf breiten Screens (wirken wie "·" zwischen Links) */
 @media (min-width: 680px) {
   .footer-legal__item + .footer-legal__item::before {
     content: "·";
@@ -166,7 +158,7 @@ const mail = t('footer.contactEmail', {
 }
 
 .footer-legal__link {
-  display: inline-block;   /* bessere Klickfläche */
+  display: inline-block;
   padding: 4px 8px;
   border-radius: 8px;
   text-decoration: none;
@@ -174,7 +166,6 @@ const mail = t('footer.contactEmail', {
   border: 1px solid transparent;
 }
 
-/* Responsive Anpassungen */
 @media (max-width: 768px) {
   .news-card {
     width: 100%;

@@ -9,7 +9,6 @@ yarn-error.log*
 test/unit/coverage
 selenium-debug.log
 .eslintcache
-package-lock.json
 
 deprecated
 
@@ -24,3 +23,6 @@ deprecated
 *.local
 stats.html
 .env
+
+coverage/
+

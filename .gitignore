@@ -3,3 +3,17 @@ packages/*/node_modules
 packages/*/artifacts
 packages/*/cache
 .env
+
+# OS/Editor
+.DS_Store
+.idea/
+.vscode/
+
+.env*
+!.env.example
+
+yarn.lock
+pnpm-lock.yaml
+
+coverage/
+*.log

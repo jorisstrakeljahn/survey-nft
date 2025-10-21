@@ -1,12 +1,14 @@
 <!-- /pages/PrivacyPage/PrivacyPage.vue -->
 <template>
-  <!-- Anker für "Zurück nach oben" -->
+  <!-- Invisible anchor for "Back to top" links -->
   <div id="top" />
 
+  <!-- Landmark: main document region for assistive tech -->
   <main class="privacy" role="main" aria-labelledby="privacy-title">
     <!-- Hero -->
     <section class="privacy__hero">
       <div class="privacy__container privacy__hero-inner">
+        <!-- Page title is referenced by aria-labelledby on <main> -->
         <h1 id="privacy-title" class="privacy__title">
           {{ t('privacy.title') }}
         </h1>
@@ -17,9 +19,9 @@
       </div>
     </section>
 
-    <!-- Content Grid -->
+    <!-- Content grid: sticky desktop ToC + scrollable content -->
     <section class="privacy__container privacy__grid">
-      <!-- TOC (Mobile: Akkordeon) -->
+      <!-- Mobile ToC: collapsible with <details>/<summary> for built-in a11y -->
       <details class="privacy__toc privacy__toc--mobile">
         <summary class="privacy__toc-summary">
           {{ t('privacy.tocTitle') }}
@@ -33,7 +35,7 @@
         </ul>
       </details>
 
-      <!-- TOC (Desktop: sticky) -->
+      <!-- Desktop ToC: sticky navigation. Keep aria-label descriptive. -->
       <nav
         class="privacy__toc privacy__toc--desktop"
         aria-label="Inhaltsverzeichnis"
@@ -50,7 +52,7 @@
         </ul>
       </nav>
 
-      <!-- Inhalt -->
+      <!-- Main content: fully driven by i18n JSON structure -->
       <div class="privacy__content">
         <article
           v-for="section in sections"
@@ -59,12 +61,14 @@
           class="privacy__card privacy__section"
         >
           <header class="privacy__card-header">
+            <!-- h2 is correct here: page-level h1 above; sections use h2 -->
             <h2 class="privacy__card-title">
               {{ section.title }}
             </h2>
           </header>
 
           <div class="privacy__card-body">
+            <!-- Paragraphs (optional array) -->
             <p
               v-for="(p, idx) in section.paras || []"
               :key="`p-${idx}`"
@@ -73,12 +77,14 @@
               {{ p }}
             </p>
 
+            <!-- Bullet lists (optional) -->
             <ul v-if="section.list && section.list.length" class="privacy__list">
               <li v-for="(item, i) in section.list" :key="`li-${i}`">
                 {{ item }}
               </li>
             </ul>
 
+            <!-- Address / contact block (optional). <address> provides proper semantics. -->
             <address
               v-if="section.address || section.contact"
               class="privacy__address"
@@ -88,19 +94,20 @@
               </p>
               <p v-for="(c, i) in section.contact || []" :key="`contact-${i}`">
                 <strong>{{ c.label }}:</strong>
-                <a v-if="c.href" :href="c.href" class="privacy__link">{{
-                        c.value
-                    }}
+                <a v-if="c.href" :href="c.href" class="privacy__link">
+                  {{ c.value }}
                 </a>
                 <span v-else>{{ c.value }}</span>
               </p>
             </address>
 
+            <!-- Sub-sections for rights (e.g., GDPR rights) -->
             <div
               v-for="(right, i) in section.rights || []"
               :key="`right-${i}`"
               class="privacy__sub"
             >
+              <!-- h3 properly nests under the section h2 -->
               <h3 class="privacy__sub-title">
                 {{ right.name }}
               </h3>
@@ -111,6 +118,7 @@
           </div>
         </article>
 
+        <!-- Back to top helper (keyboard & screen-reader friendly) -->
         <div class="privacy__backtop">
           <a href="#top" class="privacy__backtop-btn">
             {{ t('privacy.backToTop') }}
@@ -124,12 +132,22 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Privacy page rendering:
+ * - Fully data-driven from i18n (arrays/objects via tm()).
+ * - Keeps markup semantic (main/section/nav/article/address).
+ * - Mobile ToC uses <details> for built-in a11y; desktop ToC is sticky.
+ */
 import AppFooter from '@/common/AppFooter.vue'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t, tm } = useI18n({ useScope: 'global' })
 
+/**
+ * JSON contract for an i18n section. Only fields present in the content are rendered.
+ * `paras2` is included if you later need an additional paragraph array without breaking types.
+ */
 type Section = {
   id: string
   title: string
@@ -141,10 +159,13 @@ type Section = {
   rights?: Array<{ name: string; desc: string }>
 }
 
+/**
+ * Pull localized sections as typed messages.
+ * tm() returns unknown → cast to Section[] based on our expected contract.
+ */
 const sections = computed<Section[]>(() => tm('privacy.sections') as any[])
 </script>
 
-<!-- globale Kleinigkeiten wie smooth scrolling -->
 <style>
 html {
   scroll-behavior: smooth;

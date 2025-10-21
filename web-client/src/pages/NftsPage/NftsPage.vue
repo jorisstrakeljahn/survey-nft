@@ -191,7 +191,6 @@ onMounted(loadMyNfts)
 </script>
 
 <style lang="scss" scoped>
-/* Seite: volle Höhe + Spaltenlayout */
 .nfts-page {
   min-height: 100vh;
   display: flex;
@@ -199,7 +198,6 @@ onMounted(loadMyNfts)
   width: 100%;
 }
 
-/* Main nimmt restlichen Platz ein und ist zentriert */
 .nfts-page__main {
   flex: 1;
   width: 100%;
@@ -208,7 +206,6 @@ onMounted(loadMyNfts)
   padding: 24px 16px 32px 16px;
 }
 
-/* Headline + Refresh */
 .nfts-page__header {
   display: flex;
   align-items: center;
@@ -231,8 +228,11 @@ onMounted(loadMyNfts)
   }
 }
 
-/* Summary Cards */
-.summary { margin-bottom: 16px; }
+
+.summary {
+  margin-bottom: 16px;
+}
+
 .summary__card {
   display: grid;
   gap: 12px;
@@ -241,40 +241,63 @@ onMounted(loadMyNfts)
   border-radius: 12px;
   padding: 14px;
 }
-.summary__item { text-align: center; }
-.summary__label { color: #666; font-size: 0.9rem; }
-.summary__value { font-size: 1.4rem; font-weight: 800; }
 
-/* Loader / States */
-.nfts-page__loader { margin: 24px 0; }
-.state { text-align: center; padding: 28px 16px; }
-.state--error h3 { color: #b00020; }
-.state--empty h3 { color: #333; }
+.summary__item {
+  text-align: center;
+}
 
-/* Grid der Karten */
+.summary__label {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.summary__value {
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+
+.nfts-page__loader {
+  margin: 24px 0;
+}
+
+.state {
+  text-align: center;
+  padding: 28px 16px;
+}
+
+.state--error h3 {
+  color: #b00020;
+}
+
+.state--empty h3 {
+  color: #333;
+}
+
 .grid {
   display: grid;
   gap: 16px;
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-/* Karte */
 .card {
   border: 1px solid #eee;
   border-radius: 12px;
   background: #fff;
   overflow: hidden;
 }
+
 .card__image-wrap {
   position: relative;
   aspect-ratio: 16 / 10;
   background: #fafafa;
 }
+
 .card__image {
   width: 100%;
   object-fit: cover;
   display: block;
 }
+
 .card__placeholder {
   width: 100%;
   height: 100%;
@@ -287,7 +310,6 @@ onMounted(loadMyNfts)
   );
 }
 
-/* Punkte-Badge */
 .badge {
   position: absolute;
   left: 8px;
@@ -298,36 +320,56 @@ onMounted(loadMyNfts)
   color: #fff;
   background: #333;
 }
-.badge--p1 { background: #64748b; }
-.badge--p2 { background: #10b981; }
-.badge--p3 { background: #2563eb; }
 
-/* Meta */
-.card__meta { padding: 12px 14px; }
+.badge--p1 {
+  background: #64748b;
+}
+
+.badge--p2 {
+  background: #10b981;
+}
+
+.badge--p3 {
+  background: #2563eb;
+}
+
+.card__meta {
+  padding: 12px 14px;
+}
+
 .card__row {
   display: flex;
   justify-content: right;
   align-items: center;
   margin-bottom: 6px;
 }
-.card__label { color: #666; padding-right: 4px;}
-.card__value { font-weight: 800; }
 
-/* Links / Buttons im Link-Stil */
+.card__label {
+  color: #666;
+  padding-right: 4px;
+}
+
+.card__value {
+  font-weight: 800;
+}
+
 .card__links {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
   margin-top: 6px;
 }
+
 .link {
   color: #2563eb;
   text-decoration: none;
   font-weight: 700;
 }
-.link:hover { text-decoration: underline; }
 
-/* Link-styled Button – für Metadaten & Explorer einheitlich */
+.link:hover {
+  text-decoration: underline;
+}
+
 .link-btn {
   background: transparent;
   border: 0;
@@ -336,9 +378,11 @@ onMounted(loadMyNfts)
   cursor: pointer;
   color: #2563eb;
 }
-.link-btn:hover { text-decoration: underline; }
 
-/* Responsive */
+.link-btn:hover {
+  text-decoration: underline;
+}
+
 @media (max-width: 530px) {
   .summary__card { grid-template-columns: 1fr; }
   .grid { grid-template-columns: 1fr; }

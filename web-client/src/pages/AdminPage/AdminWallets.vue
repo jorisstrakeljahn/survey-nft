@@ -249,7 +249,7 @@ async function confirmBurnAll () {
 </script>
 
 <style scoped>
-.box{
+.box {
   border: 1px solid #eee;
   border-radius: 12px;
   background: #fff;
@@ -257,7 +257,7 @@ async function confirmBurnAll () {
   margin-bottom: 16px;
 }
 
-.box-head{
+.box-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -265,17 +265,17 @@ async function confirmBurnAll () {
   margin-bottom: 10px;
 }
 
-.box-title{
+.box-title {
   margin: 0;
 }
 
-.search{
+.search {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
 }
 
-.search input{
+.search input {
   flex: 1;
   min-width: 240px;
   padding: 10px 12px;
@@ -283,7 +283,7 @@ async function confirmBurnAll () {
   border-radius: 10px;
 }
 
-.btn{
+.btn {
   padding: 6px 10px;
   border: 1px solid #e5e5e5;
   border-radius: 10px;
@@ -292,34 +292,34 @@ async function confirmBurnAll () {
   cursor: pointer;
 }
 
-.btn--ghost{
+.btn--ghost {
   background: #fafafa;
 }
 
-.btn--danger{
+.btn--danger {
   background: #fee2e2;
   border-color: #fecaca;
   color: #7f1d1d;
 }
 
-.help{
+.help {
   font-size: 0.95rem;
   color: #555;
   margin-top: 8px;
 }
 
-.help--error{
+.help--error {
   color: #b00020;
 }
 
-.kpis{
+.kpis {
   display: grid;
   gap: 10px;
   grid-template-columns: repeat(3,1fr);
   margin: 12px 0;
 }
 
-.kpi{
+.kpi {
   background: #fff;
   border: 1px solid #eee;
   border-radius: 12px;
@@ -327,21 +327,21 @@ async function confirmBurnAll () {
   text-align: center;
 }
 
-.kpi__label{
+.kpi__label {
   color: #666;
   font-size: 0.9rem;
 }
 
-.kpi__value{
+.kpi__value {
   font-size: 1.2rem;
   font-weight: 800;
 }
 
-.table{
+.table {
   width: 100%;
 }
 
-.thead,.trow{
+.thead,.trow {
   display: grid;
   grid-template-columns: 120px 120px 1fr 140px;
   gap: 8px;
@@ -354,18 +354,18 @@ async function confirmBurnAll () {
   border-bottom: 1px solid #eee;
 }
 
-.trow{
+.trow {
   padding: 8px 0;
   border-bottom: 1px solid #f2f2f2;
 }
 
-.cell--links{
+.cell--links {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
 }
 
-.link-btn{
+.link-btn {
   background: transparent;
   border: 0;
   padding: 0;
@@ -374,20 +374,20 @@ async function confirmBurnAll () {
   color: #2563eb;
 }
 
-.link-btn:hover{
+.link-btn:hover {
   text-decoration: underline;
 }
 
-.state{
+.state {
   text-align: center;
   padding: 28px 16px;
 }
 
-.state--error h3{
+.state--error h3 {
   color: #b00020;
 }
 
-.admin__loader{
+.admin__loader {
   margin: 24px 0;
 }
 </style>

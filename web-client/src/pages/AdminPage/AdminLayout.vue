@@ -118,19 +118,19 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.admin-page{
+.admin-page {
   min-height: 100vh;
   overflow-y: auto;
   scrollbar-gutter: stable both-edges;
 }
 
-.admin-page__main{
+.admin-page__main {
   max-width: 1240px;
   margin: 0 auto;
   padding: 24px 16px;
 }
 
-.admin-page__header{
+.admin-page__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -138,13 +138,13 @@ onMounted(() => {
   margin-bottom: 10px;
 }
 
-.badges{
+.badges {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
 }
 
-.badge{
+.badge {
   display: inline-flex;
   align-items: center;
   padding: 6px 10px;
@@ -154,30 +154,30 @@ onMounted(() => {
   border: 1px solid #e5e5e5;
 }
 
-.badge--ok{
+.badge--ok {
   background: #e8fff3;
   color: #065f46;
   border-color: #bbf7d0;
 }
 
-.badge--warn{
+.badge--warn {
   background: #fff7ed;
   color: #9a3412;
   border-color: #fed7aa;
 }
 
-.badge--muted{
+.badge--muted {
   background: #f6f6f6;
   color: #444;
 }
 
-.admin-tabs{
+.admin-tabs {
   display: flex;
   gap: 8px;
   margin: 8px 0 16px;
 }
 
-.tab{
+.tab {
   padding: 8px 12px;
   border-radius: 10px;
   border: 1px solid #eee;

@@ -357,24 +357,24 @@ watch(() => quickMode.value, () => { /* optional: neu scannen */ })
 </script>
 
 <style scoped>
-.box{
+.box {
   border: 1px solid #eee;
   border-radius: 12px;
   background: #fff;
   padding: 14px;
 }
 
-.help{
+.help {
   font-size: 0.95rem;
   color: #555;
   margin-top: 8px;
 }
 
-.help--error{
+.help--error {
   color: #b00020;
 }
 
-.roles-line{
+.roles-line {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 8px;
@@ -382,20 +382,20 @@ watch(() => quickMode.value, () => { /* optional: neu scannen */ })
   margin-top: 8px;
 }
 
-.roles-line input{
+.roles-line input {
   padding: 10px 12px;
   border: 1px solid #e5e5e5;
   border-radius: 10px;
   min-width: 260px;
 }
 
-.roles-actions{
+.roles-actions {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
 }
 
-.btn{
+.btn {
   padding: 6px 10px;
   border: 1px solid #e5e5e5;
   border-radius: 10px;
@@ -404,20 +404,20 @@ watch(() => quickMode.value, () => { /* optional: neu scannen */ })
   cursor: pointer;
 }
 
-.btn--ghost{
+.btn--ghost {
   background: #fafafa;
 }
 
-.role-block ul{
+.role-block ul {
   margin: 6px 0 0 0;
   padding: 0 0 0 16px;
 }
 
-.mono{
+.mono {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
 }
 
-.scanbox{
+.scanbox {
   border: 1px dashed #eee;
   border-radius: 10px;
   padding: 10px;
@@ -425,14 +425,14 @@ watch(() => quickMode.value, () => { /* optional: neu scannen */ })
   background: #fafafa;
 }
 
-.scanrow{
+.scanrow {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
 }
 
-.progress{
+.progress {
   height: 8px;
   border-radius: 999px;
   background: #eee;
@@ -440,7 +440,7 @@ watch(() => quickMode.value, () => { /* optional: neu scannen */ })
   overflow: hidden;
 }
 
-.progress .bar{
+.progress .bar {
   height: 100%;
   background: #4f46e5;
   transition: width .2s ease;

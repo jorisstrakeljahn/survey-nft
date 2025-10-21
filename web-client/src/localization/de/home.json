@@ -1,74 +1,153 @@
 {
   "home": {
     "hero": {
-      "title": "Versuchspunkte – fälschungssicher auf der Blockchain",
-      "subtitle": "Ab Oktober 2025 erhalten Studierende VPP-Punkte als NFTs für die Teilnahme an Studien und Umfragen. Transparent, nachvollziehbar, ohne Zettelwirtschaft.",
-      "gsnHint": "Gaslos via OpenGSN – keine MATIC erforderlich."
+      "title": "VPP-Punkte digital – einfach & fälschungssicher",
+      "subtitle": "Du nimmst an einer Studie teil, bestätigst am Ende kurz – und dein Punkt erscheint kostenlos in deiner Wallet. Keine Zettelwirtschaft, jederzeit nachvollziehbar.",
+      "gsnHint": "Keine Gebühren für dich (gaslos über OpenGSN)."
     },
     "cta": {
       "student": "Meine Punkte ansehen",
       "admin": "Lehrenden-Bereich"
     },
+
+    "gettingStarted": {
+      "title": "So startest du",
+      "students": {
+        "title": "Ich bin Student:in",
+        "steps": [
+          "Wallet installieren (z. B. MetaMask) und später bei Bedarf verbinden.",
+          "An einer registrierten Studie teilnehmen.",
+          "Auf der letzten Seite kurz bestätigen – dein Punkt erscheint in deiner Wallet.",
+          "Punktestand jederzeit prüfen (z. B. 7/10 VPP bis zur Bachelor-Anmeldung)."
+        ]
+      },
+      "teachers": {
+        "title": "Ich bin Lehrende:r",
+        "steps": [
+          "Studie im Lehrenden-Bereich anlegen (Kennung & Punktewert festlegen).",
+          "SoSci-Starterdatei (XML) herunterladen – Claim-Schritt ist schon enthalten.",
+          "In SoSci Inhalte ergänzen und Studie veröffentlichen.",
+          "Punkte im Portal prüfen; bei Bedarf Tokens gezielt oder vollständig löschen (rollenbasiert)."
+        ]
+      }
+    },
+
     "howItWorks": {
-      "title": "So funktioniert’s",
+      "title": "Wie funktioniert’s?",
       "items": {
         "participate": {
-          "title": "Teilnehmen → erhalten",
-          "text": "Nach Abschluss einer Studie erhältst du dein VPP-NFT direkt in deine Wallet."
+          "title": "Teilnehmen → bestätigen",
+          "text": "Nach Abschluss einer Studie bestätigst du einmal – das war’s."
         },
         "prove": {
-          "title": "Nachweisen → verwalten",
-          "text": "Deine Punkte sind als NFTs sichtbar. Prüfungsleistungen lassen sich einfach nachweisen."
+          "title": "Nachweisen → fertig",
+          "text": "Deine Punkte sind als digitale Nachweise sichtbar. Lehrende können sie schnell prüfen."
         },
         "secure": {
-          "title": "Sicher → nachvollziehbar",
-          "text": "Doppelte Claims sind on-chain ausgeschlossen. Alles bleibt transparent und fälschungssicher."
+          "title": "Sicher & nachvollziehbar",
+          "text": "Pro Studie nur ein Punkt pro Wallet. Alles bleibt fälschungssicher und transparent."
         }
       }
     },
+
+    "requirements": {
+      "title": "Was brauche ich?",
+      "bullets": [
+        "Einen aktuellen Browser und eine Wallet (z. B. MetaMask).",
+        "Kein Kryptoguthaben nötig – Gebühren werden vom System gesponsert.",
+        "Die App hilft beim Wechsel ins richtige Netzwerk (Polygon)."
+      ]
+    },
+
+    "security": {
+      "title": "Sicherheit & Datenschutz",
+      "points": [
+        "Keine Namen, keine Matrikelnummern im System.",
+        "Öffentlich sichtbar: Wallet-Adresse, Blockzeit, Token-Ereignisse.",
+        "Einmalige Nutzung pro Studie – doppelte Vergaben sind ausgeschlossen."
+      ]
+    },
+
     "target": {
       "title": "Für wen ist das?",
       "student": {
         "title": "Studierende",
         "bullets": [
-          "Punktestand jederzeit in der Wallet",
-          "Kein Papier, kein Nachtrag",
-          "Direkter Nachweis für Prüfungsleistungen"
+          "Punktestand jederzeit sichtbar",
+          "Kein Papier, keine Nachträge",
+          "Direkter Nachweis für Prüfungen"
         ]
       },
       "admin": {
         "title": "Lehrende & Organisation",
         "bullets": [
-          "Zuverlässiger Überblick über VPP",
-          "Selektives oder vollständiges Löschen (rollenbasiert)",
-          "Explorer-Links & Exportoptionen"
+          "Schnelle Prüfung pro Wallet",
+          "Gezieltes oder vollständiges Löschen (rollenbasiert)",
+          "Explorer-Links & kompakte Übersicht"
         ]
       }
     },
-    "faq": {
-      "title": "FAQ",
-      "items": {
-        "gas": {
-          "title": "Muss ich etwas bezahlen?",
-          "content": "Nein. Transaktionsgebühren werden über unseren Paymaster gesponsert (OpenGSN)."
+
+    "faqPlus": {
+      "title": "Häufige Fragen (ausführlich)",
+      "items": [
+        {
+          "q": "Muss ich etwas bezahlen?",
+          "a": "Nein. Die Transaktionsgebühren übernimmt ein Paymaster – für dich ist es kostenfrei."
         },
-        "duplicate": {
-          "title": "Kann ich mehrfach für dieselbe Studie claimen?",
-          "content": "Nein. Der Smart-Contract verhindert Doppel-Claims und speichert bereits vergebene Kombinationen."
+        {
+          "q": "Kann ich dieselbe Studie mehrfach nutzen?",
+          "a": "Nein. Pro Wallet und Studie gibt es genau einen Punkt."
         },
-        "network": {
-          "title": "Welches Netzwerk wird genutzt?",
-          "content": "Polygon Mainnet. Wenn du verbunden bist, hilft die App dir automatisch beim Wechsel."
+        {
+          "q": "Welches Netzwerk wird genutzt?",
+          "a": "Polygon. Die App hilft beim Wechsel, falls nötig."
         },
-        "privacy": {
-          "title": "Welche Daten werden gespeichert?",
-          "content": "On-chain wird der NFT-Besitz dokumentiert. Persönliche Daten verwalten wir nicht."
+        {
+          "q": "Welche Daten werden gespeichert?",
+          "a": "Wir speichern keine personenbezogenen Daten – nur die technischen Nachweise der Punkte."
+        },
+        {
+          "q": "Ich habe noch keine Wallet – was mache ich?",
+          "a": "Installiere z. B. MetaMask im Browser oder als App und folge den kurzen Schritten. Danach kannst du Studienabschluss bestätigen und Punkte empfangen."
+        },
+        {
+          "q": "Brauche ich Kryptogeld?",
+          "a": "Nein. Die Gebühren bezahlt ein Paymaster im Hintergrund – für dich entstehen keine Kosten."
+        },
+        {
+          "q": "Wie sehe ich meine Punkte?",
+          "a": "Öffne deine Wallet – die Punkte erscheinen als digitale Einträge. Außerdem kannst du sie im Lehrenden-Portal bei Bedarf prüfen lassen."
+        },
+        {
+          "q": "Kann ich Punkte übertragen oder verkaufen?",
+          "a": "Nein. Die Punkte sind nicht übertragbar und bleiben deiner Wallet zugeordnet."
+        },
+        {
+          "q": "Ich habe am Ende der Studie nichts bekommen – was tun?",
+          "a": "Prüfe Wallet-Verbindung und Netzwerk. Wenn es trotzdem nicht klappt, wende dich mit deiner Wallet-Adresse an die Lehrperson."
+        },
+        {
+          "q": "Ich habe meine Wallet verloren – sind die Punkte weg?",
+          "a": "Punkte sind an die Wallet gebunden. Wende dich an die Lehrperson: In begründeten Fällen können Tokens gelöscht werden, damit eine korrekte Zuweisung möglich wird."
+        },
+        {
+          "q": "Wie viele Punkte brauche ich bis zur Bachelor-Anmeldung?",
+          "a": "Insgesamt 10 VPP. Deinen Fortschritt kannst du jederzeit prüfen."
+        },
+        {
+          "q": "Welche Daten sieht die Öffentlichkeit?",
+          "a": "Nur Wallet-Adresse, Zeitangaben (über den Block) und Ereignisse wie „Punkt erstellt/gelöscht“ – keine Namen oder Matrikelnummern."
+        },
+        {
+          "q": "Was machen Lehrende genau im Portal?",
+          "a": "Studien anlegen, SoSci-Vorlagen erstellen, Punkte pro Wallet prüfen und bei Bedarf Tokens löschen – abgesichert über Rollen."
+        },
+        {
+          "q": "Warum kostet das alles nichts?",
+          "a": "Weil ein Paymaster die Gebühren übernimmt. Die Transaktionen werden als Meta-Transaktionen über OpenGSN gesponsert."
         }
-      }
+      ]
     }
-  },
-  "accordion-item": {
-    "open": "-",
-    "close": "+"
   }
 }

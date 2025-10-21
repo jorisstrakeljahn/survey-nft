@@ -19,7 +19,7 @@
         </span>
       </div>
 
-      <!-- 1) Kein Provider: Installieren -->
+      <!-- 1) No provider detected: offer installation -->
       <app-button
         v-if="!hasProvider"
         target="_blank"
@@ -28,7 +28,7 @@
         :text="$t('connect-page.install-metamask-btn')"
       />
 
-      <!-- 2) Provider da, aber nicht verbunden: Verbinden -->
+      <!-- 2) Provider present but not connected: request connection -->
       <app-button
         v-else-if="!connected"
         :text="$t('connect-page.connect-btn')"
@@ -37,7 +37,7 @@
         @click="connect"
       />
 
-      <!-- 3) Verbunden, aber falsche Chain: Wechseln -->
+      <!-- 3) Connected on the wrong chain: request network switch -->
       <app-button
         v-else-if="wrongChain"
         :icon-left="$icons.metamask"
@@ -46,7 +46,7 @@
         @click="switchChain"
       />
 
-      <!-- 4) Verbunden & richtige Chain: Auto-Redirect + Fallback-Button -->
+      <!-- 4) Connected & on expected chain: allow continuation (auto-redirect will also run) -->
       <app-button
         v-else
         :icon-left="$icons.metamask"
@@ -70,25 +70,28 @@ import {
   toHex,
   chainLabelFromId,
 } from '@/utils/chain.util'
+import { AppButton } from '@/common'
 
 const { t } = useI18n({ useScope: 'global' })
 
-/** Zielnetz (Polygon Mainnet per util) */
-const expectedDec  = getExpectedChainIdDec()               // z.B. 137
+/**
+ * Target network (Polygon by default). Keep these in sync with your config/utils.
+ */
+const expectedDec  = getExpectedChainIdDec()               // e.g. 137
 const expectedHex  = toHex(expectedDec)                    // '0x89'
 const expectedName = chainLabelFromId(expectedDec)         // 'Polygon Mainnet'
 
-/** Fallback-Weiterleitung (Routen-Name) */
+/** Default route to continue to once we’re fully connected/ready. */
 const DEFAULT_REDIRECT_NAME = 'NftsPage'
 
-/** MetaMask Download */
+/** Official MM download landing page (desktop + mobile). */
 const METAMASK_DOWNLOAD_LINK = 'https://metamask.io/download/'
 
-/** Router */
+/** Vue Router handles redirection once connection requirements are satisfied. */
 const router = useRouter()
 const route  = useRoute()
 
-/** State */
+/** Reactive UI + connection state */
 const hasProvider = ref(false)
 const account     = ref<string | null>(null)
 const chainId     = ref<string | null>(null)
@@ -96,15 +99,22 @@ const connecting  = ref(false)
 const switching   = ref(false)
 const statusMsg   = ref('')
 
-/** Abgeleitete Zustände */
+/**
+ * Derived flags used to drive the 4-state CTA above:
+ * - connected: we have an account
+ * - wrongChain: connected but not on the expected chain
+ */
 const connected  = computed(() => !!account.value)
 const wrongChain = computed(() => connected.value && chainId.value?.toLowerCase() !== expectedHex.toLowerCase())
 
-/** Provider helpers */
+/** EIP-1193 provider helpers (MetaMask and compatibles). */
 function eth(): any { return (window as any).ethereum }
 function isMetamaskExtension(){ return !!eth()?.isMetaMask }
 
-/** Warte auf Provider-Injection (v.a. Firefox) */
+/**
+ * Wait for provider injection (mainly Firefox/slow extensions).
+ * No popups, just passive polling up to timeoutMs.
+ */
 function waitForEthereum(timeoutMs = 3000): Promise<boolean> {
   return new Promise((resolve) => {
     if (eth()?.request) return resolve(true)
@@ -116,9 +126,11 @@ function waitForEthereum(timeoutMs = 3000): Promise<boolean> {
   })
 }
 
-/** Ziel aus Query ableiten: redirect|next|admin */
+/**
+ * Resolve the next route based on query params.
+ * Supports `?redirect=/path`, `?next=RouteName`, or `?admin=1`.
+ */
 function resolveNext() {
-  // akzeptiere redirect oder next
   const raw = String(route.query.redirect ?? route.query.next ?? '').trim()
   if (raw) {
     if (raw.startsWith('/')) return { path: raw }
@@ -128,13 +140,13 @@ function resolveNext() {
   return { name: DEFAULT_REDIRECT_NAME }
 }
 
-/** Aktive Weiterleitung */
+/** Push user forward (replace history to avoid back-navigating to connect). */
 function goNext() {
   const target = resolveNext()
   router.replace(target).catch(() => {})
 }
 
-/** Weiterleiten, sobald ready */
+/** If we’re already connected and on the right chain, skip the step instantly. */
 function maybeRedirect() {
   if (connected.value && !wrongChain.value) {
     statusMsg.value = ''
@@ -142,7 +154,13 @@ function maybeRedirect() {
   }
 }
 
-/** Sanfte Initialisierung (ohne Popups) */
+/**
+ * Soft init on mount:
+ *  - detect provider (no prompts)
+ *  - read current account + chain
+ *  - wire EIP-1193 events
+ *  - attempt auto-redirect if everything is already good
+ */
 async function softInit() {
   const ok = await waitForEthereum()
   hasProvider.value = ok
@@ -155,10 +173,10 @@ async function softInit() {
     chainId.value = await getCurrentChainIdHex(provider)
     maybeRedirect()
   } catch {
-    // okay – UI zeigt Connect-CTA
+    // Silent: UI will show "Connect" CTA instead.
   }
 
-  // Events aktuell halten
+  // Keep listeners clean and up-to-date
   try {
     eth().removeAllListeners?.('accountsChanged')
     eth().removeAllListeners?.('chainChanged')
@@ -179,7 +197,10 @@ async function softInit() {
   })
 }
 
-/** Chain sicherstellen (user-gesture) */
+/**
+ * Ensure the expected chain. Requires a user gesture by design.
+ * If the chain isn’t known (error 4902), we attempt to add it first.
+ */
 async function switchChain() {
   const provider = eth()
   if (!provider?.request) return
@@ -194,6 +215,7 @@ async function switchChain() {
     maybeRedirect()
   } catch (e: any) {
     if (e?.code === 4902) {
+      // Add chain then switch—Polygon mainnet details here
       await provider.request({
         method: 'wallet_addEthereumChain',
         params: [{
@@ -207,6 +229,7 @@ async function switchChain() {
       chainId.value = expectedHex
       maybeRedirect()
     } else if (e?.code === 4001) {
+      // User rejected the request; keep a friendly, specific message
       statusMsg.value = (isMetamaskExtension() ? 'MetaMask: ' : '') + t('connect-page.status.rejected')
     } else {
       statusMsg.value = e?.message || t('connect-page.status.switch-failed')
@@ -216,7 +239,10 @@ async function switchChain() {
   }
 }
 
-/** Verbinden (per Klick) */
+/**
+ * Request accounts (user gesture), then ensure the correct chain.
+ * On success we auto-redirect; otherwise we surface a minimal error status.
+ */
 async function connect() {
   const provider = eth()
   if (!provider?.request) { hasProvider.value = false; statusMsg.value = ''; return }
@@ -244,10 +270,10 @@ async function connect() {
   }
 }
 
-/** Mount */
+/** Mount lifecycle: passive init only (no popups). */
 onMounted(() => { void softInit() })
 
-/** Wenn Query-Param sich ändert, erneut prüfen */
+/** Re-evaluate redirect target when query changes or connection state flips. */
 watch(() => [route.query.redirect, route.query.next, route.query.admin], () => { maybeRedirect() })
 watch([connected, wrongChain], () => { maybeRedirect() })
 </script>

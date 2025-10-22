@@ -1,202 +1,163 @@
 // src/lib/gsn-client.v5.ts
-// GSN + Ethers helper with v5/v6 compatibility, staged send, tuned relay lookups, and debug logging.
-
 import { ethers } from 'ethers'
 import {
   CHAIN_ID,
   POLYGON_HEX,
   PAYMASTER_ADDRESS,
-  PREFERRED_RELAYS,      // e.g. ['https://your-relay.domain']
+  PREFERRED_RELAYS,
   FORWARDER_ADDRESS
 } from '@/config/addresses'
 import { ensureGsnLoaded } from '@/utils/gsn-loader'
 
-/* ------------------------------------------------------------- */
-/* Debug logging                                                  */
-/* ------------------------------------------------------------- */
-const DEBUG = String((import.meta as any)?.env?.VITE_GSN_DEBUG ?? '').toLowerCase() === 'true'
-function log(...args: any[])   { if (DEBUG) console.log('[GSN]', ...args) }
-function warn(...args: any[])  { if (DEBUG) console.warn('[GSN]', ...args) }
-function error(...args: any[]) { if (DEBUG) console.error('[GSN]', ...args) }
+/* ------------------ Debug + Timing ------------------ */
+// Aktiviert, wenn VITE_GSN_DEBUG ODER VITE_ADMIN_DEBUG truthy ist
+const RAW_DBG = (import.meta as any)?.env?.VITE_GSN_DEBUG ?? (import.meta as any)?.env?.VITE_ADMIN_DEBUG ?? ''
+const DEBUG = /^(1|true|yes|on)$/i.test(String(RAW_DBG))
+const log  = (...a:any[]) => { if (DEBUG) console.log('[GSN]', ...a) }
+const warn = (...a:any[]) => { if (DEBUG) console.warn('[GSN]', ...a) }
+const err  = (...a:any[]) => { if (DEBUG) console.error('[GSN]', ...a) }
+const now  = () => performance.now()
+const fmt  = (ms:number) => `${ms.toFixed(0)} ms (${(ms/1000).toFixed(3)} s)`
 
-/* ------------------------------------------------------------- */
-/* Ethers v5/v6 compatibility                                    */
-/* ------------------------------------------------------------- */
-const E = ethers as any
-const JsonRpcProviderCtor = E.JsonRpcProvider ?? E.providers?.JsonRpcProvider      // v6 || v5
-const BrowserProviderCtor = E.BrowserProvider ?? E.providers?.Web3Provider         // v6 || v5
-function requireCtor(name: string, ctor: any) {
-  if (!ctor) throw new Error(`Ethers constructor missing: ${name}. Check ethers version / bundle.`)
-  return ctor
-}
+/* ------------------ Ethers v5/v6 compat -------------- */
+const E:any = ethers as any
+const JsonRpcProviderCtor = E.JsonRpcProvider ?? E.providers?.JsonRpcProvider
+const BrowserProviderCtor = E.BrowserProvider ?? E.providers?.Web3Provider
+function requireCtor(name:string, ctor:any){ if(!ctor) throw new Error(`Ethers ctor missing: ${name}`); return ctor }
 
-/* ------------------------------------------------------------- */
-/* Minimal EIP-1193 helpers                                      */
-/* ------------------------------------------------------------- */
-type Eip1193 = { request: (args: { method: string; params?: any[] | object }) => Promise<any> }
-
-function getEthereum(): Eip1193 {
-  const eth = (window as any).ethereum as Eip1193 | undefined
-  if (!eth || typeof eth.request !== 'function') {
-    throw new Error('MetaMask / EIP-1193 Provider not found.')
-  }
+/* ------------------ EIP-1193 helpers ----------------- */
+type Eip1193 = { request: (args:{method:string; params?:any[]|object}) => Promise<any> }
+function getEthereum():Eip1193 {
+  const eth = (window as any).ethereum as Eip1193|undefined
+  if(!eth || typeof eth.request!=='function') throw new Error('MetaMask / EIP-1193 Provider not found.')
   return eth
 }
-
-/**
- * Ensure Polygon (only when you explicitly call it from a user gesture flow).
- */
-async function ensurePolygon(eth: Eip1193) {
-  const id = await eth.request({ method: 'eth_chainId' })
-  if (id !== POLYGON_HEX) {
+async function ensurePolygon(eth:Eip1193){
+  const id = await eth.request({ method:'eth_chainId' })
+  if(id !== POLYGON_HEX){
     try {
-      await eth.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: POLYGON_HEX }] })
-    } catch (e: any) {
-      if (e?.code === 4902) {
-        await eth.request({
-          method: 'wallet_addEthereumChain',
-          params: [{
-            chainId: POLYGON_HEX,
-            chainName: 'Polygon Mainnet',
-            nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 },
-            rpcUrls: ['https://polygon-rpc.com'],
-            blockExplorerUrls: ['https://polygonscan.com/']
-          }]
-        })
-      } else {
-        throw e
-      }
+      await eth.request({ method:'wallet_switchEthereumChain', params:[{ chainId: POLYGON_HEX }] })
+    } catch (e:any) {
+      if(e?.code === 4902){
+        await eth.request({ method:'wallet_addEthereumChain', params:[{
+            chainId: POLYGON_HEX, chainName:'Polygon Mainnet',
+            nativeCurrency:{ name:'MATIC', symbol:'MATIC', decimals:18 },
+            rpcUrls:['https://polygon-rpc.com'], blockExplorerUrls:['https://polygonscan.com/']
+          }]})
+      } else { throw e }
     }
   }
 }
 
-/* ------------------------------------------------------------- */
-/* GSN config tuning (avoid huge event scans / -32005)            */
-/* ------------------------------------------------------------- */
+/* -------------- GSN tuning: kleines Fenster  ---------- */
 const DEFAULT_GSN_TUNING = {
-  // Smaller windows so the provider won’t query from block 0
-  relayLookupWindowBlocks:       120_000,  // ~ a few days on Polygon; tune as you like
-  relayRegistrationLookupBlocks: 120_000,
-  // Keep pages small to never hit 10k log limits on RPCs
-  pastEventsQueryMaxPageSize:     2_000,
-  // Fewer extras, quicker path
+  relayLookupWindowBlocks:       20_000,
+  relayRegistrationLookupBlocks: 20_000,
+  pastEventsQueryMaxPageSize:     1_000,
   auditorsCount: 0,
-  // Slightly aggressive gas to get mined faster (paymaster pays)
   gasPriceFactorPercent: 120,
   loggerConfiguration: { logLevel: 'error' as const },
 }
 
-/* ------------------------------------------------------------- */
-/* Primary factory: OpenGSN RelayProvider + Ethers provider       */
-/* ------------------------------------------------------------- */
-export async function getGsnEthers(configOverrides: Record<string, any> = {}) {
-  log('getGsnEthers(): ensure GSN bundle + build provider…')
+/* -------------- Factory: RelayProvider + Ethers -------- */
+export async function getGsnEthers(configOverrides:Record<string,any> = {}){
+  const t0 = now()
+  log('getGsnEthers(): ensure bundle + build provider…')
 
+  const tBundle = now()
   await ensureGsnLoaded()
+  log('getGsnEthers(): bundle loaded in', fmt(now()-tBundle))
+
   const RP = (window as any).gsn?.RelayProvider || (window as any).RelayProvider
-  if (!RP) throw new Error('OpenGSN (UMD) not loaded – missing <script src="/vendor/gsn-umd.js">?')
+  if(!RP) throw new Error('OpenGSN (UMD) not loaded – missing <script src="/vendor/gsn-umd.js">?')
 
   const effectiveCfg = {
     paymasterAddress:  PAYMASTER_ADDRESS,
     forwarderAddress:  FORWARDER_ADDRESS,
     preferredRelays:   PREFERRED_RELAYS,
     ...DEFAULT_GSN_TUNING,
-    ...configOverrides,
+    ...configOverrides
   }
-  if (DEBUG) {
-    const snapshot = { ...effectiveCfg, preferredRelays: (effectiveCfg.preferredRelays ?? []).length }
-    log('GSN config:', snapshot)
-  }
+  // Immer einmal konfigur. Snapshot ausgeben – hilft enorm beim Debuggen
+  console.info('[GSN] config snapshot', {
+    preferredRelays: effectiveCfg.preferredRelays,
+    relayLookupWindowBlocks: effectiveCfg.relayLookupWindowBlocks,
+    relayRegistrationLookupBlocks: effectiveCfg.relayRegistrationLookupBlocks,
+    pastEventsQueryMaxPageSize: effectiveCfg.pastEventsQueryMaxPageSize
+  })
 
-  const relayProvider = await RP.newProvider({
-    provider: (window as any).ethereum,
-    config: effectiveCfg
-  }).init()
+  const tInit = now()
+  const relayProvider = await RP.newProvider({ provider:(window as any).ethereum, config: effectiveCfg }).init()
+  log('getGsnEthers(): provider init (discovery) took', fmt(now()-tInit))
 
   const BP = requireCtor('BrowserProvider/Web3Provider', BrowserProviderCtor)
-  const provider = new BP(relayProvider)               // v6: BrowserProvider, v5: Web3Provider
+  const tSigner = now()
+  const provider = new BP(relayProvider)
   const signer = await provider.getSigner()
+  log('getGsnEthers(): getSigner took', fmt(now()-tSigner), '| total', fmt(now()-t0), '| ethers', (ethers as any).version)
 
-  log('getGsnEthers(): ready – ethers=', (ethers as any).version, 'ctor=', BP?.name ?? 'unknown')
   return { provider, signer, relayProvider }
 }
 
-/* ------------------------------------------------------------- */
-/* Staged sender: txHash immediately, receipt via waitReceipt()  */
-/* ------------------------------------------------------------- */
+/* -------------- Staged sender -------------------------- */
 export type GsnSendResult = {
   txHash: string
-  waitReceipt: (confirmations?: number) => Promise<any> // neutral typing for v5/v6
+  waitReceipt: (confirmations?:number)=>Promise<any>
 }
 
-/**
- * Send a GSN tx and return the tx hash immediately; confirm later.
- * Use confirmations=1 on Polygon for a good UX/security trade-off.
- */
 export async function gsnSendTx(
-  contractAddress: string,
-  abi: any[],
-  method: string,
-  args: any[] = [],
+  contractAddress:string,
+  abi:any[],
+  method:string,
+  args:any[] = [],
   confirmations = 1
 ): Promise<GsnSendResult> {
+  const t0 = now()
   const { signer } = await getGsnEthers()
   const c = new ethers.Contract(contractAddress, abi, signer)
 
-  log('gsnSendTx(): call', { contractAddress, method, args, confirmations })
-  // dynamic method invocation (neutral typing for v5/v6)
-  const tx: any = await (c as any)[method](...args)
-  const txHash: string = tx.hash
-  log('gsnSendTx(): tx submitted', txHash)
+  const tCall = now()
+  log('gsnSendTx(): call', { method, args })
+  const tx:any = await (c as any)[method](...args)
+  const tHash = now()
+  const txHash:string = tx.hash
+  log('gsnSendTx(): tx submitted', { txHash, callLatency: fmt(tHash - tCall), e2eToHash: fmt(tHash - t0) })
 
   const waitReceipt = async (conf = confirmations) => {
+    const tWait = now()
     try {
       const receipt = await tx.wait(conf)
-      log('gsnSendTx(): tx confirmed', { txHash, conf })
+      log('gsnSendTx(): tx confirmed', { txHash, conf, mineLatency: fmt(now()-tWait), totalE2E: fmt(now()-t0) })
       return receipt
-    } catch (e) {
-      error('gsnSendTx(): waitReceipt failed', e)
+    } catch(e){
+      err('gsnSendTx(): waitReceipt failed', e)
       throw e
     }
   }
   return { txHash, waitReceipt }
 }
 
-/* Back-compat wrapper (DEPRECATED): wait immediately via staged sender. */
-export async function gsnTx(
-  address: string,
-  abi: any[],
-  method: string,
-  args: any[] = [],
-  overrides: Record<string, any> = {}
-) {
+/* -------------- Back-compat wrapper -------------------- */
+export async function gsnTx(address:string, abi:any[], method:string, args:any[] = [], overrides:Record<string,any> = {}){
   const res = await gsnSendTx(address, abi, method, overrides ? [...args, overrides] : args, 1)
   return res.waitReceipt(1)
 }
 
-/* ------------------------------------------------------------- */
-/* Explicit signer (requests accounts + ensure chain).           */
-/* Only call from user-gesture flows (e.g., a Connect button).   */
-/* ------------------------------------------------------------- */
-export async function getGsnSigner() {
+/* -------------- Explicit signer (user gesture) ---------- */
+export async function getGsnSigner(){
   const eth = getEthereum()
-  await eth.request({ method: 'eth_requestAccounts' })
+  await eth.request({ method:'eth_requestAccounts' })
   await ensurePolygon(eth)
 
   const RP = (window as any).gsn?.RelayProvider || (window as any).RelayProvider
-  if (!RP) throw new Error('OpenGSN (UMD) not loaded – missing <script src="/vendor/gsn-umd.js">?')
+  if(!RP) throw new Error('OpenGSN (UMD) not loaded – missing <script src="/vendor/gsn-umd.js">?')
 
-  const effectiveCfg = {
-    paymasterAddress:  PAYMASTER_ADDRESS,
-    preferredRelays:   PREFERRED_RELAYS,
-    ...DEFAULT_GSN_TUNING,
-  }
-  if (DEBUG) log('getGsnSigner(): config', effectiveCfg)
+  const effectiveCfg = { paymasterAddress: PAYMASTER_ADDRESS, preferredRelays: PREFERRED_RELAYS, ...DEFAULT_GSN_TUNING }
+  log('getGsnSigner(): config', effectiveCfg)
 
-  const gsnProvider = await RP.newProvider({
-    provider: eth,
-    config: effectiveCfg
-  }).init()
+  const tInit = now()
+  const gsnProvider = await RP.newProvider({ provider: eth, config: effectiveCfg }).init()
+  log('getGsnSigner(): provider init took', fmt(now()-tInit))
 
   const BP = requireCtor('BrowserProvider/Web3Provider', BrowserProviderCtor)
   const provider = new BP(gsnProvider)
@@ -205,23 +166,16 @@ export async function getGsnSigner() {
   return signer
 }
 
-/* ------------------------------------------------------------- */
-/* Read-only JSON-RPC (v6/v5 compatible)                         */
-/* ------------------------------------------------------------- */
-export function readRpc() {
+/* -------------- Read-only RPC -------------------------- */
+export function readRpc(){
   const JRP = requireCtor('JsonRpcProvider', JsonRpcProviderCtor)
-  const rpc = new JRP('https://polygon-rpc.com', {
-    name: 'matic',
-    chainId: Number(CHAIN_ID) || 137
-  })
+  const rpc = new JRP('https://polygon-rpc.com', { name:'matic', chainId: Number(CHAIN_ID) || 137 })
   log('readRpc(): created')
   return rpc
 }
 
-/* ------------------------------------------------------------- */
-/* Helpers                                                       */
-/* ------------------------------------------------------------- */
-export function txExplorerUrl(txHash: string) {
+/* -------------- Helpers -------------------------------- */
+export function txExplorerUrl(txHash:string){
   const id = Number(CHAIN_ID || 137)
   const base = id === 80001 ? 'https://mumbai.polygonscan.com' : 'https://polygonscan.com'
   return `${base}/tx/${txHash}`

@@ -34,7 +34,7 @@
 
   <!-- Loader / Error / Empty -->
   <loader v-if="isLoading" class="admin__loader" />
-  <section v-if="!isLoading && error" class="state state--error">
+  <section v-if="!isLoading && hasError" class="state state--error">
     <h3>{{ t('admin.error.title') }}</h3>
     <p>{{ t('admin.error.text') }}</p>
   </section>
@@ -47,9 +47,23 @@
   <section v-if="!isLoading && hasResult && tokens.length > 0" class="box">
     <div class="box-head">
       <h2 class="box-title">{{ t('admin.table.title') }}</h2>
-      <button class="btn btn--danger" :disabled="!isDeleter" @click="confirmBurnAll">
+      <button class="btn btn--danger" :disabled="!isDeleter || isSending" @click="confirmBurnAll">
         {{ t('admin.actions.burnAll') }}
       </button>
+    </div>
+
+    <div v-if="pending.length" class="pending">
+      <div class="pending__item" v-for="p in pending" :key="p.hash">
+        <span class="pending__label">{{ p.label }}</span>
+        <a class="link-btn" :href="txExplorerUrl(p.hash)" target="_blank" rel="noopener">Explorer</a>
+        <span class="pill" :class="{
+      'pill--pending': p.state==='pending',
+      'pill--ok': p.state==='confirmed',
+      'pill--err': p.state==='failed'
+    }">
+      {{ p.state }}
+    </span>
+      </div>
     </div>
 
     <div class="table">
@@ -68,7 +82,7 @@
           <button class="link-btn" @click="openExplorer(tkn.tokenId)">{{ t('admin.table.explorer') }}</button>
         </div>
         <div class="cell">
-          <button class="btn btn--danger" :disabled="!isDeleter" @click="confirmBurnOne(tkn.tokenId)">
+          <button class="btn btn--danger" :disabled="!isDeleter || isSending || isRowBusy(tkn.tokenId)" @click="confirmBurnOne(tkn.tokenId)">
             {{ t('admin.table.burn') }}
           </button>
         </div>
@@ -97,38 +111,49 @@ import Loader from '@/common/Loader.vue'
 import NftMetadataModal from '@/common/NftMetadataModal.vue'
 import { useErc721 } from '@/composables/contracts/use-erc721'
 import { config } from '@/config'
-
-// Gasless writes via GSN (only used for burn actions)
-import { gsnTx } from '@/lib/gsn-client.v5'
+import { gsnSendTx, txExplorerUrl } from '@/lib/gsn-client.v5'
 import { NFT_ADDRESS } from '@/config/addresses'
 import { ABI_SURVEY_NFT } from '@/abi/surveyNft'
 
-/** i18n from global scope so navbar language switches take effect immediately */
+/* ------------------------ Debug + Timing ------------------------ */
+/** Aktivieren mit VITE_ADMIN_DEBUG=true (Vite-Env) */
+const ADMIN_DEBUG =
+  String((import.meta as any)?.env?.VITE_ADMIN_DEBUG ?? '').toLowerCase() === 'true'
+const dbg  = (...a: any[]) => { if (ADMIN_DEBUG) console.log('[AdminWallets]', ...a) }
+const dbgW = (...a: any[]) => { if (ADMIN_DEBUG) console.warn('[AdminWallets]', ...a) }
+const dbgE = (...a: any[]) => { if (ADMIN_DEBUG) console.error('[AdminWallets]', ...a) }
+
+/** Timing-Helfer */
+const now = () => performance.now()
+const fmt = (ms: number) => `${ms.toFixed(0)} ms (${(ms/1000).toFixed(3)} s)`
+const split = (t0: number) => fmt(now() - t0)
+
+/* i18n */
 const { t } = useI18n({ useScope: 'global' })
 
-/** Permission props from layout */
+/* Props */
 defineProps<{ canManage?: boolean; isDeleter?: boolean }>()
 
-/** Token shape (minimal fields we need for UI) */
+/* Token type */
 type Token = { tokenId: number; owner: `0x${string}`; uri?: string; points?: number }
 
-/** Read-only helpers from composable (no writes here) */
+/* Composable */
 const { loadTokensOf, getTokenURI, getTokenPoints } = useErc721()
 
-/** Explorer base + contract address (driven by configured chain id) */
+/* Explorer base */
 const chainId = Number(config.SUPPORTED_CHAIN_ID || 137)
 const erc721Address = config.ERC721_ADDRESS as string
+dbg('init:', { chainId, erc721Address, NFT_ADDRESS })
 
-// Lint-friendly alternative to nested ternaries: centralized lookup
 const POLYGON_EXPLORERS: Record<number, string> = {
-  137:   'https://polygonscan.com',
+  137: 'https://polygonscan.com',
   80001: 'https://mumbai.polygonscan.com'
 }
 const explorerBase = computed(() => POLYGON_EXPLORERS[chainId] ?? POLYGON_EXPLORERS[137])
 
-/** UI state */
+/* --------------------------- State ----------------------------- */
 const isLoading = ref(false)
-const error = ref(false)
+const hasError  = ref(false)
 const walletInput = ref('')
 const target = ref<`0x${string}` | ''>('')
 const searchError = ref('')
@@ -140,118 +165,234 @@ const hasResult = computed(() => !!target.value)
 const showMeta = ref(false)
 const metaToken = ref<Token | null>(null)
 
-/** Small helpers */
-function short (addr?: string) { return addr ? `${addr.slice(0,6)}…${addr.slice(-4)}` : '' }
-function isAddress (s: string) { return /^0x[a-fA-F0-9]{40}$/.test(s.trim()) }
+/* Pending activity */
+type PendingState = 'pending' | 'confirmed' | 'failed'
+type PendingOp = { hash: string; label: string; state: PendingState }
+const pending = ref<PendingOp[]>([])
+const isSending = ref(false)
+const inFlight = ref<Set<number>>(new Set())
 
-/** Lazy-load metadata for a single token and open modal */
-async function openMeta (tkn: Token) {
+function isRowBusy(id: number) { return inFlight.value.has(id) }
+
+function addPending(label: string, hash: string) {
+  const next: PendingOp = { hash, label, state: 'pending' }
+  dbg('pending:add', { label, hash, explorer: txExplorerUrl(hash) })
+  pending.value = [next, ...pending.value].slice(0, 6)
+}
+function resolvePending(hash: string, ok: boolean) {
+  const idx = pending.value.findIndex(p => p.hash === hash)
+  if (idx >= 0) {
+    pending.value[idx].state = ok ? 'confirmed' : 'failed'
+    dbg('pending:update', { hash, state: pending.value[idx].state })
+  } else {
+    dbgW('pending:update: hash not found', hash)
+  }
+}
+
+/* Helpers */
+function short(addr?: string) { return addr ? `${addr.slice(0,6)}…${addr.slice(-4)}` : '' }
+function isAddress(s: string) { return /^0x[a-fA-F0-9]{40}$/.test(s.trim()) }
+
+/* Open metadata */
+async function openMeta(tkn: Token) {
+  dbg('openMeta: start', { tokenId: tkn.tokenId })
   if (!tkn.uri)   tkn.uri   = await getTokenURI(tkn.tokenId)
   if (tkn.points == null) tkn.points = await getTokenPoints(tkn.tokenId)
   metaToken.value = tkn
   showMeta.value = true
+  dbg('openMeta: done', { tokenId: tkn.tokenId, hasUri: !!tkn.uri, points: tkn.points })
 }
 
-/** Open token in the block explorer (contract page with token filter) */
-function openExplorer (tokenId: number) {
-  window.open(`${explorerBase.value}/token/${erc721Address}?a=${tokenId}`, '_blank', 'noopener')
+/* Explorer */
+function openExplorer(tokenId: number) {
+  const url = `${explorerBase.value}/token/${erc721Address}?a=${tokenId}`
+  dbg('openExplorer', { tokenId, url })
+  window.open(url, '_blank', 'noopener')
 }
 
-/** Load all tokens for the searched wallet, enrich with points/uri */
-async function loadWallet () {
-  searchError.value = ''; error.value = false
+/* Load wallet */
+async function loadWallet() {
+  searchError.value = ''; hasError.value = false
   const a = walletInput.value.trim()
-  if (!isAddress(a)) { searchError.value = t('admin.search.invalid'); return }
+  if (!isAddress(a)) { searchError.value = t('admin.search.invalid'); dbgW('loadWallet: invalid', a); return }
 
+  const t0 = now()
   try {
     isLoading.value = true
     target.value = a as `0x${string}`
+    dbg('loadWallet: start', { target: target.value })
 
-    // Fetch list, then fill missing fields (points/uri) on demand
+    const tList = now()
     const list = await loadTokensOf(target.value)
-    for (const tkn of list) {
+    dbg('loadWallet: baseList', { count: list.length, sample: list.slice(0,5).map(x => x.tokenId), took: split(tList) })
+
+    const tEnrich = now()
+    await Promise.all(list.map(async (tkn) => {
       if (tkn.points == null) tkn.points = await getTokenPoints(tkn.tokenId)
       if (!tkn.uri)           tkn.uri   = await getTokenURI(tkn.tokenId)
-    }
+    }))
+    dbg('loadWallet: enrich', { took: split(tEnrich) })
+
     tokens.value = list
+    dbg('loadWallet: done', { total: tokens.value.length, totalPoints: totalPoints.value, totalTook: split(t0) })
   } catch (e) {
-    // Keep user-facing error minimal; details go to console
-    // eslint-disable-next-line no-console
-    console.error(e)
-    error.value = true
+    dbgE('loadWallet: failed', e)
+    hasError.value = true
   } finally {
     isLoading.value = false
   }
 }
 
-/** Reset UI to initial state */
-function clear () {
+/* Clear */
+function clear() {
+  dbg('clear()')
   walletInput.value = ''
   target.value = ''
   tokens.value = []
-  error.value = false
+  hasError.value = false
   searchError.value = ''
 }
 
-/** Auto-search when a full 0x address has been typed (tiny debounce) */
+/* Auto-search on full 0x address */
 let searchTimer: number | undefined
 watch(walletInput, (val) => {
   if (searchTimer) window.clearTimeout(searchTimer)
   const trimmed = val.trim()
-  if (!trimmed) { clear(); return }
+  if (!trimmed) { dbg('watch(walletInput): cleared'); clear(); return }
   if (trimmed.length === 42 && isAddress(trimmed)) {
+    dbg('watch(walletInput): auto-load', trimmed)
     searchTimer = window.setTimeout(() => { void loadWallet() }, 200)
   }
 })
 
-/** --- Burn actions (gasless via GSN) ----------------------------------- */
+/* Debug watches */
+watch(tokens, (next, prev) => {
+  if (!ADMIN_DEBUG) return
+  const a = prev?.length ?? 0, b = next?.length ?? 0
+  dbg('tokens: changed', `${a} -> ${b}`, { removed: (a - b) > 0 })
+})
+watch(pending, (next) => { if (ADMIN_DEBUG) dbg('pending: now', next) })
 
-/** Burn a single token id, then refresh the list */
-async function burnOne (id: number) {
+/* ---------------------- Burn actions --------------------------- */
+async function burnOne(id: number) {
+  const op0 = now()
+  dbg('burnOne: start', { id })
+
   try {
-    isLoading.value = true
-    await gsnTx(NFT_ADDRESS, ABI_SURVEY_NFT, 'burnAny', [id])
-    await loadWallet()
+    inFlight.value.add(id)
+    isSending.value = true
+
+    const tSend = now()
+    dbg('burnOne: send', { id, address: NFT_ADDRESS })
+    const { txHash, waitReceipt } = await gsnSendTx(NFT_ADDRESS, ABI_SURVEY_NFT, 'burnAny', [id], 1)
+    const tHash = now()
+
+    isSending.value = false
+    dbg('burnOne: submitted', {
+      id, txHash, explorer: txExplorerUrl(txHash),
+      sendLatency: fmt(tHash - tSend), totalToHash: fmt(tHash - op0)
+    })
+    addPending(`Burn #${id}`, txHash)
+
+    const before = tokens.value.length
+    tokens.value = tokens.value.filter(t => t.tokenId !== id)
+    const after = tokens.value.length
+    dbg('burnOne: optimistic update', { before, after, took: split(tHash) })
+
+    waitReceipt()
+      .then(() => {
+        const tRcpt = now()
+        dbg('burnOne: confirmed', {
+          id, txHash,
+          mineLatency: fmt(tRcpt - tHash),
+          e2e: fmt(tRcpt - op0)
+        })
+        resolvePending(txHash, true)
+      })
+      .catch(err => {
+        dbgE('burnOne: receipt failed', err)
+        resolvePending(txHash, false)
+        void loadWallet()
+      })
   } catch (e) {
-    // eslint-disable-next-line no-console
-    console.error('[burnAny(gsn)]', e)
-    isLoading.value = false
+    dbgE('[burnAny(gsn)]', e)
+    isSending.value = false
+  } finally {
+    inFlight.value.delete(id)
+    dbg('burnOne: end', { id, e2e: split(op0) })
   }
 }
-async function confirmBurnOne (id: number) {
-  if (!confirm(`${t('admin.table.burn')} #${id}?`)) return
+
+async function confirmBurnOne(id: number) {
+  dbg('confirmBurnOne: prompt', { id })
+  if (!confirm(`${t('admin.table.burn')} #${id}?`)) { dbg('confirmBurnOne: cancelled'); return }
   await burnOne(id)
 }
 
-/**
- * Burn all tokens for the current wallet in manageable chunks.
- * If your contract exposes burnAllFor(address, count), we loop in CHUNK_SIZE
- * to keep transactions reasonably sized; otherwise, use burnAny(...) per token.
- */
+/* Burn all (chunked) */
 const CHUNK_SIZE = 50
-async function burnAllForTarget () {
-  if (!target.value) return
+async function burnAllForTarget() {
+  if (!target.value) { dbgW('burnAllForTarget: no target'); return }
+  const op0 = now()
+  dbg('burnAllForTarget: start', { target: target.value, chunk: CHUNK_SIZE })
+
   try {
-    isLoading.value = true
-    let safety = 40 // hard stop to avoid endless loops in edge cases
+    let safety = 40
+    let totalSent = 0
     while (safety-- > 0) {
+      const tLoop = now()
       await loadWallet()
       const count = tokens.value.length
-      if (!count) break
+      if (!count) { dbg('burnAllForTarget: nothing to burn (loop)', { e2e: split(op0) }); break }
+
       const n = Math.min(CHUNK_SIZE, count)
-      await gsnTx(NFT_ADDRESS, ABI_SURVEY_NFT, 'burnAllFor', [target.value, n])
-      // No extra delay required; gsnTx awaits the receipt internally.
+      isSending.value = true
+      const tSend = now()
+      dbg('burnAllForTarget: send chunk', { n, target: target.value })
+      const { txHash, waitReceipt } = await gsnSendTx(NFT_ADDRESS, ABI_SURVEY_NFT, 'burnAllFor', [target.value, n], 1)
+      const tHash = now()
+      isSending.value = false
+
+      totalSent += n
+      dbg('burnAllForTarget: submitted', {
+        txHash,
+        explorer: txExplorerUrl(txHash),
+        chunkSendLatency: fmt(tHash - tSend),
+        loopTimeToHash: fmt(tHash - tLoop),
+        totalSent
+      })
+      addPending(`Burn ${n} token(s)`, txHash)
+
+      await waitReceipt()
+        .then(async () => {
+          const tRcpt = now()
+          dbg('burnAllForTarget: confirmed', {
+            txHash,
+            chunkMineLatency: fmt(tRcpt - tHash),
+            chunkE2E: fmt(tRcpt - tLoop),
+            totalE2E: fmt(tRcpt - op0)
+          })
+          resolvePending(txHash, true)
+          await loadWallet()
+        })
+        .catch(async (err) => {
+          dbgE('burnAllForTarget: receipt failed', err)
+          resolvePending(txHash, false)
+          await loadWallet()
+        })
     }
-    await loadWallet()
   } catch (e) {
-    // eslint-disable-next-line no-console
-    console.error('[burnAllFor(gsn)]', e)
-    isLoading.value = false
+    dbgE('[burnAllFor(gsn)]', e)
+    isSending.value = false
+  } finally {
+    dbg('burnAllForTarget: end', { e2e: split(op0) })
   }
 }
-async function confirmBurnAll () {
+
+async function confirmBurnAll() {
   const count = tokens.value.length
-  if (!confirm(`${t('admin.actions.burnAll')} (${count})?`)) return
+  dbg('confirmBurnAll: prompt', { count, target: target.value })
+  if (!confirm(`${t('admin.actions.burnAll')} (${count})?`)) { dbg('confirmBurnAll: cancelled'); return }
   await burnAllForTarget()
 }
 </script>
@@ -397,5 +538,45 @@ async function confirmBurnAll () {
 
 .admin__loader {
   margin: 24px 0;
+}
+
+.pending {
+  display: grid;
+  gap: 6px;
+  margin: 8px 0 12px;
+}
+
+.pending__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pending__label {
+  font-weight: 600;
+}
+
+.pill {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: .8rem;
+}
+
+.pill--pending {
+  background: #fff7ed;
+  color: #9a3412;
+  border: 1px solid #fde6c7;
+}
+
+.pill--ok {
+  background: #e8fff3;
+  color: #065f46;
+  border: 1px solid #bbf7d0;
+}
+
+.pill--err {
+  background: #fee2e2;
+  color: #7f1d1d;
+  border: 1px solid #fecaca;
 }
 </style>
